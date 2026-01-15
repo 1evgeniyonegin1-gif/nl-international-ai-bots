@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.database.base import AsyncSessionLocal
-from shared.ai_clients.anthropic_client import AnthropicClient
+from shared.ai_clients.gigachat_client import GigaChatClient
 from shared.config.settings import settings
 from curator_bot.database.models import User, ConversationMessage
 from curator_bot.ai.chat_engine import CuratorChatEngine
@@ -18,10 +18,10 @@ from loguru import logger
 router = Router(name="messages")
 
 # Инициализируем AI клиент глобально
-# Используем Claude (Anthropic)
-ai_client = AnthropicClient(
-    api_key=settings.anthropic_api_key,
-    model=settings.curator_ai_model
+# Используем GigaChat (Сбер) - бесплатный
+ai_client = GigaChatClient(
+    auth_token=settings.gigachat_auth_token,
+    model="GigaChat"
 )
 
 # Инициализируем движок чата
