@@ -5,7 +5,7 @@ from typing import List, Dict, Optional
 from datetime import datetime
 from loguru import logger
 
-from shared.ai_clients.gemini_client import GeminiClient
+from shared.ai_clients.openai_client import OpenAIClient
 from curator_bot.ai.prompts import get_curator_system_prompt, get_rag_instruction
 from curator_bot.database.models import User, ConversationMessage
 
@@ -15,12 +15,12 @@ class CuratorChatEngine:
     Движок для генерации ответов куратора с использованием AI и RAG
     """
 
-    def __init__(self, ai_client: GeminiClient):
+    def __init__(self, ai_client):
         """
         Инициализация движка
 
         Args:
-            ai_client: Клиент для работы с AI (Gemini)
+            ai_client: Клиент для работы с AI (Gemini или OpenAI)
         """
         self.ai_client = ai_client
         logger.info("Curator chat engine initialized")

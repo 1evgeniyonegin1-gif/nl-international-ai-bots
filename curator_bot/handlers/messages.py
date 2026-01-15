@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.database.base import AsyncSessionLocal
-from shared.ai_clients.gemini_client import GeminiClient
+from shared.ai_clients.anthropic_client import AnthropicClient
 from shared.config.settings import settings
 from curator_bot.database.models import User, ConversationMessage
 from curator_bot.ai.chat_engine import CuratorChatEngine
@@ -18,9 +18,10 @@ from loguru import logger
 router = Router(name="messages")
 
 # Инициализируем AI клиент глобально
-ai_client = GeminiClient(
-    api_key=settings.gemini_api_key,
-    model_name=settings.curator_ai_model
+# Используем Claude (Anthropic)
+ai_client = AnthropicClient(
+    api_key=settings.anthropic_api_key,
+    model=settings.curator_ai_model
 )
 
 # Инициализируем движок чата
@@ -101,7 +102,7 @@ async def handle_message(message: Message):
                 sender="bot",
                 timestamp=datetime.now(),
                 ai_model=settings.curator_ai_model,
-                tokens_used=ai_client.count_tokens(ai_response)
+                tokens_used=None  # OpenAI возвращает usage в ответе, можно добавить позже
             )
             session.add(bot_msg)
             await session.commit()

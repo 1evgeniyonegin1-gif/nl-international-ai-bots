@@ -101,11 +101,13 @@ class KnowledgeBaseChunk(Base, TimestampMixin):
     chunk_text: Mapped[str] = mapped_column(Text)
 
     # Векторное представление для поиска (используем pgvector)
-    embedding: Mapped[Optional[List[float]]] = mapped_column(Vector(384))  # sentence-transformers размерность 384
+    # ВРЕМЕННО ОТКЛЮЧЕНО: требует установки расширения pgvector в PostgreSQL
+    # embedding: Mapped[Optional[List[float]]] = mapped_column(Vector(384))  # sentence-transformers размерность 384
+    embedding: Mapped[Optional[str]] = mapped_column(Text)  # Временно храним как TEXT
 
     # Метаданные
     category: Mapped[str] = mapped_column(String(100), index=True)  # products, marketing_plan, sales_scripts, etc.
-    metadata: Mapped[Optional[dict]] = mapped_column(JSONB)
+    meta_data: Mapped[Optional[dict]] = mapped_column(JSONB)  # Переименовано из metadata чтобы избежать конфликта
 
     def __repr__(self) -> str:
         return f"<KnowledgeBaseChunk(id={self.id}, category={self.category})>"

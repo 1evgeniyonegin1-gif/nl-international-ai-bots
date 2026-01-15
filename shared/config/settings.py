@@ -42,9 +42,10 @@ class Settings(BaseSettings):
     log_level: str = Field(default="INFO", env="LOG_LEVEL")
     timezone: str = Field(default="Europe/Moscow", env="TIMEZONE")
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8"
+    }
 
 
 # Глобальный экземпляр настроек
