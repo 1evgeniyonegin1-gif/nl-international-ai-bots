@@ -15,6 +15,30 @@ class Settings(BaseSettings):
     content_manager_bot_token: str = Field(..., env="CONTENT_MANAGER_BOT_TOKEN")
     channel_username: str = Field(..., env="CHANNEL_USERNAME")
 
+    # Group with Topics (for content publishing)
+    group_id: str = Field(default="", env="GROUP_ID")
+    curator_bot_username: str = Field(default="@nl_curator_bot", env="CURATOR_BOT_USERNAME")
+
+    # Topic IDs (message_thread_id for each topic)
+    topic_products: int = Field(default=0, env="TOPIC_PRODUCTS")
+    topic_business: int = Field(default=0, env="TOPIC_BUSINESS")
+    topic_training: int = Field(default=0, env="TOPIC_TRAINING")
+    topic_news: int = Field(default=0, env="TOPIC_NEWS")
+    topic_success: int = Field(default=0, env="TOPIC_SUCCESS")
+    topic_faq: int = Field(default=0, env="TOPIC_FAQ")
+
+    def get_topic_id(self, post_type: str) -> int:
+        """Возвращает ID темы для типа поста"""
+        mapping = {
+            "product": self.topic_products,
+            "motivation": self.topic_success,  # Мотивация -> Истории успеха
+            "news": self.topic_news,
+            "tips": self.topic_training,  # Советы -> Обучение
+            "success_story": self.topic_success,
+            "promo": self.topic_news,  # Промо -> Новости
+        }
+        return mapping.get(post_type, 0)
+
     # AI API Keys
     gemini_api_key: str = Field(default="", env="GEMINI_API_KEY")
     openai_api_key: str = Field(default="", env="OPENAI_API_KEY")

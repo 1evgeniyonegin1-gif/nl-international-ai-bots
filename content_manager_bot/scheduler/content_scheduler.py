@@ -97,18 +97,37 @@ class ContentScheduler:
 
     async def _publish_post(self, post: Post, session):
         """
-        Публикация поста в канал
+        Публикация поста в группу с Topics или канал
 
         Args:
             post: Пост для публикации
             session: Сессия БД
         """
         try:
-            # Публикуем в канал
-            message = await self.bot.send_message(
-                chat_id=settings.channel_username,
-                text=post.content
+            # Определяем куда публиковать (тема в группе)
+            topic_id = settings.get_topic_id(post.post_type)
+
+            # Добавляем ссылку на куратора
+            post_with_curator = (
+                f"{post.content}\n\n"
+                f"━━━━━━━━━━━━━━━\n"
+                f"❓ Есть вопросы? Спроси AI-Куратора → {settings.curator_bot_username}"
             )
+
+            # Публикуем в группу с Topics или в канал
+            if settings.group_id and topic_id:
+                message = await self.bot.send_message(
+                    chat_id=settings.group_id,
+                    text=post_with_curator,
+                    message_thread_id=topic_id
+                )
+                publish_target = f"группа (тема #{topic_id})"
+            else:
+                message = await self.bot.send_message(
+                    chat_id=settings.channel_username,
+                    text=post_with_curator
+                )
+                publish_target = settings.channel_username
 
             # Обновляем статус
             post.status = "published"
@@ -117,12 +136,12 @@ class ContentScheduler:
 
             await session.commit()
 
-            logger.info(f"Scheduled post #{post.id} published to {settings.channel_username}")
+            logger.info(f"Scheduled post #{post.id} published to {publish_target}")
 
             # Уведомляем админов
             await self._notify_admins(
                 f"📢 Автопубликация\n\n"
-                f"Пост #{post.id} опубликован в канал по расписанию."
+                f"Пост #{post.id} опубликован в {publish_target} по расписанию."
             )
 
         except Exception as e:

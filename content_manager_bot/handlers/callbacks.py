@@ -71,11 +71,31 @@ async def callback_publish(callback: CallbackQuery, bot: Bot):
             return
 
         try:
-            # Публикуем в канал
-            channel_message = await bot.send_message(
-                chat_id=settings.channel_username,
-                text=post.content
+            # Определяем куда публиковать (тема в группе)
+            topic_id = settings.get_topic_id(post.post_type)
+
+            # Добавляем ссылку на куратора в конец поста
+            post_with_curator = (
+                f"{post.content}\n\n"
+                f"━━━━━━━━━━━━━━━\n"
+                f"❓ Есть вопросы? Спроси AI-Куратора → {settings.curator_bot_username}"
             )
+
+            # Публикуем в группу с Topics или в канал
+            if settings.group_id and topic_id:
+                channel_message = await bot.send_message(
+                    chat_id=settings.group_id,
+                    text=post_with_curator,
+                    message_thread_id=topic_id
+                )
+                publish_target = f"группа (тема #{topic_id})"
+            else:
+                # Фолбэк на канал если группа не настроена
+                channel_message = await bot.send_message(
+                    chat_id=settings.channel_username,
+                    text=post_with_curator
+                )
+                publish_target = settings.channel_username
 
             # Обновляем статус поста
             post.status = "published"
@@ -88,7 +108,8 @@ async def callback_publish(callback: CallbackQuery, bot: Bot):
             action = AdminAction(
                 admin_id=callback.from_user.id,
                 post_id=post_id,
-                action="publish"
+                action="publish",
+                details={"topic_id": topic_id} if topic_id else None
             )
             session.add(action)
 
@@ -98,10 +119,10 @@ async def callback_publish(callback: CallbackQuery, bot: Bot):
             await callback.message.edit_text(
                 f"✅ <b>Пост #{post_id} опубликован!</b>\n\n"
                 f"{post.content[:300]}...\n\n"
-                f"<i>Канал: {settings.channel_username}</i>"
+                f"<i>Опубликовано в: {publish_target}</i>"
             )
 
-            logger.info(f"Post #{post_id} published to {settings.channel_username}")
+            logger.info(f"Post #{post_id} published to {publish_target}")
 
         except Exception as e:
             logger.error(f"Error publishing post #{post_id}: {e}")
