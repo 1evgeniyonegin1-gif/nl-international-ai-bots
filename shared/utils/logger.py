@@ -53,3 +53,16 @@ def setup_logger(bot_name: str, log_level: str = "INFO"):
     logger.info(f"Logger initialized for {bot_name}")
 
     return logger
+
+
+def get_logger(name: str = None):
+    """
+    Получить логгер для модуля.
+
+    Args:
+        name: Имя модуля (обычно __name__)
+
+    Returns:
+        logger: Настроенный логгер
+    """
+    return logger

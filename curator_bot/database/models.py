@@ -101,9 +101,7 @@ class KnowledgeBaseChunk(Base, TimestampMixin):
     chunk_text: Mapped[str] = mapped_column(Text)
 
     # Векторное представление для поиска (используем pgvector)
-    # ВРЕМЕННО ОТКЛЮЧЕНО: требует установки расширения pgvector в PostgreSQL
-    # embedding: Mapped[Optional[List[float]]] = mapped_column(Vector(384))  # sentence-transformers размерность 384
-    embedding: Mapped[Optional[str]] = mapped_column(Text)  # Временно храним как TEXT
+    embedding: Mapped[Optional[List[float]]] = mapped_column(Vector(384), nullable=True)
 
     # Метаданные
     category: Mapped[str] = mapped_column(String(100), index=True)  # products, marketing_plan, sales_scripts, etc.

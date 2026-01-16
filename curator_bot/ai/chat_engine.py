@@ -142,23 +142,66 @@ class CuratorChatEngine:
         }
 
         # Определяем категорию вопроса
-        if any(word in message_lower for word in ["продукт", "energy diet", "коктейль", "крем", "витамин"]):
+        # PRODUCTS - продукты NL International
+        product_keywords = [
+            "продукт", "energy diet", "коктейль", "крем", "витамин",
+            "коллаген", "collagen", "бад", "адаптоген", "slim", "похуден",
+            "косметик", "уход за кож", "сыворотк", "маск", "шампун",
+            "гель", "лосьон", "тоник", "пилинг", "скраб", "капсул",
+            "спрей", "напиток", "батончик", "чай", "кофе"
+        ]
+        if any(word in message_lower for word in product_keywords):
             intent["category"] = "products"
             intent["keywords"].append("products")
 
-        elif any(word in message_lower for word in ["заработ", "дохо", "товарообор", "проце", "бону", "квалифик"]):
+        # BUSINESS - маркетинг-план, заработок, партнёрство
+        elif any(word in message_lower for word in [
+            "заработ", "дохо", "товарообор", "проце", "бону", "квалифик",
+            "маркетинг", "план вознаг", "карьер", "менеджер", "директор",
+            "реферал", "пригласи", "ссылк", "промокод", "скидк", "регистр"
+        ]):
             intent["category"] = "business"
             intent["keywords"].append("marketing_plan")
 
-        elif any(word in message_lower for word in ["как продать", "клиент", "возражен", "продаж"]):
+        # SALES - продажи и работа с возражениями
+        elif any(word in message_lower for word in [
+            "как продать", "клиент", "возражен", "продаж", "сетевой",
+            "пирамид", "развод", "дорого", "не работает", "отказ"
+        ]):
             intent["category"] = "sales"
             intent["keywords"].append("sales_scripts")
 
-        elif any(word in message_lower for word in ["обучен", "урок", "курс", "мастер"]):
+        # TRAINING - обучение, советы, соцсети
+        elif any(word in message_lower for word in [
+            "обучен", "урок", "курс", "мастер", "совет", "новичок",
+            "начать", "первы шаг", "соцсет", "инстаграм", "telegram",
+            "контент", "пост", "сторис", "reels", "видео"
+        ]):
             intent["category"] = "training"
+            intent["keywords"].append("training")
 
-        elif any(word in message_lower for word in ["команд", "партнер", "структур", "лидер"]):
+        # FAQ - заказы, доставка, оплата
+        elif any(word in message_lower for word in [
+            "заказ", "оформи", "доставк", "оплат", "получи", "посылк",
+            "трек", "адрес", "пункт выдач", "почт", "курьер", "стоимость"
+        ]):
+            intent["category"] = "faq"
+            intent["keywords"].append("faq")
+
+        # COMPANY - о компании NL International
+        elif any(word in message_lower for word in [
+            "о компании", "nl international", "история", "основател",
+            "когда создан", "сколько лет", "головной офис", "страны"
+        ]):
+            intent["category"] = "company"
+            intent["keywords"].append("company")
+
+        # TEAM_BUILDING - команда и структура
+        elif any(word in message_lower for word in [
+            "команд", "партнер", "структур", "лидер", "наставник", "спонсор"
+        ]):
             intent["category"] = "team_building"
+            intent["keywords"].append("team_building")
 
         # Определяем срочность
         if any(word in message_lower for word in ["срочно", "быстро", "важно", "помоги", "проблем"]):
@@ -177,5 +220,14 @@ class CuratorChatEngine:
         Returns:
             bool: True если нужно использовать RAG
         """
-        # Используем RAG для вопросов о продуктах, бизнесе и продажах
-        return intent["category"] in ["products", "business", "sales"]
+        # Используем RAG для всех категорий, связанных с NL International
+        rag_categories = [
+            "products",      # Продукты
+            "business",      # Маркетинг-план, заработок
+            "sales",         # Продажи, возражения
+            "training",      # Обучение, соцсети
+            "faq",           # Заказы, доставка
+            "company",       # О компании
+            "team_building"  # Команда (может быть в training)
+        ]
+        return intent["category"] in rag_categories

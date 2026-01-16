@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from shared.database.base import AsyncSessionLocal
 from shared.ai_clients.gigachat_client import GigaChatClient
 from shared.config.settings import settings
+from shared.rag import get_rag_engine
 from curator_bot.database.models import User, ConversationMessage
 from curator_bot.ai.chat_engine import CuratorChatEngine
 from loguru import logger
@@ -82,10 +83,36 @@ async def handle_message(message: Message):
             # Определяем, нужна ли база знаний
             knowledge_fragments = None
             if chat_engine.should_use_rag(intent):
-                # TODO: Реализовать поиск по базе знаний (RAG)
-                # knowledge_fragments = await search_knowledge_base(message.text, intent)
-                logger.info(f"RAG search would be performed for keywords: {intent['keywords']}")
-                # Пока используем None
+                try:
+                    # Получаем RAG движок и ищем релевантные документы
+                    rag_engine = await get_rag_engine()
+
+                    # Определяем категорию для поиска
+                    category = intent.get("category")
+                    if category == "sales":
+                        category = "training"  # Скрипты продаж в категории training
+
+                    # Выполняем поиск по базе знаний
+                    search_results = await rag_engine.retrieve(
+                        query=message.text,
+                        category=category,
+                        top_k=5,
+                        min_similarity=0.3
+                    )
+
+                    if search_results:
+                        # Преобразуем результаты в список строк для chat_engine
+                        knowledge_fragments = [
+                            f"[{r.source}]: {r.content}"
+                            for r in search_results
+                        ]
+                        logger.info(f"RAG: найдено {len(search_results)} документов для категории '{category}'")
+                    else:
+                        logger.info(f"RAG: документы не найдены для запроса в категории '{category}'")
+
+                except Exception as rag_error:
+                    logger.warning(f"RAG search failed, continuing without knowledge base: {rag_error}")
+                    # Продолжаем без RAG если произошла ошибка
 
             # Генерируем ответ от AI
             ai_response = await chat_engine.generate_response(

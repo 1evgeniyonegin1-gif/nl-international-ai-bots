@@ -258,10 +258,15 @@ class DocumentLoader:
         return stats
 
 
-async def main():
-    """Главная функция для загрузки базы знаний."""
+async def main(clear_existing: bool = False):
+    """
+    Главная функция для загрузки базы знаний.
+
+    Args:
+        clear_existing: Очистить существующие документы перед загрузкой
+    """
     print("=" * 60)
-    print("📚 Загрузка документов в базу знаний RAG")
+    print("[RAG] Zagruzka dokumentov v bazu znaniy")
     print("=" * 60)
 
     # Путь к папке с документами
@@ -269,27 +274,43 @@ async def main():
     knowledge_base_path = project_root / "content" / "knowledge_base"
 
     if not knowledge_base_path.exists():
-        print(f"\n❌ Папка не найдена: {knowledge_base_path}")
-        print("\n💡 Создайте папку и добавьте туда документы:")
+        print(f"\n[!] Papka ne naydena: {knowledge_base_path}")
+        print("\n[i] Sozdayte papku i dobavte tuda dokumenty:")
         print(f"   {knowledge_base_path}")
-        print("\nПоддерживаемые форматы: .txt, .md")
+        print("\nFormaty: .txt, .md")
         return
 
     # Проверяем есть ли файлы
     files = list(knowledge_base_path.rglob("*.txt")) + list(knowledge_base_path.rglob("*.md"))
 
     if not files:
-        print(f"\n⚠️  Папка {knowledge_base_path} пуста!")
-        print("\n💡 Добавьте документы в папку:")
-        print("   - Описание продуктов NL International")
-        print("   - Маркетинг-план")
-        print("   - Инструкции для партнёров")
-        print("   - FAQ и частые вопросы")
-        print("\nПоддерживаемые форматы: .txt, .md")
+        print(f"\n[!] Papka {knowledge_base_path} pusta!")
+        print("\n[i] Dobavte dokumenty v papku")
+        print("\nFormaty: .txt, .md")
         return
 
-    print(f"\n📁 Найдено {len(files)} файлов")
-    print("\nЗагрузка...")
+    # Показываем структуру папок
+    print(f"\n[*] Naydeno {len(files)} faylov:")
+    categories = {}
+    for f in files:
+        cat = f.parent.name if f.parent != knowledge_base_path else "root"
+        categories[cat] = categories.get(cat, 0) + 1
+    for cat, count in sorted(categories.items()):
+        print(f"   [{cat}]: {count} faylov")
+
+    # Очистка существующих документов если нужно
+    if clear_existing or "--clear" in sys.argv:
+        print("\n[*] Ochistka suschestvuyuschih dokumentov...")
+        store = await get_vector_store()
+        # Удаляем все документы через прямой SQL
+        from shared.database.base import AsyncSessionLocal
+        from sqlalchemy import text
+        async with AsyncSessionLocal() as session:
+            await session.execute(text("DELETE FROM knowledge_documents"))
+            await session.commit()
+        print("   Dokumenty udaleny")
+
+    print("\n[*] Zagruzka dokumentov...")
 
     # Инициализируем загрузчик
     loader = DocumentLoader()
@@ -298,38 +319,59 @@ async def main():
     stats = await loader.load_directory(knowledge_base_path)
 
     print("\n" + "=" * 60)
-    print("📊 Результаты загрузки:")
+    print("[RESULTS]")
     print("=" * 60)
-    print(f"  Файлов обработано: {stats['files_processed']}")
-    print(f"  Чанков добавлено:  {stats['chunks_added']}")
+    print(f"  Files processed: {stats['files_processed']}")
+    print(f"  Chunks added:    {stats['chunks_added']}")
 
     if stats['errors']:
-        print(f"\n⚠️  Ошибки ({len(stats['errors'])}):")
+        print(f"\n[!] Errors ({len(stats['errors'])}):")
         for err in stats['errors']:
             print(f"   - {err}")
 
     if stats['files']:
-        print("\n📄 Загруженные файлы:")
+        print("\n[*] Loaded files:")
         for f in stats['files']:
-            print(f"   - {f['file']}: {f['chunks']} чанков [{f['category'] or 'без категории'}]")
+            print(f"   - {f['file']}: {f['chunks']} chunks [{f['category'] or 'no category'}]")
 
     # Показываем статистику базы
     store = await get_vector_store()
     db_stats = await store.get_stats()
 
     print("\n" + "=" * 60)
-    print("📈 Статистика базы знаний:")
+    print("[STATS]")
     print("=" * 60)
-    print(f"  Всего документов: {db_stats['total_documents']}")
-    print(f"  Размерность эмбеддингов: {db_stats['embedding_dimension']}")
+    print(f"  Total documents: {db_stats['total_documents']}")
+    print(f"  Embedding dim:   {db_stats['embedding_dimension']}")
 
     if db_stats['by_category']:
-        print("\n  По категориям:")
+        print("\n  By category:")
         for cat, count in db_stats['by_category'].items():
             print(f"    - {cat}: {count}")
 
-    print("\n✅ Загрузка завершена!")
+    print("\n[OK] Loading complete!")
+    print("\n[i] RAG system ready for AI-Curator!")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    if "--help" in sys.argv or "-h" in sys.argv:
+        print("""
+Скрипт загрузки базы знаний RAG
+
+Использование:
+    python scripts/load_knowledge_base.py [опции]
+
+Опции:
+    --clear     Очистить существующие документы перед загрузкой
+    --help, -h  Показать эту справку
+
+Пример:
+    python scripts/load_knowledge_base.py --clear
+
+Требования:
+    1. PostgreSQL с расширением pgvector
+    2. pip install sentence-transformers pgvector
+    3. Настроенные переменные окружения для подключения к БД
+        """)
+    else:
+        asyncio.run(main())

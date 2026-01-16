@@ -42,7 +42,7 @@ class Document(Base):
     category = Column(String(100), nullable=True)  # Категория: продукты, бизнес-план и т.д.
     chunk_index = Column(Integer, default=0)  # Индекс чанка если документ разбит
     embedding = Column(Vector(384), nullable=True)  # 384 = размерность MiniLM
-    metadata = Column(JSONB, default={})  # Дополнительные данные
+    extra_data = Column(JSONB, default={})  # Дополнительные данные (metadata зарезервировано)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
@@ -121,7 +121,7 @@ class VectorStore:
                 category=category,
                 chunk_index=chunk_index,
                 embedding=embedding,
-                metadata=metadata or {}
+                extra_data=metadata or {}
             )
             session.add(doc)
             await session.commit()
@@ -160,7 +160,7 @@ class VectorStore:
                     category=doc_data.get("category"),
                     chunk_index=doc_data.get("chunk_index", 0),
                     embedding=embeddings[i],
-                    metadata=doc_data.get("metadata", {})
+                    extra_data=doc_data.get("metadata", {})
                 )
                 session.add(doc)
                 doc_ids.append(doc)
@@ -206,7 +206,7 @@ class VectorStore:
                     Document.content,
                     Document.source,
                     Document.category,
-                    Document.metadata,
+                    Document.extra_data,
                     (1 - distance_expr).label("similarity")
                 )
                 .where(Document.embedding.isnot(None))
@@ -230,7 +230,7 @@ class VectorStore:
                         source=row.source,
                         category=row.category,
                         similarity=similarity,
-                        metadata=row.metadata or {}
+                        metadata=row.extra_data or {}
                     ))
 
             return results[:top_k]
