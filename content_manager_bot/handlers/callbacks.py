@@ -524,6 +524,21 @@ async def callback_autoschedule(callback: CallbackQuery):
             # Включаем/выключаем расписание для типа поста
             post_type = action
 
+            # Расписание для каждого типа (интервал в часах, время МСК)
+            # product: ежедневно в 10:00, motivation: ежедневно в 08:00
+            # tips: через день (48ч), news: через 2 дня (56ч)
+            # success_story: 2 раза в неделю (84ч), promo: 2 раза в неделю (84ч)
+            schedule_config = {
+                "product": {"hours": 24, "cron": "0 7 * * *", "desc": "ежедневно в 10:00"},
+                "motivation": {"hours": 24, "cron": "0 5 * * *", "desc": "ежедневно в 08:00"},
+                "tips": {"hours": 48, "cron": "0 11 */2 * *", "desc": "через день в 14:00"},
+                "news": {"hours": 56, "cron": "0 9 * * 1,3,5", "desc": "пн/ср/пт в 12:00"},
+                "success_story": {"hours": 84, "cron": "0 15 * * 2,6", "desc": "вт/сб в 18:00"},
+                "promo": {"hours": 84, "cron": "0 13 * * 4,0", "desc": "чт/вс в 16:00"},
+            }
+
+            config = schedule_config.get(post_type, {"hours": 24, "cron": "0 9 * * *", "desc": "ежедневно"})
+
             async with AsyncSessionLocal() as session:
                 # Ищем существующее расписание
                 result = await session.execute(
@@ -536,12 +551,12 @@ async def callback_autoschedule(callback: CallbackQuery):
                     schedule.is_active = not schedule.is_active
                     status = "включен" if schedule.is_active else "выключен"
                 else:
-                    # Создаём новое расписание (каждые 8 часов)
+                    # Создаём новое расписание с настройками для типа
                     schedule = ContentSchedule(
                         post_type=post_type,
-                        cron_expression="0 */8 * * *",
+                        cron_expression=config["cron"],
                         is_active=True,
-                        next_run=datetime.utcnow() + timedelta(hours=8),
+                        next_run=datetime.utcnow() + timedelta(hours=config["hours"]),
                         total_generated=0
                     )
                     session.add(schedule)
@@ -554,12 +569,12 @@ async def callback_autoschedule(callback: CallbackQuery):
 
             await callback.answer(f"Автопостинг {type_name}: {status}", show_alert=True)
 
-            # Обновляем меню
+            # Обновляем меню с информацией о расписании
             await callback.message.edit_text(
                 "⚙️ <b>Настройки автопостинга</b>\n\n"
-                f"✅ {type_name}: {status}\n\n"
-                "Бот будет генерировать посты каждые 8 часов\n"
-                "и присылать на модерацию.",
+                f"{'✅' if status == 'включен' else '❌'} <b>{type_name}</b>: {status}\n"
+                f"📅 Расписание: {config['desc']}\n\n"
+                "<i>Бот будет генерировать посты и присылать на модерацию.</i>",
                 reply_markup=Keyboards.auto_schedule_settings()
             )
 

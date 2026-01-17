@@ -237,9 +237,10 @@ class Keyboards:
 
     @staticmethod
     def auto_schedule_settings() -> InlineKeyboardMarkup:
-        """Настройки автоматической генерации"""
+        """Настройки автоматической генерации для всех 6 типов контента"""
         builder = InlineKeyboardBuilder()
 
+        # Ряд 1: Продукты и Мотивация (ежедневно)
         builder.row(
             InlineKeyboardButton(
                 text="📦 Продукты",
@@ -250,6 +251,29 @@ class Keyboards:
                 callback_data="autosched:motivation"
             )
         )
+        # Ряд 2: Новости и Советы
+        builder.row(
+            InlineKeyboardButton(
+                text="📰 Новости",
+                callback_data="autosched:news"
+            ),
+            InlineKeyboardButton(
+                text="💡 Советы",
+                callback_data="autosched:tips"
+            )
+        )
+        # Ряд 3: Истории успеха и Промо
+        builder.row(
+            InlineKeyboardButton(
+                text="🌟 Истории успеха",
+                callback_data="autosched:success_story"
+            ),
+            InlineKeyboardButton(
+                text="🎁 Промо",
+                callback_data="autosched:promo"
+            )
+        )
+        # Ряд 4: Статус и Назад
         builder.row(
             InlineKeyboardButton(
                 text="📊 Статус расписания",
