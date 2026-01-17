@@ -39,9 +39,9 @@ async def main():
     storage = MemoryStorage()
     dp = Dispatcher(storage=storage)
 
-    # Регистрируем роутеры
-    dp.include_router(admin_router)
+    # Регистрируем роутеры (callbacks первым для FSM)
     dp.include_router(callbacks_router)
+    dp.include_router(admin_router)
 
     logger.info("✅ Handlers registered")
 

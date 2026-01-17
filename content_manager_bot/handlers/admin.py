@@ -296,13 +296,3 @@ async def cmd_schedule(message: Message):
     )
 
 
-# Фильтр для обработки текстовых сообщений от админа
-@router.message(F.text & ~F.text.startswith("/"))
-async def handle_admin_text(message: Message):
-    """Обработка текстовых сообщений (для редактирования и т.д.)"""
-    if not is_admin(message.from_user.id):
-        return
-
-    # Здесь можно добавить логику для редактирования постов
-    # когда админ в режиме редактирования
-    pass
