@@ -21,6 +21,16 @@ class ContentScheduler:
     и генерации нового контента по расписанию
     """
 
+    # Конфигурация расписания для каждого типа контента
+    SCHEDULE_CONFIG = {
+        "product": {"hours": 24, "desc": "ежедневно в 10:00"},
+        "motivation": {"hours": 24, "desc": "ежедневно в 08:00"},
+        "tips": {"hours": 48, "desc": "через день в 14:00"},
+        "news": {"hours": 56, "desc": "пн/ср/пт в 12:00"},
+        "success_story": {"hours": 84, "desc": "вт/сб в 18:00"},
+        "promo": {"hours": 84, "desc": "чт/вс в 16:00"},
+    }
+
     def __init__(self, bot: Bot):
         """
         Инициализация планировщика
@@ -201,8 +211,9 @@ class ContentScheduler:
         schedule.last_run = datetime.utcnow()
         schedule.total_generated += 1
 
-        # Вычисляем следующий запуск (пока простая логика - через 24 часа)
-        schedule.next_run = datetime.utcnow() + timedelta(days=1)
+        # Вычисляем следующий запуск на основе конфига для типа контента
+        config = self.SCHEDULE_CONFIG.get(schedule.post_type, {"hours": 24})
+        schedule.next_run = datetime.utcnow() + timedelta(hours=config["hours"])
 
         await session.commit()
         await session.refresh(post)
