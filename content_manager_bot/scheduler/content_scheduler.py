@@ -12,6 +12,7 @@ from shared.config.settings import settings
 from shared.database.base import AsyncSessionLocal
 from content_manager_bot.database.models import Post, ContentSchedule
 from content_manager_bot.ai.content_generator import ContentGenerator
+from content_manager_bot.utils.keyboards import Keyboards
 
 
 class ContentScheduler:
@@ -208,13 +209,41 @@ class ContentScheduler:
 
         logger.info(f"Auto generated post #{post.id} ({schedule.post_type})")
 
-        # Уведомляем админов
-        await self._notify_admins(
-            f"🤖 <b>Автогенерация контента</b>\n\n"
-            f"Создан новый пост типа: {schedule.post_type}\n"
-            f"ID: #{post.id}\n\n"
-            f"Проверьте через /pending"
+        # Отправляем пост админам сразу с кнопками модерации
+        type_names = ContentGenerator.get_available_post_types()
+        type_name = type_names.get(schedule.post_type, schedule.post_type)
+
+        await self._send_post_for_moderation(
+            post_id=post.id,
+            content=content,
+            post_type=type_name
         )
+
+    async def _send_post_for_moderation(self, post_id: int, content: str, post_type: str):
+        """
+        Отправка поста админам с кнопками модерации
+
+        Args:
+            post_id: ID поста
+            content: Текст поста
+            post_type: Название типа поста
+        """
+        message_text = (
+            f"🤖 <b>Автогенерация: {post_type}</b>\n"
+            f"ID: #{post_id}\n\n"
+            f"{content}\n\n"
+            f"<i>Что делаем с постом?</i>"
+        )
+
+        for admin_id in settings.admin_ids_list:
+            try:
+                await self.bot.send_message(
+                    chat_id=admin_id,
+                    text=message_text,
+                    reply_markup=Keyboards.post_moderation(post_id)
+                )
+            except Exception as e:
+                logger.error(f"Failed to send post for moderation to admin {admin_id}: {e}")
 
     async def _notify_admins(self, message: str):
         """

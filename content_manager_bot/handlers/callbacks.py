@@ -474,3 +474,93 @@ async def process_regenerate_feedback(message: Message, state: FSMContext):
             await status_msg.edit_text(f"❌ Ошибка перегенерации: {str(e)}")
 
     await state.clear()
+
+
+# === Автопостинг ===
+
+@router.callback_query(F.data.startswith("autosched:"))
+async def callback_autoschedule(callback: CallbackQuery):
+    """Управление автопостингом"""
+    if not is_admin(callback.from_user.id):
+        await callback.answer("⛔ Доступ запрещён", show_alert=True)
+        return
+
+    action = callback.data.split(":")[1]
+
+    if action == "status":
+        # Показываем статус расписаний
+        from content_manager_bot.database.models import ContentSchedule
+
+        async with AsyncSessionLocal() as session:
+            result = await session.execute(select(ContentSchedule))
+            schedules = result.scalars().all()
+
+            if not schedules:
+                await callback.message.edit_text(
+                    "📅 <b>Расписание автопостинга</b>\n\n"
+                    "Пока нет активных расписаний.\n\n"
+                    "Нажмите на тип поста чтобы включить автогенерацию:",
+                    reply_markup=Keyboards.auto_schedule_settings()
+                )
+            else:
+                status_text = "📅 <b>Расписание автопостинга</b>\n\n"
+                type_names = ContentGenerator.get_available_post_types()
+
+                for sched in schedules:
+                    type_name = type_names.get(sched.post_type, sched.post_type)
+                    status_emoji = "✅" if sched.is_active else "❌"
+                    next_run = sched.next_run.strftime("%d.%m %H:%M") if sched.next_run else "—"
+
+                    status_text += f"{status_emoji} {type_name}\n"
+                    status_text += f"   Следующий: {next_run}\n"
+                    status_text += f"   Всего: {sched.total_generated} постов\n\n"
+
+                await callback.message.edit_text(
+                    status_text,
+                    reply_markup=Keyboards.auto_schedule_settings()
+                )
+
+    else:
+        # Включаем/выключаем расписание для типа поста
+        post_type = action
+        from content_manager_bot.database.models import ContentSchedule
+        from datetime import datetime, timedelta
+
+        async with AsyncSessionLocal() as session:
+            # Ищем существующее расписание
+            result = await session.execute(
+                select(ContentSchedule).where(ContentSchedule.post_type == post_type)
+            )
+            schedule = result.scalar_one_or_none()
+
+            if schedule:
+                # Переключаем статус
+                schedule.is_active = not schedule.is_active
+                status = "включен" if schedule.is_active else "выключен"
+            else:
+                # Создаём новое расписание (каждые 8 часов)
+                schedule = ContentSchedule(
+                    post_type=post_type,
+                    cron_expression="0 */8 * * *",
+                    is_active=True,
+                    next_run=datetime.utcnow() + timedelta(hours=8),
+                    total_generated=0
+                )
+                session.add(schedule)
+                status = "включен"
+
+            await session.commit()
+
+        type_names = ContentGenerator.get_available_post_types()
+        type_name = type_names.get(post_type, post_type)
+
+        await callback.answer(f"Автопостинг {type_name}: {status}", show_alert=True)
+
+        # Обновляем меню
+        await callback.message.edit_text(
+            "⚙️ <b>Настройки автопостинга</b>\n\n"
+            f"✅ {type_name}: {status}\n\n"
+            "Бот будет генерировать посты каждые 8 часов\n"
+            "и присылать на модерацию.",
+            reply_markup=Keyboards.auto_schedule_settings()
+        )
