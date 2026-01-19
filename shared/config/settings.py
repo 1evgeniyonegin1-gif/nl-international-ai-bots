@@ -46,6 +46,13 @@ class Settings(BaseSettings):
     gigachat_auth_token: str = Field(default="", env="GIGACHAT_AUTH_TOKEN")
     gigachat_client_id: str = Field(default="", env="GIGACHAT_CLIENT_ID")
 
+    # YandexGPT (Yandex Cloud)
+    yandex_service_account_id: str = Field(default="", env="YANDEX_SERVICE_ACCOUNT_ID")
+    yandex_key_id: str = Field(default="", env="YANDEX_KEY_ID")
+    yandex_private_key: str = Field(default="", env="YANDEX_PRIVATE_KEY")
+    yandex_folder_id: str = Field(default="", env="YANDEX_FOLDER_ID")
+    yandex_model: str = Field(default="yandexgpt-lite", env="YANDEX_MODEL")
+
     # Database
     database_url: str = Field(..., env="DATABASE_URL")
 

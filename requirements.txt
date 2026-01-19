@@ -12,6 +12,8 @@ pgvector==0.2.4  # Vector search extension
 openai==1.10.0
 google-generativeai==0.3.2
 anthropic==0.18.1
+PyJWT==2.8.0  # For YandexGPT authentication
+cryptography==42.0.0  # Required by PyJWT for RS256
 
 # Vector Database & Embeddings
 chromadb==0.4.22

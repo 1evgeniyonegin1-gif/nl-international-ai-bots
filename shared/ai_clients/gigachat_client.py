@@ -25,9 +25,14 @@ class GigaChatClient:
         self.access_token = None
         logger.info(f"GigaChat client initialized with model: {self.model}")
 
-    async def _get_access_token(self) -> str:
-        """Получение access токена через OAuth"""
-        if self.access_token:
+    async def _get_access_token(self, force_refresh: bool = False) -> str:
+        """
+        Получение access токена через OAuth
+
+        Args:
+            force_refresh: Принудительно обновить токен (при 401 ошибке)
+        """
+        if self.access_token and not force_refresh:
             return self.access_token
 
         async with httpx.AsyncClient(verify=False) as client:
@@ -42,7 +47,7 @@ class GigaChatClient:
             )
             response.raise_for_status()
             self.access_token = response.json()["access_token"]
-            logger.info("GigaChat access token obtained")
+            logger.info("GigaChat access token obtained" + (" (refreshed)" if force_refresh else ""))
             return self.access_token
 
     async def generate_response(
@@ -66,48 +71,65 @@ class GigaChatClient:
         Returns:
             str: Ответ от AI
         """
-        try:
-            access_token = await self._get_access_token()
+        # Retry при истечении токена
+        for attempt in range(2):
+            try:
+                access_token = await self._get_access_token(force_refresh=(attempt > 0))
 
-            messages = []
+                messages = []
 
-            # Добавляем системный промпт
-            messages.append({"role": "system", "content": system_prompt})
+                # Добавляем системный промпт
+                messages.append({"role": "system", "content": system_prompt})
 
-            # Добавляем историю диалога
-            if context:
-                messages.extend(context)
+                # Добавляем историю диалога
+                if context:
+                    messages.extend(context)
 
-            # Добавляем текущее сообщение
-            messages.append({"role": "user", "content": user_message})
+                # Добавляем текущее сообщение
+                messages.append({"role": "user", "content": user_message})
 
-            logger.debug(f"Sending request to GigaChat with {len(messages)} messages")
+                logger.debug(f"Sending request to GigaChat with {len(messages)} messages")
 
-            async with httpx.AsyncClient(verify=False, timeout=30.0) as client:
-                response = await client.post(
-                    f"{self.base_url}/chat/completions",
-                    headers={
-                        "Authorization": f"Bearer {access_token}",
-                        "Content-Type": "application/json"
-                    },
-                    json={
-                        "model": self.model,
-                        "messages": messages,
-                        "temperature": temperature,
-                        "max_tokens": max_tokens
-                    }
-                )
-                response.raise_for_status()
-                result = response.json()
+                async with httpx.AsyncClient(verify=False, timeout=30.0) as client:
+                    response = await client.post(
+                        f"{self.base_url}/chat/completions",
+                        headers={
+                            "Authorization": f"Bearer {access_token}",
+                            "Content-Type": "application/json"
+                        },
+                        json={
+                            "model": self.model,
+                            "messages": messages,
+                            "temperature": temperature,
+                            "max_tokens": max_tokens
+                        }
+                    )
 
-            answer = result["choices"][0]["message"]["content"]
-            logger.info(f"Response generated successfully from GigaChat")
+                    # Если 401 - токен истёк, пробуем обновить
+                    if response.status_code == 401 and attempt == 0:
+                        logger.warning("GigaChat token expired, refreshing...")
+                        self.access_token = None  # Сбрасываем токен
+                        continue
 
-            return answer
+                    response.raise_for_status()
+                    result = response.json()
 
-        except Exception as e:
-            logger.error(f"Error calling GigaChat API: {e}")
-            raise
+                answer = result["choices"][0]["message"]["content"]
+                logger.info(f"Response generated successfully from GigaChat")
+
+                return answer
+
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 401 and attempt == 0:
+                    logger.warning("GigaChat token expired (HTTPStatusError), refreshing...")
+                    self.access_token = None
+                    continue
+                logger.error(f"Error calling GigaChat API: {e}")
+                raise
+
+            except Exception as e:
+                logger.error(f"Error calling GigaChat API: {e}")
+                raise
 
     async def generate_with_rag(
         self,
