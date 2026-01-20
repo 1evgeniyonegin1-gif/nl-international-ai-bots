@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.config.settings import settings
 from shared.database.base import AsyncSessionLocal
+from shared.style_monitor import get_style_service
 from content_manager_bot.ai.content_generator import ContentGenerator
 from content_manager_bot.database.models import Post, PostStatus, AdminAction
 from content_manager_bot.utils.keyboards import Keyboards
@@ -69,37 +70,37 @@ async def cmd_help(message: Message):
 
     await message.answer(
         "📖 <b>Справка по командам</b>\n\n"
-        "<b>/generate</b> - генерация нового поста\n"
-        "  • /generate - показать меню выбора типа\n"
+        "<b>📝 ГЕНЕРАЦИЯ КОНТЕНТА</b>\n"
+        "/generate - генерация нового поста\n"
         "  • /generate product - пост о продукте\n"
         "  • /generate motivation - мотивационный пост\n"
-        "  • /generate news - новость\n"
-        "  • /generate tips - советы\n"
-        "  • /generate success_story - история успеха\n"
-        "  • /generate promo - акция/промо\n\n"
-        "<b>/pending</b> - посты ожидающие модерации\n\n"
-        "<b>/stats</b> - базовая статистика:\n"
-        "  • Всего сгенерировано\n"
-        "  • Опубликовано\n"
-        "  • Отклонено\n"
-        "  • На модерации\n\n"
-        "<b>/analytics</b> [дней] - детальная аналитика постов\n"
-        "  • /analytics - за 7 дней\n"
-        "  • /analytics 30 - за 30 дней\n\n"
-        "<b>/update_stats</b> - обновить статистику из Telegram\n"
-        "  (собирает просмотры и реакции)\n\n"
-        "<b>/top</b> [критерий] [количество] [дней] - топ постов\n"
-        "  • /top - топ-10 по вовлеченности за 30 дней\n"
-        "  • /top views - топ по просмотрам\n"
-        "  • /top reactions 5 7 - топ-5 по реакциям за 7 дней\n\n"
-        "<b>/schedule</b> - настройки автоматической генерации\n\n"
+        "  • /generate success_story - история успеха\n\n"
+        "/pending - посты ожидающие модерации\n\n"
+
+        "<b>📊 АНАЛИТИКА</b>\n"
+        "/stats - базовая статистика\n"
+        "/analytics [дней] - детальная аналитика\n"
+        "/update_stats - обновить из Telegram\n"
+        "/top [views|reactions] [N] [дней] - топ постов\n\n"
+
+        "<b>📺 КАНАЛЫ-ОБРАЗЦЫ (стиль)</b>\n"
+        "/add_channel @username [категория] - добавить канал\n"
+        "/channels - список каналов\n"
+        "/fetch_posts - загрузить посты из каналов\n"
+        "/remove_channel [id] - удалить канал\n\n"
+
+        "<b>Категории стиля:</b>\n"
+        "• motivation - мотивация\n"
+        "• product - продукты\n"
+        "• lifestyle - лайфстайл\n"
+        "• business - бизнес\n\n"
+
+        "<b>⚙️ НАСТРОЙКИ</b>\n"
+        "/schedule - автоматическая генерация\n\n"
+
         "<b>Типы контента:</b>\n"
-        "📦 product - о продуктах NL\n"
-        "💪 motivation - мотивация для партнёров\n"
-        "📰 news - новости компании\n"
-        "💡 tips - советы по продажам\n"
-        "🌟 success_story - истории успеха\n"
-        "🎁 promo - акции и предложения"
+        "📦 product | 💪 motivation | 📰 news\n"
+        "💡 tips | 🌟 success_story | 🎁 promo"
     )
 
 
@@ -514,5 +515,164 @@ async def cmd_top(message: Message):
         await status_msg.edit_text(
             f"❌ Ошибка при получении топ постов:\n{str(e)}"
         )
+
+
+# ============== КОМАНДЫ ДЛЯ КАНАЛОВ-ОБРАЗЦОВ ==============
+
+@router.message(Command("add_channel"))
+async def cmd_add_channel(message: Message):
+    """
+    Добавить канал для мониторинга стиля.
+    Формат: /add_channel @username [категория] [описание]
+    """
+    if not is_admin(message.from_user.id):
+        return
+
+    args = message.text.split(maxsplit=3)
+    if len(args) < 2:
+        await message.answer(
+            "📺 <b>Добавление канала-образца</b>\n\n"
+            "Формат: /add_channel @username [категория] [описание]\n\n"
+            "Категории стиля:\n"
+            "• <code>motivation</code> — мотивационный контент\n"
+            "• <code>product</code> — посты о продуктах\n"
+            "• <code>lifestyle</code> — лайфстайл контент\n"
+            "• <code>business</code> — бизнес-контент\n"
+            "• <code>general</code> — общий стиль\n\n"
+            "Пример:\n"
+            "<code>/add_channel @channel_name motivation Канал с мотивацией</code>"
+        )
+        return
+
+    username = args[1]
+    style_category = args[2] if len(args) > 2 else "general"
+    description = args[3] if len(args) > 3 else None
+
+    status_msg = await message.answer(f"⏳ Проверяю канал {username}...")
+
+    try:
+        style_service = get_style_service()
+        channel = await style_service.add_channel(
+            username_or_id=username,
+            description=description,
+            style_category=style_category
+        )
+
+        if channel:
+            await status_msg.edit_text(
+                f"✅ <b>Канал добавлен!</b>\n\n"
+                f"📺 {channel.title}\n"
+                f"🏷 Категория: {style_category}\n"
+                f"📝 {description or 'Без описания'}\n\n"
+                f"Используйте /fetch_posts для загрузки постов."
+            )
+        else:
+            await status_msg.edit_text(
+                f"❌ Не удалось добавить канал {username}.\n"
+                "Возможные причины:\n"
+                "• Канал не существует\n"
+                "• Канал приватный\n"
+                "• Канал уже добавлен\n"
+                "• Не настроены Telethon credentials"
+            )
+
+    except Exception as e:
+        logger.error(f"Error adding channel: {e}")
+        await status_msg.edit_text(f"❌ Ошибка: {str(e)}")
+
+
+@router.message(Command("channels"))
+async def cmd_channels(message: Message):
+    """Показать список каналов-образцов."""
+    if not is_admin(message.from_user.id):
+        return
+
+    try:
+        style_service = get_style_service()
+        channels = await style_service.get_active_channels()
+
+        if not channels:
+            await message.answer(
+                "📭 <b>Нет каналов-образцов</b>\n\n"
+                "Добавьте каналы командой:\n"
+                "<code>/add_channel @username</code>"
+            )
+            return
+
+        text = "📺 <b>Каналы-образцы для анализа стиля:</b>\n\n"
+        for ch in channels:
+            username = f"@{ch.username}" if ch.username else f"ID: {ch.channel_id}"
+            text += f"• <b>{ch.title}</b> ({username})\n"
+            text += f"  🏷 {ch.style_category or 'general'} | "
+            text += f"📝 {ch.posts_count} постов\n"
+            if ch.last_fetched_at:
+                text += f"  ⏱ Обновлено: {ch.last_fetched_at.strftime('%d.%m %H:%M')}\n"
+            text += "\n"
+
+        await message.answer(text)
+
+    except Exception as e:
+        logger.error(f"Error listing channels: {e}")
+        await message.answer(f"❌ Ошибка: {str(e)}")
+
+
+@router.message(Command("fetch_posts"))
+async def cmd_fetch_posts(message: Message):
+    """Загрузить посты из всех каналов-образцов."""
+    if not is_admin(message.from_user.id):
+        return
+
+    status_msg = await message.answer("⏳ Загружаю посты из каналов-образцов...")
+
+    try:
+        style_service = get_style_service()
+        stats = await style_service.fetch_all_channels(limit_per_channel=50)
+
+        text = (
+            f"✅ <b>Загрузка завершена!</b>\n\n"
+            f"📺 Обработано каналов: {stats['channels_processed']}\n"
+            f"📝 Новых постов: {stats['total_new_posts']}\n"
+        )
+
+        if stats['errors']:
+            text += f"\n⚠️ Ошибки ({len(stats['errors'])}):\n"
+            for err in stats['errors'][:3]:
+                text += f"• {err}\n"
+
+        await status_msg.edit_text(text)
+
+    except Exception as e:
+        logger.error(f"Error fetching posts: {e}")
+        await status_msg.edit_text(f"❌ Ошибка: {str(e)}")
+
+
+@router.message(Command("remove_channel"))
+async def cmd_remove_channel(message: Message):
+    """Удалить канал из мониторинга."""
+    if not is_admin(message.from_user.id):
+        return
+
+    args = message.text.split(maxsplit=1)
+    if len(args) < 2:
+        await message.answer(
+            "Формат: /remove_channel <channel_id>\n\n"
+            "Используйте /channels чтобы увидеть ID каналов."
+        )
+        return
+
+    try:
+        channel_id = int(args[1])
+        style_service = get_style_service()
+
+        if await style_service.remove_channel(channel_id):
+            await message.answer(f"✅ Канал {channel_id} удалён")
+        else:
+            await message.answer(f"❌ Канал {channel_id} не найден")
+
+    except ValueError:
+        await message.answer("❌ Неверный формат ID канала")
+    except Exception as e:
+        logger.error(f"Error removing channel: {e}")
+        await message.answer(f"❌ Ошибка: {str(e)}")
 
 

@@ -68,7 +68,7 @@ async def test_user(test_session: AsyncSession) -> User:
         first_name="Test",
         last_name="User",
         user_type="partner",
-        qualification="beginner"
+        qualification="consultant"  # Обновлено на новую систему квалификаций
     )
     test_session.add(user)
     await test_session.commit()

@@ -43,7 +43,7 @@ class TestUserModel:
         await test_session.refresh(user)
         
         assert user.user_type == "lead"
-        assert user.qualification == "beginner"
+        assert user.qualification == "consultant"  # Обновлено на новую систему
         assert user.is_active is True
         assert user.is_blocked is False
 

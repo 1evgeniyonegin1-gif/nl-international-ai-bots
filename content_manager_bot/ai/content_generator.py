@@ -1,8 +1,9 @@
 """
 Генератор контента с использованием GigaChat, YandexGPT и GPT-4 (гибридный подход)
 Поддерживает генерацию изображений через YandexART
+Поддерживает обучение на образцах стиля из каналов
 """
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 from datetime import datetime
 from loguru import logger
 
@@ -11,6 +12,7 @@ from shared.ai_clients.yandexgpt_client import YandexGPTClient
 from shared.ai_clients.yandexart_client import YandexARTClient, ImageStyle
 from shared.ai_clients.openai_client import OpenAIClient
 from shared.config.settings import settings
+from shared.style_monitor import get_style_service
 from content_manager_bot.ai.prompts import ContentPrompts
 from content_manager_bot.utils.product_reference import ProductReferenceManager
 
@@ -82,6 +84,97 @@ class ContentGenerator:
         if not self.main_client:
             raise ValueError("No AI client configured! Check .env settings")
 
+        # Флаг использования образцов стиля
+        self.use_style_samples = True
+
+    async def _get_style_samples(
+        self,
+        post_type: str,
+        limit: int = 3
+    ) -> List[str]:
+        """
+        Получает образцы постов из каналов-образцов для обучения стилю.
+
+        Args:
+            post_type: Тип поста для маппинга на категорию стиля
+            limit: Максимум образцов
+
+        Returns:
+            List[str]: Список текстов образцов
+        """
+        if not self.use_style_samples:
+            return []
+
+        # Маппинг типов постов на категории стиля
+        type_to_category = {
+            "product": "product",
+            "motivation": "motivation",
+            "success_story": "motivation",
+            "transformation": "motivation",
+            "business_lifestyle": "lifestyle",
+            "business": "business",
+            "business_myths": "business",
+            "tips": "general",
+            "news": "general",
+            "promo": "general",
+            "myth_busting": "general",
+            "faq": "general"
+        }
+
+        style_category = type_to_category.get(post_type, "general")
+
+        try:
+            style_service = get_style_service()
+            samples = await style_service.get_style_samples(
+                style_category=style_category,
+                limit=limit,
+                min_quality=7  # Только качественные образцы
+            )
+
+            if not samples:
+                # Пробуем без фильтра по категории
+                samples = await style_service.get_style_samples(
+                    style_category=None,
+                    limit=limit,
+                    min_quality=None
+                )
+
+            return [s.text for s in samples if s.text]
+
+        except Exception as e:
+            logger.debug(f"Could not get style samples: {e}")
+            return []
+
+    def _format_style_examples(self, samples: List[str]) -> str:
+        """
+        Форматирует образцы стиля для добавления в промпт.
+
+        Args:
+            samples: Список текстов образцов
+
+        Returns:
+            str: Отформатированный блок с образцами
+        """
+        if not samples:
+            return ""
+
+        examples_text = "\n\n---\n\n".join([
+            f"ПРИМЕР {i+1}:\n{sample[:500]}{'...' if len(sample) > 500 else ''}"
+            for i, sample in enumerate(samples)
+        ])
+
+        return f"""
+
+### ОБРАЗЦЫ СТИЛЯ (ориентируйся на эти примеры):
+
+{examples_text}
+
+### ВАЖНО:
+- Используй похожий тон и структуру
+- Сохраняй свою уникальность, но учись у примеров
+- НЕ копируй дословно, создавай оригинальный контент
+"""
+
     def _get_client_for_post_type(self, post_type: str):
         """
         Выбирает AI клиент в зависимости от типа поста
@@ -106,7 +199,8 @@ class ContentGenerator:
         self,
         post_type: str,
         custom_topic: Optional[str] = None,
-        temperature: Optional[float] = None
+        temperature: Optional[float] = None,
+        use_style_samples: bool = True
     ) -> Tuple[str, str]:
         """
         Генерирует пост для Telegram канала
@@ -115,6 +209,7 @@ class ContentGenerator:
             post_type: Тип поста (product, motivation, news, tips, success_story, promo)
             custom_topic: Дополнительная тема для уточнения
             temperature: Креативность (0.0-1.0), если None - используется дефолт для модели
+            use_style_samples: Использовать образцы стиля из каналов-образцов
 
         Returns:
             Tuple[str, str]: (текст поста, использованный промпт)
@@ -122,6 +217,14 @@ class ContentGenerator:
         try:
             # Получаем промпт для типа поста
             user_prompt = self.prompts.get_prompt_for_type(post_type, custom_topic)
+
+            # Добавляем образцы стиля если доступны
+            if use_style_samples and self.use_style_samples:
+                style_samples = await self._get_style_samples(post_type, limit=3)
+                if style_samples:
+                    style_block = self._format_style_examples(style_samples)
+                    user_prompt = user_prompt + style_block
+                    logger.info(f"Added {len(style_samples)} style samples to prompt")
 
             # Выбираем клиент в зависимости от типа поста
             ai_client, model_name = self._get_client_for_post_type(post_type)
