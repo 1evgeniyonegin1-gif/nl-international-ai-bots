@@ -246,10 +246,14 @@ class YandexARTClient:
                     })
                     logger.info("Using image-to-image mode with reference image")
 
-                # Добавляем текстовый промпт
+                # Добавляем текстовый промпт (обрезаем до 500 символов - лимит YandexART)
+                truncated_prompt = prompt[:500] if len(prompt) > 500 else prompt
+                if len(prompt) > 500:
+                    logger.warning(f"Prompt truncated from {len(prompt)} to 500 chars")
+
                 request_body["messages"].append({
                     "weight": "1",
-                    "text": prompt
+                    "text": truncated_prompt
                 })
 
                 if seed is not None:
