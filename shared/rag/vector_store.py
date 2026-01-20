@@ -1,11 +1,16 @@
 """
 Vector Store с использованием PostgreSQL + pgvector.
 Хранит документы и их embeddings для семантического поиска.
+
+Поддержка датирования документов:
+- date_updated в metadata для определения актуальности
+- expires для автоматической фильтрации устаревших документов
+- Приоритизация свежих документов при поиске
 """
 
-from datetime import datetime
+from datetime import datetime, date
 from typing import List, Optional, Tuple
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from sqlalchemy import Column, Integer, String, Text, DateTime, func, text, Index
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
@@ -30,6 +35,31 @@ class SearchResult:
     category: str
     similarity: float
     metadata: dict
+    # Дата актуальности контента (из metadata)
+    date_updated: Optional[date] = None
+    # Флаг истечения срока
+    is_expired: bool = False
+
+    @property
+    def freshness_info(self) -> str:
+        """Информация о свежести документа."""
+        if self.is_expired:
+            return "⚠️ УСТАРЕЛ"
+        if self.date_updated:
+            days_ago = (date.today() - self.date_updated).days
+            if days_ago == 0:
+                return "Сегодня"
+            elif days_ago == 1:
+                return "Вчера"
+            elif days_ago < 7:
+                return f"{days_ago} дн. назад"
+            elif days_ago < 30:
+                return f"{days_ago // 7} нед. назад"
+            elif days_ago < 365:
+                return f"{days_ago // 30} мес. назад"
+            else:
+                return f"{days_ago // 365} г. назад"
+        return "Дата неизвестна"
 
 
 class Document(Base):
@@ -173,27 +203,50 @@ class VectorStore:
             logger.info(f"Добавлено {len(result_ids)} документов")
             return result_ids
 
+    def _parse_date_from_metadata(self, metadata: dict, key: str) -> Optional[date]:
+        """Извлечь дату из metadata."""
+        if not metadata:
+            return None
+        value = metadata.get(key)
+        if value is None:
+            return None
+        if isinstance(value, date):
+            return value
+        if isinstance(value, str):
+            try:
+                return datetime.fromisoformat(value).date()
+            except ValueError:
+                return None
+        return None
+
     async def search(
         self,
         query: str,
         top_k: int = 5,
         category: str = None,
-        min_similarity: float = 0.3
+        min_similarity: float = 0.3,
+        exclude_expired: bool = True,
+        prefer_recent: bool = True,
+        max_age_days: Optional[int] = None
     ) -> List[SearchResult]:
         """
-        Семантический поиск по базе знаний.
+        Семантический поиск по базе знаний с учётом актуальности.
 
         Args:
             query: Поисковый запрос
             top_k: Количество результатов
             category: Фильтр по категории
             min_similarity: Минимальный порог схожести (0-1)
+            exclude_expired: Исключить документы с истекшим сроком
+            prefer_recent: Приоритизировать свежие документы
+            max_age_days: Максимальный возраст документа в днях (None = без ограничений)
 
         Returns:
             Список результатов поиска
         """
         # Получаем embedding запроса
         query_embedding = await self.embedding_service.aget_embedding(query)
+        today = date.today()
 
         async with AsyncSessionLocal() as session:
             # Используем косинусное расстояние pgvector
@@ -211,7 +264,7 @@ class VectorStore:
                 )
                 .where(Document.embedding.isnot(None))
                 .order_by(distance_expr)
-                .limit(top_k * 2)  # Берем больше, потом фильтруем
+                .limit(top_k * 3)  # Берем больше для фильтрации по дате
             )
 
             if category:
@@ -223,15 +276,52 @@ class VectorStore:
             results = []
             for row in rows:
                 similarity = float(row.similarity)
-                if similarity >= min_similarity:
-                    results.append(SearchResult(
-                        id=row.id,
-                        content=row.content,
-                        source=row.source,
-                        category=row.category,
-                        similarity=similarity,
-                        metadata=row.extra_data or {}
-                    ))
+                if similarity < min_similarity:
+                    continue
+
+                metadata = row.extra_data or {}
+
+                # Извлекаем даты из metadata
+                date_updated = self._parse_date_from_metadata(metadata, 'date_updated')
+                expires = self._parse_date_from_metadata(metadata, 'expires')
+
+                # Проверяем истечение срока
+                is_expired = expires is not None and expires < today
+                if exclude_expired and is_expired:
+                    logger.debug(f"Пропускаем истекший документ: {row.source}")
+                    continue
+
+                # Проверяем максимальный возраст
+                if max_age_days is not None and date_updated:
+                    age_days = (today - date_updated).days
+                    if age_days > max_age_days:
+                        logger.debug(f"Пропускаем старый документ ({age_days} дн.): {row.source}")
+                        continue
+
+                results.append(SearchResult(
+                    id=row.id,
+                    content=row.content,
+                    source=row.source,
+                    category=row.category,
+                    similarity=similarity,
+                    metadata=metadata,
+                    date_updated=date_updated,
+                    is_expired=is_expired
+                ))
+
+            # Приоритизируем свежие документы (если включено)
+            if prefer_recent and len(results) > 1:
+                # Комбинируем similarity и freshness
+                def combined_score(r: SearchResult) -> float:
+                    base_score = r.similarity
+                    if r.date_updated:
+                        days_old = (today - r.date_updated).days
+                        # Бонус за свежесть: до +0.1 для документов < 30 дней
+                        freshness_bonus = max(0, 0.1 * (1 - days_old / 365))
+                        return base_score + freshness_bonus
+                    return base_score
+
+                results.sort(key=combined_score, reverse=True)
 
             return results[:top_k]
 

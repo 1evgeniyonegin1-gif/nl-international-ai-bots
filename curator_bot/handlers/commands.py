@@ -38,7 +38,7 @@ async def cmd_start(message: Message):
                     first_name=message.from_user.first_name,
                     last_name=message.from_user.last_name,
                     user_type="lead",
-                    qualification="beginner"
+                    qualification="consultant"
                 )
                 session.add(user)
                 await session.commit()
@@ -102,18 +102,37 @@ async def cmd_progress(message: Message):
                 await message.answer("Сначала нажми /start для регистрации")
                 return
 
-            # Словарь квалификаций
+            # Словарь квалификаций по системе NL International
             qual_names = {
-                "beginner": "🌱 Новичок",
-                "manager": "⭐ Manager",
-                "master": "💎 Master",
-                "star": "🌟 Star",
-                "diamond": "💍 Diamond"
+                "consultant": "🌱 Консультант (3%)",
+                "consultant_6": "📈 Консультант 6%",
+                "manager_9": "⭐ Менеджер 9%",
+                "senior_manager": "💼 Старший менеджер (12%)",
+                "manager_15": "📊 Менеджер 15%",
+                "director_21": "🎯 Директор 21%",
+                "M1": "🔥 Middle 1",
+                "M2": "🔥 Middle 2",
+                "M3": "🔥 Middle 3",
+                "B1": "💼 Business Partner 1",
+                "B2": "💼 Business Partner 2",
+                "B3": "💼 Business Partner 3",
+                "TOP": "⭐ TOP",
+                "TOP1": "⭐ TOP 1",
+                "TOP2": "⭐ TOP 2",
+                "TOP3": "⭐ TOP 3",
+                "TOP4": "⭐ TOP 4",
+                "TOP5": "⭐ TOP 5",
+                "AC1": "👑 Ambassador Club 1",
+                "AC2": "👑 Ambassador Club 2",
+                "AC3": "👑 Ambassador Club 3",
+                "AC4": "👑 Ambassador Club 4",
+                "AC5": "👑 Ambassador Club 5",
+                "AC6": "👑 Ambassador Club 6",
             }
 
             progress_text = f"""<b>📊 Твой прогресс</b>
 
-<b>Текущая квалификация:</b> {qual_names.get(user.qualification, "Новичок")}
+<b>Текущая квалификация:</b> {qual_names.get(user.qualification, "🌱 Консультант")}
 <b>Пройдено уроков:</b> 0 из 25
 <b>Дней в бизнесе:</b> {(message.date - user.created_at).days}
 

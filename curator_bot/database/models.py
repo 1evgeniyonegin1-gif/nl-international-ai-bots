@@ -24,7 +24,11 @@ class User(Base, TimestampMixin):
 
     # Тип и квалификация
     user_type: Mapped[str] = mapped_column(String(20), default="lead")  # 'lead' или 'partner'
-    qualification: Mapped[str] = mapped_column(String(50), default="beginner")  # beginner, manager, master, star, diamond
+    # Квалификация партнёра по системе NL International
+    # См. content/knowledge_base/business/plan_voznagrazhdeniya.md
+    # Возможные значения: consultant, consultant_6, manager_9, senior_manager,
+    # manager_15, director_21, M1, M2, M3, B1, B2, B3, TOP, TOP1-TOP5, AC1-AC6
+    qualification: Mapped[str] = mapped_column(String(50), default="consultant")
 
     # Реферальная система
     referrer_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"))

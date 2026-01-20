@@ -39,6 +39,7 @@ Pillow==10.2.0  # For image compositing (watermarks, logos)
 python-dotenv==1.0.1
 pydantic==2.5.3
 pydantic-settings==2.1.0
+PyYAML==6.0.1  # For frontmatter parsing in knowledge base
 
 # Utilities
 python-dateutil==2.8.2

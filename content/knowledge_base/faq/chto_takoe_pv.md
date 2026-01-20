@@ -1,3 +1,8 @@
+---
+date_created: 2024-03-15
+date_updated: 2026-01-20
+---
+
 # FAQ: Что такое PV в NL International?
 
 ## Что такое PV простыми словами

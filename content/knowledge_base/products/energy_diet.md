@@ -1,3 +1,8 @@
+---
+date_created: 2024-06-01
+date_updated: 2026-01-20
+---
+
 # Energy Diet - Функциональное питание NL International
 
 ## Две линейки продуктов

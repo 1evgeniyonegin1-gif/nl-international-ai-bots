@@ -87,6 +87,12 @@ class Settings(BaseSettings):
     # Redis (optional)
     redis_url: str = Field(default="redis://localhost:6379", env="REDIS_URL")
 
+    # Telethon (для мониторинга каналов-образцов)
+    # Получить на https://my.telegram.org/apps
+    telethon_api_id: int = Field(default=0, env="TELETHON_API_ID")
+    telethon_api_hash: str = Field(default="", env="TELETHON_API_HASH")
+    telethon_session_name: str = Field(default="nl_style_monitor", env="TELETHON_SESSION_NAME")
+
     # Other Settings
     log_level: str = Field(default="INFO", env="LOG_LEVEL")
     timezone: str = Field(default="Europe/Moscow", env="TIMEZONE")

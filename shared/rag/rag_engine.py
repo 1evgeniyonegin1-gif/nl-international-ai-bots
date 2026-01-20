@@ -38,7 +38,7 @@ class RAGEngine:
 3. Если вопрос не связан с NL International, отвечай как обычный помощник
 4. Будь дружелюбным и поддерживающим"""
 
-    DEFAULT_CONTEXT_TEMPLATE = """[Источник: {source}] (Релевантность: {similarity:.0%})
+    DEFAULT_CONTEXT_TEMPLATE = """[Источник: {source}] (Релевантность: {similarity:.0%}) {freshness}
 {content}
 ---"""
 
@@ -106,9 +106,17 @@ class RAGEngine:
 
         context_parts = []
         for doc in docs:
+            # Формируем информацию о свежести
+            freshness = ""
+            if hasattr(doc, 'freshness_info'):
+                freshness = f"[{doc.freshness_info}]"
+            elif hasattr(doc, 'date_updated') and doc.date_updated:
+                freshness = f"[Обновлено: {doc.date_updated}]"
+
             part = self.context_template.format(
                 source=doc.source or "База знаний",
                 similarity=doc.similarity,
+                freshness=freshness,
                 content=doc.content
             )
             context_parts.append(part)

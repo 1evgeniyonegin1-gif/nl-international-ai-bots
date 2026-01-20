@@ -14,34 +14,72 @@ def get_curator_system_prompt(
 
     Args:
         user_name: Имя партнера
-        qualification: Текущая квалификация (beginner, manager, master, star, diamond)
-        lessons_completed: Количество пройденных уроков
+        qualification: Текущая квалификация (consultant, M1, M2, M3, B1, B2, B3, TOP, AC и т.д.)
+        lessons_completed: Количество пройденных уроков (не используется, оставлено для совместимости)
         current_goal: Текущая цель партнера (если есть)
 
     Returns:
         str: Системный промпт
     """
 
-    # Словарь квалификаций на русском
+    # Словарь квалификаций на русском (по системе NL International)
     qual_names = {
-        "beginner": "Новичок",
-        "manager": "Manager",
-        "master": "Master",
-        "star": "Star",
-        "diamond": "Diamond"
+        "consultant": "Консультант",
+        "consultant_6": "Консультант 6%",
+        "manager_9": "Менеджер 9%",
+        "senior_manager": "Старший менеджер",
+        "manager_15": "Менеджер 15%",
+        "director_21": "Директор 21%",
+        "M1": "Middle 1",
+        "M2": "Middle 2",
+        "M3": "Middle 3",
+        "B1": "Business Partner 1",
+        "B2": "Business Partner 2",
+        "B3": "Business Partner 3",
+        "TOP": "TOP",
+        "TOP1": "TOP 1",
+        "TOP2": "TOP 2",
+        "TOP3": "TOP 3",
+        "TOP4": "TOP 4",
+        "TOP5": "TOP 5",
+        "AC1": "Ambassador Club 1",
+        "AC2": "Ambassador Club 2",
+        "AC3": "Ambassador Club 3",
+        "AC4": "Ambassador Club 4",
+        "AC5": "Ambassador Club 5",
+        "AC6": "Ambassador Club 6",
     }
 
-    qualification_ru = qual_names.get(qualification, "Новичок")
+    qualification_ru = qual_names.get(qualification, "Консультант")
 
-    # Следующий уровень
+    # Следующий уровень в карьерной лестнице NL
     next_level = {
-        "beginner": "Manager",
-        "manager": "Master",
-        "master": "Star",
-        "star": "Diamond",
-        "diamond": "Diamond и выше"
+        "consultant": "Консультант 6% (300 PV)",
+        "consultant_6": "Менеджер 9% (600 PV)",
+        "manager_9": "Старший менеджер (1500 PV)",
+        "senior_manager": "Менеджер 15% (3000 PV)",
+        "manager_15": "Директор 21% (6000 PV)",
+        "director_21": "Middle 1 или выше",
+        "M1": "Middle 2 (1500 PV)",
+        "M2": "Middle 3 (3000 PV)",
+        "M3": "Business Partner 1 (5500 PV + 1×M3)",
+        "B1": "Business Partner 2 (8000 PV + 2×M3)",
+        "B2": "Business Partner 3 (10000 PV + 3×M3)",
+        "B3": "TOP (16000 PV + 5×M3)",
+        "TOP": "TOP 1 (23000 PV + 4×M3 + 1×B3)",
+        "TOP1": "TOP 2 (30000 PV)",
+        "TOP2": "TOP 3 (37000 PV)",
+        "TOP3": "TOP 4 (44000 PV)",
+        "TOP4": "TOP 5 (51000 PV)",
+        "TOP5": "Ambassador Club 1 (200000 PV)",
+        "AC1": "Ambassador Club 2 (350000 PV)",
+        "AC2": "Ambassador Club 3 (500000 PV)",
+        "AC3": "Ambassador Club 4 (1M PV)",
+        "AC4": "Ambassador Club 5 (2.5M PV)",
+        "AC5": "Ambassador Club 6 (5M PV)",
+        "AC6": "Ambassador Club 6 (вершина)"
     }
-    next_level_name = next_level.get(qualification, "Manager")
+    next_level_name = next_level.get(qualification, "Консультант 6%")
 
     prompt = f"""Ты - Данил, 21 год, партнёр NL International с экспертизой в нутрициологии.
 
@@ -83,9 +121,8 @@ def get_curator_system_prompt(
 👤 ПАРТНЁР, С КОТОРЫМ РАБОТАЕШЬ
 ═══════════════════════════════════════════
 • Имя: {user_name}
-• Текущий уровень: {qualification_ru}
-• Следующая цель: {next_level_name}
-• Пройдено уроков: {lessons_completed}"""
+• Текущая квалификация: {qualification_ru}
+• Следующая цель: {next_level_name}"""
 
     if current_goal:
         prompt += f"\n• Личная цель: {current_goal}"

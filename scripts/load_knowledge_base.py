@@ -1,14 +1,24 @@
 """
 Скрипт для загрузки документов в базу знаний RAG.
 Поддерживает .txt, .md, .pdf файлы.
+
+Поддержка YAML frontmatter для датирования документов:
+---
+date_created: 2025-01-15
+date_updated: 2026-01-20
+expires: 2026-03-01  # опционально
+---
 """
 
 import asyncio
 import os
 import re
 import sys
+from datetime import datetime, date
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
+
+import yaml
 
 # Добавляем корневую директорию проекта в путь
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -28,6 +38,9 @@ class DocumentLoader:
     # Перекрытие между чанками
     CHUNK_OVERLAP = 200
 
+    # Регулярное выражение для YAML frontmatter
+    FRONTMATTER_REGEX = re.compile(r'^---\s*\n(.*?)\n---\s*\n', re.DOTALL)
+
     def __init__(self, vector_store: VectorStore = None):
         self._vector_store = vector_store
 
@@ -35,6 +48,45 @@ class DocumentLoader:
         if self._vector_store is None:
             self._vector_store = await get_vector_store()
         return self._vector_store
+
+    def parse_frontmatter(self, text: str) -> tuple[Dict[str, Any], str]:
+        """
+        Извлечь YAML frontmatter из текста.
+
+        Args:
+            text: Текст документа с возможным frontmatter
+
+        Returns:
+            (metadata_dict, content_without_frontmatter)
+        """
+        match = self.FRONTMATTER_REGEX.match(text)
+        if not match:
+            return {}, text
+
+        try:
+            yaml_content = match.group(1)
+            metadata = yaml.safe_load(yaml_content) or {}
+            content = text[match.end():]
+            return metadata, content
+        except yaml.YAMLError as e:
+            logger.warning(f"Ошибка парсинга frontmatter: {e}")
+            return {}, text
+
+    def parse_date(self, value: Any) -> Optional[date]:
+        """Преобразовать значение в дату."""
+        if value is None:
+            return None
+        if isinstance(value, date):
+            return value
+        if isinstance(value, datetime):
+            return value.date()
+        if isinstance(value, str):
+            for fmt in ['%Y-%m-%d', '%d.%m.%Y', '%d/%m/%Y']:
+                try:
+                    return datetime.strptime(value, fmt).date()
+                except ValueError:
+                    continue
+        return None
 
     def chunk_text(self, text: str, chunk_size: int = None, overlap: int = None) -> List[str]:
         """
@@ -111,9 +163,18 @@ class DocumentLoader:
                 continue
         raise ValueError(f"Не удалось прочитать файл: {file_path}")
 
-    def read_markdown(self, file_path: Path) -> str:
-        """Прочитать Markdown файл (убираем разметку)."""
-        text = self.read_text_file(file_path)
+    def read_markdown(self, file_path: Path) -> tuple[str, Dict[str, Any]]:
+        """
+        Прочитать Markdown файл (убираем разметку).
+
+        Returns:
+            (text, frontmatter_metadata)
+        """
+        raw_text = self.read_text_file(file_path)
+
+        # Извлекаем frontmatter
+        frontmatter, text = self.parse_frontmatter(raw_text)
+
         # Убираем заголовки markdown
         text = re.sub(r'^#+\s*', '', text, flags=re.MULTILINE)
         # Убираем ссылки [text](url) -> text
@@ -126,7 +187,7 @@ class DocumentLoader:
         # Убираем код блоки
         text = re.sub(r'```[^`]*```', '', text)
         text = re.sub(r'`([^`]+)`', r'\1', text)
-        return text
+        return text, frontmatter
 
     async def load_file(
         self,
@@ -152,11 +213,13 @@ class DocumentLoader:
 
         # Определяем тип файла
         suffix = file_path.suffix.lower()
+        frontmatter = {}
 
         if suffix in ['.txt', '.text']:
-            text = self.read_text_file(file_path)
+            raw_text = self.read_text_file(file_path)
+            frontmatter, text = self.parse_frontmatter(raw_text)
         elif suffix in ['.md', '.markdown']:
-            text = self.read_markdown(file_path)
+            text, frontmatter = self.read_markdown(file_path)
         else:
             logger.warning(f"Неподдерживаемый формат: {suffix}")
             return 0
@@ -164,6 +227,18 @@ class DocumentLoader:
         if not text.strip():
             logger.warning(f"Пустой файл: {file_path}")
             return 0
+
+        # Извлекаем даты из frontmatter
+        date_created = self.parse_date(frontmatter.get('date_created'))
+        date_updated = self.parse_date(frontmatter.get('date_updated'))
+        expires = self.parse_date(frontmatter.get('expires'))
+
+        # Проверяем истёк ли документ
+        today = date.today()
+        if expires and expires < today:
+            logger.warning(f"Документ истёк ({expires}): {file_path.name}")
+            # Можно пропустить или пометить как устаревший
+            # return 0  # Раскомментировать чтобы пропускать
 
         # Разбиваем на чанки
         chunks = self.chunk_text(text)
@@ -183,7 +258,14 @@ class DocumentLoader:
                 "metadata": {
                     **(metadata or {}),
                     "file_path": str(file_path),
-                    "total_chunks": len(chunks)
+                    "total_chunks": len(chunks),
+                    # Даты из frontmatter
+                    "date_created": date_created.isoformat() if date_created else None,
+                    "date_updated": date_updated.isoformat() if date_updated else None,
+                    "expires": expires.isoformat() if expires else None,
+                    # Дополнительные метаданные из frontmatter
+                    **{k: v for k, v in frontmatter.items()
+                       if k not in ['date_created', 'date_updated', 'expires']}
                 }
             }
             documents.append(doc)
@@ -192,7 +274,8 @@ class DocumentLoader:
         store = await self.get_vector_store()
         await store.add_documents(documents)
 
-        logger.info(f"Загружено {len(chunks)} чанков из {file_path.name}")
+        date_info = f" [updated: {date_updated}]" if date_updated else ""
+        logger.info(f"Загружено {len(chunks)} чанков из {file_path.name}{date_info}")
         return len(chunks)
 
     async def load_directory(
