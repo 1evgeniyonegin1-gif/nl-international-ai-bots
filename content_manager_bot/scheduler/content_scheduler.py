@@ -13,6 +13,7 @@ from shared.database.base import AsyncSessionLocal
 from content_manager_bot.database.models import Post, ContentSchedule
 from content_manager_bot.ai.content_generator import ContentGenerator
 from content_manager_bot.utils.keyboards import Keyboards
+from content_manager_bot.analytics import StatsCollector
 
 
 class ContentScheduler:
@@ -42,6 +43,7 @@ class ContentScheduler:
         self.content_generator = ContentGenerator()
         self.running = False
         self._task: Optional[asyncio.Task] = None
+        self._last_stats_update: Optional[datetime] = None
         logger.info("ContentScheduler initialized")
 
     async def start(self):
@@ -75,6 +77,9 @@ class ContentScheduler:
                 # Проверяем расписание автогенерации
                 await self._check_auto_generation()
 
+                # Обновляем статистику постов (каждые 30 минут)
+                await self._update_stats_if_needed()
+
                 # Ждём 60 секунд до следующей проверки
                 await asyncio.sleep(60)
 
@@ -100,11 +105,15 @@ class ContentScheduler:
             )
             posts = result.scalars().all()
 
+            if posts:
+                logger.info(f"📤 Found {len(posts)} scheduled posts ready for publication")
+
             for post in posts:
                 try:
+                    logger.info(f"📢 Publishing scheduled post #{post.id} (type: {post.post_type}, scheduled_for: {post.scheduled_for})")
                     await self._publish_post(post, session)
                 except Exception as e:
-                    logger.error(f"Error publishing scheduled post #{post.id}: {e}")
+                    logger.error(f"❌ Error publishing scheduled post #{post.id}: {e}", exc_info=True)
 
     async def _publish_post(self, post: Post, session):
         """
@@ -175,11 +184,15 @@ class ContentScheduler:
             )
             schedules = result.scalars().all()
 
+            if schedules:
+                logger.info(f"🤖 Found {len(schedules)} active schedules ready for auto-generation")
+
             for schedule in schedules:
                 try:
+                    logger.info(f"⚙️ Starting auto-generation for schedule #{schedule.id} (type: {schedule.post_type}, next_run: {schedule.next_run})")
                     await self._run_auto_generation(schedule, session)
                 except Exception as e:
-                    logger.error(f"Error in auto generation for schedule #{schedule.id}: {e}")
+                    logger.error(f"❌ Error in auto generation for schedule #{schedule.id}: {e}", exc_info=True)
 
     async def _run_auto_generation(self, schedule: ContentSchedule, session):
         """
@@ -202,7 +215,7 @@ class ContentScheduler:
             post_type=schedule.post_type,
             status="pending",
             generated_at=datetime.utcnow(),
-            ai_model="GigaChat",
+            ai_model=settings.content_manager_ai_model,
             prompt_used=prompt_used
         )
         session.add(post)
@@ -218,7 +231,12 @@ class ContentScheduler:
         await session.commit()
         await session.refresh(post)
 
-        logger.info(f"Auto generated post #{post.id} ({schedule.post_type})")
+        logger.info(
+            f"✅ Auto-generated post #{post.id} ({schedule.post_type}). "
+            f"Total generated: {schedule.total_generated}. "
+            f"Next run: {schedule.next_run.strftime('%Y-%m-%d %H:%M UTC')} "
+            f"(interval: {config['hours']}h - {config.get('desc', 'N/A')})"
+        )
 
         # Отправляем пост админам сразу с кнопками модерации
         type_names = ContentGenerator.get_available_post_types()
@@ -333,3 +351,32 @@ class ContentScheduler:
                 return schedule.is_active
 
             return False
+
+    async def _update_stats_if_needed(self):
+        """
+        Обновление статистики постов (каждые 30 минут)
+        """
+        now = datetime.utcnow()
+
+        # Проверяем, нужно ли обновлять статистику
+        if self._last_stats_update:
+            time_since_update = now - self._last_stats_update
+            if time_since_update.total_seconds() < 1800:  # 30 минут
+                return
+
+        try:
+            logger.info("📊 Starting automatic stats update...")
+
+            async with AsyncSessionLocal() as session:
+                stats_collector = StatsCollector(self.bot, session)
+
+                # Обновляем статистику всех опубликованных постов
+                updated_count = await stats_collector.update_all_published_posts()
+
+                logger.info(f"✅ Stats updated for {updated_count} posts")
+
+                # Обновляем время последнего обновления
+                self._last_stats_update = now
+
+        except Exception as e:
+            logger.error(f"❌ Error updating stats: {e}")

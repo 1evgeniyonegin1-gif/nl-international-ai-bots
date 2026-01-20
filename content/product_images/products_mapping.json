@@ -1,0 +1,85 @@
+{
+  "greenflash": {
+    "vision_plus": {
+      "name": "GreenFlash Vision Plus",
+      "image": "greenflash/vision_plus.jpg",
+      "description": "Витамины для зрения с лютеином и зеаксантином"
+    },
+    "multivitamin": {
+      "name": "GreenFlash Мультивитамины",
+      "image": "greenflash/multivitamin.jpg",
+      "description": "Комплекс витаминов и минералов для ежедневной поддержки"
+    },
+    "omega3": {
+      "name": "GreenFlash Омега-3",
+      "image": "greenflash/omega3.jpg",
+      "description": "Рыбий жир высшего качества для сердца и мозга"
+    },
+    "vitamin_d3": {
+      "name": "GreenFlash Витамин D3",
+      "image": "greenflash/vitamin_d3.jpg",
+      "description": "Холекальциферол для иммунитета и костей"
+    },
+    "collagen": {
+      "name": "GreenFlash Коллаген",
+      "image": "greenflash/collagen.jpg",
+      "description": "Морской коллаген для кожи, волос и суставов"
+    }
+  },
+  "lovely": {
+    "face_cream": {
+      "name": "Lovely Крем для лица",
+      "image": "lovely/face_cream.jpg",
+      "description": "Увлажняющий крем с гиалуроновой кислотой"
+    },
+    "serum": {
+      "name": "Lovely Сыворотка",
+      "image": "lovely/serum.jpg",
+      "description": "Антивозрастная сыворотка с витамином C"
+    },
+    "micellar_water": {
+      "name": "Lovely Мицеллярная вода",
+      "image": "lovely/micellar_water.jpg",
+      "description": "Бережное очищение без пересушивания"
+    },
+    "body_lotion": {
+      "name": "Lovely Лосьон для тела",
+      "image": "lovely/body_lotion.jpg",
+      "description": "Питательный лосьон с маслом ши"
+    }
+  },
+  "energy_diet": {
+    "smart": {
+      "name": "Energy Diet Smart",
+      "image": "energy_diet/smart.jpg",
+      "description": "Сбалансированное питание для контроля веса"
+    },
+    "shake_chocolate": {
+      "name": "Energy Diet Шоколадный коктейль",
+      "image": "energy_diet/shake_chocolate.jpg",
+      "description": "Протеиновый коктейль со вкусом шоколада"
+    },
+    "shake_vanilla": {
+      "name": "Energy Diet Ванильный коктейль",
+      "image": "energy_diet/shake_vanilla.jpg",
+      "description": "Протеиновый коктейль со вкусом ванили"
+    },
+    "soup": {
+      "name": "Energy Diet Суп",
+      "image": "energy_diet/soup.jpg",
+      "description": "Питательный суп быстрого приготовления"
+    }
+  },
+  "other": {
+    "kids_vitamins": {
+      "name": "Детские витамины",
+      "image": "other/kids_vitamins.jpg",
+      "description": "Витаминный комплекс для детей"
+    },
+    "tea": {
+      "name": "Фиточай NL",
+      "image": "other/tea.jpg",
+      "description": "Травяной чай для здоровья и красоты"
+    }
+  }
+}

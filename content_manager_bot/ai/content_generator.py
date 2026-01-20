@@ -1,5 +1,6 @@
 """
 Генератор контента с использованием GigaChat, YandexGPT и GPT-4 (гибридный подход)
+Поддерживает генерацию изображений через YandexART
 """
 from typing import Optional, Tuple
 from datetime import datetime
@@ -7,9 +8,11 @@ from loguru import logger
 
 from shared.ai_clients.gigachat_client import GigaChatClient
 from shared.ai_clients.yandexgpt_client import YandexGPTClient
+from shared.ai_clients.yandexart_client import YandexARTClient, ImageStyle
 from shared.ai_clients.openai_client import OpenAIClient
 from shared.config.settings import settings
 from content_manager_bot.ai.prompts import ContentPrompts
+from content_manager_bot.utils.product_reference import ProductReferenceManager
 
 
 # Типы постов, где используется GPT-4 для лучшего качества
@@ -36,6 +39,7 @@ class ContentGenerator:
         self.gigachat_client = None
         self.yandexgpt_client = None
         self.openai_client = None
+        self.yandexart_client = None
         self.main_client = None
         self.main_model_name = "unknown"
 
@@ -66,6 +70,14 @@ class ContentGenerator:
                 model="gpt-4"
             )
             logger.info("OpenAI GPT-4 available for premium posts")
+
+        # YandexART (для генерации изображений)
+        if settings.yandex_art_enabled and settings.yandex_folder_id and settings.yandex_private_key:
+            self.yandexart_client = YandexARTClient()
+            logger.info("YandexART available for image generation")
+
+        # Менеджер референсных изображений продуктов
+        self.product_reference = ProductReferenceManager()
 
         if not self.main_client:
             raise ValueError("No AI client configured! Check .env settings")
@@ -289,3 +301,128 @@ class ContentGenerator:
             list: список типов premium постов
         """
         return PREMIUM_POST_TYPES
+
+    # === Методы для работы с изображениями ===
+
+    def is_image_generation_available(self) -> bool:
+        """Проверяет, доступна ли генерация изображений"""
+        return self.yandexart_client is not None
+
+    async def generate_image(
+        self,
+        post_type: str,
+        post_content: str,
+        custom_prompt: Optional[str] = None,
+        style: Optional[ImageStyle] = None,
+        use_product_reference: bool = True
+    ) -> Tuple[Optional[str], str]:
+        """
+        Генерирует изображение для поста (с поддержкой референсных изображений продуктов)
+
+        Args:
+            post_type: Тип поста
+            post_content: Текст поста
+            custom_prompt: Пользовательский промпт (опционально)
+            style: Визуальный стиль изображения (ImageStyle enum)
+            use_product_reference: Использовать reference image если найден продукт (image-to-image)
+
+        Returns:
+            Tuple[Optional[str], str]: (base64 изображения или None, использованный промпт)
+        """
+        if not self.yandexart_client:
+            logger.warning("YandexART client not available")
+            return None, ""
+
+        try:
+            reference_image = None
+            reference_used = False
+
+            # Пытаемся найти референсное изображение продукта (только для постов о продуктах)
+            if use_product_reference and post_type == "product":
+                product_info_tuple = self.product_reference.extract_product_from_content(post_content)
+                if product_info_tuple:
+                    category, product_key, product_info = product_info_tuple
+                    reference_image = self.product_reference.get_product_image_base64(product_key, category)
+                    if reference_image:
+                        logger.info(f"Using reference image for product: {product_info['name']}")
+                        reference_used = True
+                        # Модифицируем промпт для image-to-image режима
+                        if custom_prompt:
+                            custom_prompt = self.product_reference.generate_image_to_image_prompt(
+                                product_info, custom_prompt
+                            )
+
+            # Генерируем изображение
+            if reference_image:
+                # Image-to-image режим
+                if not custom_prompt:
+                    custom_prompt = self.yandexart_client._generate_image_prompt(post_type, post_content, style)
+                    custom_prompt = self.product_reference.generate_image_to_image_prompt(
+                        product_info, custom_prompt
+                    )
+
+                image_base64 = await self.yandexart_client.generate_image(
+                    prompt=custom_prompt,
+                    reference_image=reference_image
+                )
+                prompt_info = f"{custom_prompt} [image-to-image mode]"
+            else:
+                # Text-to-image режим (обычная генерация)
+                image_base64, prompt_info = await self.yandexart_client.generate_image_for_post(
+                    post_type=post_type,
+                    post_content=post_content,
+                    custom_prompt=custom_prompt,
+                    style=style
+                )
+
+            return image_base64, prompt_info
+        except Exception as e:
+            logger.error(f"Error generating image: {e}")
+            return None, ""
+
+    async def regenerate_image(
+        self,
+        post_type: str,
+        post_content: str,
+        feedback: Optional[str] = None,
+        style: Optional[ImageStyle] = None
+    ) -> Tuple[Optional[str], str]:
+        """
+        Перегенерирует изображение с учётом фидбека
+
+        Args:
+            post_type: Тип поста
+            post_content: Текст поста
+            feedback: Комментарий для улучшения
+            style: Визуальный стиль изображения (ImageStyle enum)
+
+        Returns:
+            Tuple[Optional[str], str]: (base64 изображения или None, использованный промпт)
+        """
+        custom_prompt = None
+        if feedback:
+            # Формируем новый промпт с учётом фидбека
+            custom_prompt = f"{feedback}. Контекст поста: {post_content[:100]}"
+
+        return await self.generate_image(post_type, post_content, custom_prompt, style)
+
+    @staticmethod
+    def get_available_image_styles() -> dict:
+        """
+        Возвращает доступные стили изображений
+
+        Returns:
+            dict: {style_code: description}
+        """
+        return {
+            ImageStyle.PHOTO.value: "Фотореалистичный",
+            ImageStyle.MINIMALISM.value: "Минимализм",
+            ImageStyle.ILLUSTRATION.value: "Иллюстрация",
+            ImageStyle.INFOGRAPHIC.value: "Инфографика",
+            ImageStyle.BUSINESS.value: "Бизнес-стиль",
+            ImageStyle.VIBRANT.value: "Яркий/энергичный",
+            ImageStyle.CINEMATIC.value: "Кинематографичный",
+            ImageStyle.FLAT_LAY.value: "Flat Lay (сверху)",
+            ImageStyle.LIFESTYLE.value: "Lifestyle",
+            ImageStyle.GRADIENT.value: "Градиент/абстракция"
+        }

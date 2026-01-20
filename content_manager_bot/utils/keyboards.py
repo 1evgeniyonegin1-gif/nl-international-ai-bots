@@ -10,12 +10,13 @@ class Keyboards:
     """Клавиатуры для взаимодействия с администратором"""
 
     @staticmethod
-    def post_moderation(post_id: int) -> InlineKeyboardMarkup:
+    def post_moderation(post_id: int, has_image: bool = False) -> InlineKeyboardMarkup:
         """
         Клавиатура для модерации поста
 
         Args:
             post_id: ID поста в базе данных
+            has_image: Есть ли изображение у поста
 
         Returns:
             InlineKeyboardMarkup
@@ -42,6 +43,25 @@ class Keyboards:
                 callback_data=f"regenerate:{post_id}"
             )
         )
+        # Кнопки для изображений
+        if has_image:
+            builder.row(
+                InlineKeyboardButton(
+                    text="🖼 Новое изображение",
+                    callback_data=f"regen_image:{post_id}"
+                ),
+                InlineKeyboardButton(
+                    text="🚫 Без картинки",
+                    callback_data=f"remove_image:{post_id}"
+                )
+            )
+        else:
+            builder.row(
+                InlineKeyboardButton(
+                    text="🖼 Добавить картинку",
+                    callback_data=f"gen_image:{post_id}"
+                )
+            )
         builder.row(
             InlineKeyboardButton(
                 text="❌ Отклонить",
@@ -284,6 +304,46 @@ class Keyboards:
             InlineKeyboardButton(
                 text="🔙 Назад",
                 callback_data="back_to_menu"
+            )
+        )
+
+        return builder.as_markup()
+
+    @staticmethod
+    def analytics_menu() -> InlineKeyboardMarkup:
+        """Меню аналитики"""
+        builder = InlineKeyboardBuilder()
+
+        builder.row(
+            InlineKeyboardButton(
+                text="📊 Аналитика за 7 дней",
+                callback_data="analytics:7"
+            ),
+            InlineKeyboardButton(
+                text="📊 За 30 дней",
+                callback_data="analytics:30"
+            )
+        )
+        builder.row(
+            InlineKeyboardButton(
+                text="🏆 Топ по просмотрам",
+                callback_data="top:views"
+            ),
+            InlineKeyboardButton(
+                text="❤️ Топ по реакциям",
+                callback_data="top:reactions"
+            )
+        )
+        builder.row(
+            InlineKeyboardButton(
+                text="📈 Топ по вовлеченности",
+                callback_data="top:engagement"
+            )
+        )
+        builder.row(
+            InlineKeyboardButton(
+                text="🔄 Обновить статистику",
+                callback_data="update_stats"
             )
         )
 

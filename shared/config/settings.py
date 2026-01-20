@@ -2,9 +2,10 @@
 Общие настройки для обоих ботов
 """
 import os
-from typing import List
+from pathlib import Path
+from typing import List, Optional
 from pydantic_settings import BaseSettings
-from pydantic import Field
+from pydantic import Field, model_validator
 
 
 class Settings(BaseSettings):
@@ -50,8 +51,18 @@ class Settings(BaseSettings):
     yandex_service_account_id: str = Field(default="", env="YANDEX_SERVICE_ACCOUNT_ID")
     yandex_key_id: str = Field(default="", env="YANDEX_KEY_ID")
     yandex_private_key: str = Field(default="", env="YANDEX_PRIVATE_KEY")
+    yandex_private_key_file: str = Field(default="", env="YANDEX_PRIVATE_KEY_FILE")
     yandex_folder_id: str = Field(default="", env="YANDEX_FOLDER_ID")
     yandex_model: str = Field(default="yandexgpt-lite", env="YANDEX_MODEL")
+
+    @model_validator(mode='after')
+    def load_private_key_from_file(self) -> 'Settings':
+        """Загружает приватный ключ из файла если указан путь"""
+        if self.yandex_private_key_file and not self.yandex_private_key:
+            key_path = Path(self.yandex_private_key_file)
+            if key_path.exists():
+                self.yandex_private_key = key_path.read_text(encoding='utf-8')
+        return self
 
     # YandexART (генерация изображений)
     yandex_art_enabled: bool = Field(default=True, env="YANDEX_ART_ENABLED")

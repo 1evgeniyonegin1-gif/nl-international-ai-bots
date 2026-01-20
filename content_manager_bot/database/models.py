@@ -62,9 +62,22 @@ class Post(Base, TimestampMixin):
     prompt_used: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     generation_params: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
 
+    # Изображения (YandexART)
+    image_url: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # URL или base64 изображения
+    image_prompt: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # Промпт для генерации
+    image_status: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)  # pending, generated, approved, rejected
+
     # Метрики (заполняются после публикации)
-    views_count: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
-    reactions_count: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    views_count: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, default=0)
+    reactions_count: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, default=0)
+    forwards_count: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, default=0)
+
+    # Детальная аналитика реакций (JSONB для хранения разбивки по типам)
+    reactions_breakdown: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
+
+    # Метрики эффективности
+    engagement_rate: Mapped[Optional[float]] = mapped_column(nullable=True)  # (реакции + пересылки) / просмотры
+    last_metrics_update: Mapped[Optional[datetime]] = mapped_column(nullable=True)
 
     def __repr__(self) -> str:
         return f"<Post(id={self.id}, type={self.post_type}, status={self.status})>"
@@ -72,6 +85,19 @@ class Post(Base, TimestampMixin):
     def to_telegram_format(self) -> str:
         """Форматирует пост для отправки в Telegram"""
         return self.content
+
+    def calculate_engagement_rate(self) -> Optional[float]:
+        """Рассчитывает коэффициент вовлеченности (engagement rate)"""
+        if not self.views_count or self.views_count == 0:
+            return None
+
+        total_engagement = (self.reactions_count or 0) + (self.forwards_count or 0)
+        return round((total_engagement / self.views_count) * 100, 2)
+
+    def update_engagement_rate(self):
+        """Обновляет расчетный коэффициент вовлеченности"""
+        self.engagement_rate = self.calculate_engagement_rate()
+        self.last_metrics_update = datetime.utcnow()
 
 
 class ContentSchedule(Base, TimestampMixin):
@@ -97,6 +123,36 @@ class ContentSchedule(Base, TimestampMixin):
 
     def __repr__(self) -> str:
         return f"<ContentSchedule(id={self.id}, type={self.post_type}, cron={self.cron_expression})>"
+
+
+class PostAnalytics(Base, TimestampMixin):
+    """Детальная аналитика поста (исторические снимки метрик)"""
+    __tablename__ = "content_post_analytics"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    # Связь с постом
+    post_id: Mapped[int] = mapped_column(Integer, index=True)
+    channel_message_id: Mapped[int] = mapped_column(BigInteger)
+
+    # Метрики на момент снимка
+    views_count: Mapped[int] = mapped_column(Integer, default=0)
+    reactions_count: Mapped[int] = mapped_column(Integer, default=0)
+    forwards_count: Mapped[int] = mapped_column(Integer, default=0)
+
+    # Детальная разбивка реакций
+    reactions_breakdown: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
+    # Пример: {"👍": 10, "❤️": 5, "🔥": 3}
+
+    # Временная метка снимка
+    snapshot_at: Mapped[datetime] = mapped_column(default=datetime.utcnow, index=True)
+
+    # Прирост с предыдущего снимка
+    views_delta: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    reactions_delta: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+
+    def __repr__(self) -> str:
+        return f"<PostAnalytics(post_id={self.post_id}, views={self.views_count}, reactions={self.reactions_count})>"
 
 
 class AdminAction(Base, TimestampMixin):
