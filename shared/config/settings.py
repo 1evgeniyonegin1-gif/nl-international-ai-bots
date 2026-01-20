@@ -53,6 +53,11 @@ class Settings(BaseSettings):
     yandex_folder_id: str = Field(default="", env="YANDEX_FOLDER_ID")
     yandex_model: str = Field(default="yandexgpt-lite", env="YANDEX_MODEL")
 
+    # YandexART (генерация изображений)
+    yandex_art_enabled: bool = Field(default=True, env="YANDEX_ART_ENABLED")
+    yandex_art_width: int = Field(default=1024, env="YANDEX_ART_WIDTH")
+    yandex_art_height: int = Field(default=1024, env="YANDEX_ART_HEIGHT")
+
     # Database
     database_url: str = Field(..., env="DATABASE_URL")
 
