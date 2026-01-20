@@ -83,14 +83,22 @@ python run_bots.py
 
 ## Документация
 
+### Главные файлы:
 | Файл | Описание |
 |------|----------|
 | [CLAUDE.md](CLAUDE.md) | **Главная инструкция** — всё что нужно знать |
+| [START_TOMORROW.md](START_TOMORROW.md) | **С чего начать завтра** — быстрый чеклист |
+| [WORK_LOG_2026-01-20.md](WORK_LOG_2026-01-20.md) | Подробный отчет о работе 20 января |
+
+### Техническая документация:
+| Файл | Описание |
+|------|----------|
 | [docs/VPS_DEPLOY.md](docs/VPS_DEPLOY.md) | Деплой на Timeweb VPS |
-| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Все варианты деплоя |
 | [docs/YANDEXGPT_SETUP.md](docs/YANDEXGPT_SETUP.md) | Настройка YandexGPT |
 | [docs/YANDEX_ART_INTEGRATION.md](docs/YANDEX_ART_INTEGRATION.md) | Генерация изображений |
-| [docs/CONTENT_MANAGER_IMPLEMENTATION.md](docs/CONTENT_MANAGER_IMPLEMENTATION.md) | Техническая документация |
+| [docs/ANALYTICS.md](docs/ANALYTICS.md) | Система аналитики (NEW) |
+| [docs/REFERENCE_IMAGES.md](docs/REFERENCE_IMAGES.md) | Референсные изображения (NEW) |
+| [docs/MARKET_INTELLIGENCE.md](docs/MARKET_INTELLIGENCE.md) | Мониторинг каналов (NEW) |
 
 ---
 
