@@ -35,6 +35,9 @@ class User(Base, TimestampMixin):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     is_blocked: Mapped[bool] = mapped_column(Boolean, default=False)
 
+    # Прогресс обучения
+    lessons_completed: Mapped[int] = mapped_column(Integer, default=0)
+
     # Relationships
     messages: Mapped[List["ConversationMessage"]] = relationship(
         back_populates="user",

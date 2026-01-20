@@ -191,7 +191,7 @@ async def callback_schedule(callback: CallbackQuery):
 
 
 @router.callback_query(F.data.startswith("sched_time:"))
-async def callback_schedule_time(callback: CallbackQuery):
+async def callback_schedule_time(callback: CallbackQuery, state: FSMContext):
     """Обработка выбора времени публикации"""
     if not is_admin(callback.from_user.id):
         await callback.answer("⛔ Доступ запрещён", show_alert=True)
@@ -219,9 +219,12 @@ async def callback_schedule_time(callback: CallbackQuery):
         await callback.message.edit_text(
             "📅 Введите дату и время публикации в формате:\n"
             "<code>ДД.ММ.ГГГГ ЧЧ:ММ</code>\n\n"
-            "Например: <code>25.01.2026 14:30</code>"
+            "Например: <code>25.01.2026 14:30</code>\n\n"
+            "Или отправьте /cancel для отмены"
         )
-        # TODO: добавить FSM для кастомного времени
+        # Сохраняем post_id в состоянии FSM
+        await state.set_state(EditPostStates.waiting_for_custom_time)
+        await state.update_data(post_id=post_id)
         await callback.answer()
         return
 
@@ -866,4 +869,84 @@ async def _show_post_with_image(message: Message, post: Post):
             f"🖼 <i>Изображение сгенерировано, но ошибка отображения</i>\n\n"
             f"<i>Что делаем с постом?</i>",
             reply_markup=Keyboards.post_moderation(post.id, has_image=True)
+        )
+
+
+# === Обработчик кастомного времени публикации ===
+
+@router.message(EditPostStates.waiting_for_custom_time)
+async def process_custom_time(message: Message, state: FSMContext):
+    """Обработка ввода кастомного времени публикации"""
+    if not is_admin(message.from_user.id):
+        await message.answer("⛔ Доступ запрещён")
+        await state.clear()
+        return
+
+    # Получаем post_id из состояния
+    data = await state.get_data()
+    post_id = data.get("post_id")
+
+    if not post_id:
+        await message.answer("❌ Ошибка: ID поста не найден")
+        await state.clear()
+        return
+
+    # Парсим дату и время
+    try:
+        # Формат: ДД.ММ.ГГГГ ЧЧ:ММ
+        datetime_str = message.text.strip()
+        custom_time = datetime.strptime(datetime_str, "%d.%m.%Y %H:%M")
+
+        # Преобразуем из МСК в UTC (МСК = UTC+3)
+        scheduled_time = custom_time - timedelta(hours=3)
+
+        # Проверяем, что время в будущем
+        if scheduled_time <= datetime.utcnow():
+            await message.answer(
+                "❌ <b>Ошибка!</b>\n\n"
+                "Время публикации должно быть в будущем.\n\n"
+                "Попробуйте еще раз или отправьте /cancel для отмены."
+            )
+            return
+
+        # Сохраняем в БД
+        async with AsyncSessionLocal() as session:
+            result = await session.execute(
+                select(Post).where(Post.id == post_id)
+            )
+            post = result.scalar_one_or_none()
+
+            if not post:
+                await message.answer("❌ Пост не найден")
+                await state.clear()
+                return
+
+            post.status = "scheduled"
+            post.scheduled_for = scheduled_time
+
+            action = AdminAction(
+                admin_id=message.from_user.id,
+                post_id=post_id,
+                action="schedule",
+                details={"scheduled_for": scheduled_time.isoformat(), "custom": True}
+            )
+            session.add(action)
+
+            await session.commit()
+
+            await message.answer(
+                f"✅ <b>Пост #{post_id} запланирован!</b>\n\n"
+                f"📅 Время публикации: {custom_time.strftime('%d.%m.%Y %H:%M')} (МСК)\n\n"
+                f"<i>Пост будет автоматически опубликован в указанное время.</i>"
+            )
+
+        # Очищаем состояние
+        await state.clear()
+
+    except ValueError:
+        await message.answer(
+            "❌ <b>Неверный формат!</b>\n\n"
+            "Используйте формат: <code>ДД.ММ.ГГГГ ЧЧ:ММ</code>\n"
+            "Например: <code>25.01.2026 14:30</code>\n\n"
+            "Или отправьте /cancel для отмены."
         )

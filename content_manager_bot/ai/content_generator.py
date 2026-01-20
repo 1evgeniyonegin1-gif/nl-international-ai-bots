@@ -90,15 +90,16 @@ class ContentGenerator:
             post_type: Тип поста
 
         Returns:
-            AI клиент (OpenAI для premium постов, основной клиент для остальных)
+            AI клиент (основной клиент для всех типов, OpenAI отключён из-за блокировки в РФ)
         """
-        # Для эмоциональных постов используем GPT-4 (если доступен)
-        if post_type in PREMIUM_POST_TYPES and self.openai_client:
-            logger.info(f"Using GPT-4 for premium post type: {post_type}")
-            return self.openai_client, "gpt-4"
+        # NOTE: OpenAI отключён - заблокирован в России (403 unsupported_country_region_territory)
+        # Все типы постов теперь используют основной клиент (YandexGPT или GigaChat)
 
-        # Для остальных - основной клиент (YandexGPT или GigaChat)
-        logger.info(f"Using {self.main_model_name} for post type: {post_type}")
+        if post_type in PREMIUM_POST_TYPES:
+            logger.info(f"Using {self.main_model_name} for premium post type: {post_type}")
+        else:
+            logger.info(f"Using {self.main_model_name} for post type: {post_type}")
+
         return self.main_client, self.main_model_name
 
     async def generate_post(
@@ -279,12 +280,12 @@ class ContentGenerator:
         """
         return {
             "product": "О продуктах NL",
-            "motivation": "Мотивационный пост (GPT-4)",
+            "motivation": "Мотивационный пост",
             "news": "Новости компании",
             "tips": "Советы для партнёров",
-            "success_story": "История успеха (GPT-4)",
-            "transformation": "История трансформации (GPT-4)",
-            "business_lifestyle": "Образ жизни партнёра (GPT-4)",
+            "success_story": "История успеха",
+            "transformation": "История трансформации",
+            "business_lifestyle": "Образ жизни партнёра",
             "promo": "Акция/промо",
             "myth_busting": "Разрушение мифов",
             "faq": "Вопрос-ответ",

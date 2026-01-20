@@ -51,7 +51,7 @@ class CuratorChatEngine:
             system_prompt = get_curator_system_prompt(
                 user_name=user.first_name or "Партнер",
                 qualification=user.qualification,
-                lessons_completed=0,  # TODO: Считать из БД
+                lessons_completed=user.lessons_completed,
                 current_goal=user.current_goal
             )
 

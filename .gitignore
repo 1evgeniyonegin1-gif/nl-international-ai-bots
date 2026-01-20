@@ -30,6 +30,9 @@ env/
 .env
 .env.local
 
+# API Tokens (Timeweb Cloud)
+.timeweb_api_token
+
 # IDE
 .vscode/
 .idea/

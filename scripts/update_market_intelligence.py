@@ -18,6 +18,9 @@ from datetime import datetime
 from typing import List, Dict
 import sys
 from pathlib import Path
+import aiohttp
+from bs4 import BeautifulSoup
+import re
 
 # Добавляем корневую директорию в путь для импорта модулей
 sys.path.append(str(Path(__file__).parent.parent))
@@ -116,74 +119,265 @@ class MarketIntelligenceCollector:
 
     async def _collect_nl_news(self) -> List[str]:
         """Собирает новости с официального сайта NL"""
-        # TODO: Реализовать парсинг новостей NL
-        # Пока возвращаем заглушку
+        news_items = []
 
-        # В идеале тут должен быть WebFetch или парсер
-        # Для начала можно сделать через RSS если есть
+        try:
+            url = self.sources["nl_official"]["url"]
 
-        news_items = [
-            f"""
-            [НОВОСТЬ NL] {self.today}
-            Источник: Официальный сайт NL International
+            async with aiohttp.ClientSession() as session:
+                try:
+                    async with session.get(url, timeout=aiohttp.ClientTimeout(total=30)) as response:
+                        if response.status != 200:
+                            logger.warning(f"⚠️ Не удалось получить страницу NL: статус {response.status}")
+                            return self._get_nl_news_fallback()
 
-            Примечание: Автоматический сбор новостей.
-            Для полной реализации нужно настроить парсинг сайта или RSS.
+                        html = await response.text()
+                        soup = BeautifulSoup(html, 'lxml')
 
-            Категория: Новости компании
-            Актуальность: Высокая
-            """.strip()
-        ]
+                        # Ищем новости на странице
+                        news_blocks = soup.find_all(['article', 'div'], class_=re.compile(r'news|article|post', re.I), limit=10)
+
+                        if not news_blocks:
+                            news_blocks = soup.find_all(['div'], class_=re.compile(r'item|card|entry', re.I), limit=10)
+
+                        for block in news_blocks:
+                            try:
+                                title_elem = block.find(['h1', 'h2', 'h3', 'h4', 'a'])
+                                title = title_elem.get_text(strip=True) if title_elem else ""
+
+                                text_block = block.get_text(separator=' ', strip=True)
+                                if title:
+                                    text_block = text_block.replace(title, '', 1)
+
+                                description = text_block[:500].strip() if text_block else ""
+
+                                link_elem = block.find('a', href=True)
+                                link = ""
+                                if link_elem:
+                                    href = link_elem['href']
+                                    if href.startswith('/'):
+                                        link = f"https://nl-international.ru{href}"
+                                    elif href.startswith('http'):
+                                        link = href
+
+                                if title and len(title) > 10:
+                                    news_doc = f"""
+[НОВОСТЬ NL] {self.today}
+Заголовок: {title}
+
+{description}
+
+Источник: NL International
+URL: {link if link else 'https://nl-international.ru/news/'}
+Категория: Новости компании
+Актуальность: Высокая
+                                    """.strip()
+
+                                    news_items.append(news_doc)
+
+                            except Exception as e:
+                                logger.debug(f"Ошибка при обработке блока новости: {e}")
+                                continue
+
+                        if not news_items:
+                            logger.warning("⚠️ Не удалось извлечь новости из HTML, используем fallback")
+                            return self._get_nl_news_fallback()
+
+                except asyncio.TimeoutError:
+                    logger.warning("⚠️ Таймаут при загрузке страницы NL, используем fallback")
+                    return self._get_nl_news_fallback()
+                except aiohttp.ClientError as e:
+                    logger.warning(f"⚠️ Ошибка сети при загрузке NL: {e}, используем fallback")
+                    return self._get_nl_news_fallback()
+
+        except Exception as e:
+            logger.error(f"❌ Ошибка при сборе новостей NL: {e}")
+            return self._get_nl_news_fallback()
 
         logger.info(f"✅ Собрано {len(news_items)} новостей NL")
         return news_items
+
+    def _get_nl_news_fallback(self) -> List[str]:
+        """Возвращает fallback данные если парсинг не удался"""
+        return [
+            f"""
+[НОВОСТЬ NL] {self.today}
+Источник: Официальный сайт NL International
+
+Примечание: Автоматический сбор новостей временно недоступен.
+Рекомендуется проверить официальный сайт nl-international.ru/news/
+
+Категория: Новости компании
+Актуальность: Низкая (fallback)
+            """.strip()
+        ]
 
     async def _collect_competitor_insights(self) -> List[str]:
         """Собирает информацию о конкурентах"""
         insights = []
 
-        for competitor in self.sources["competitors"]:
-            if not competitor["enabled"]:
-                continue
+        async with aiohttp.ClientSession() as session:
+            for competitor in self.sources["competitors"]:
+                if not competitor["enabled"]:
+                    continue
 
-            # TODO: Реализовать поиск через WebSearch
-            # Пока заглушка
+                try:
+                    competitor_name = competitor["name"]
+                    keywords = competitor["keywords"]
 
-            insight = f"""
-            [КОНКУРЕНТ: {competitor['name']}] {self.today}
+                    # Формируем поисковый запрос для Яндекс Новостей
+                    search_query = "+".join(keywords[:2])  # Берем первые 2 ключевых слова
+                    search_url = f"https://yandex.ru/news/search?text={search_query}"
 
-            Анализ конкурента в сегменте MLM нутрициологии.
+                    try:
+                        async with session.get(
+                            search_url,
+                            timeout=aiohttp.ClientTimeout(total=20),
+                            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+                        ) as response:
+                            if response.status == 200:
+                                html = await response.text()
+                                soup = BeautifulSoup(html, 'lxml')
 
-            Категория: Конкурентная аналитика
-            Актуальность: Средняя
-            """.strip()
+                                # Ищем заголовки новостей
+                                news_titles = []
+                                for title_elem in soup.find_all(['h2', 'h3', 'a'], limit=5):
+                                    title_text = title_elem.get_text(strip=True)
+                                    if title_text and len(title_text) > 20:
+                                        # Проверяем что в заголовке есть хотя бы одно ключевое слово
+                                        if any(kw.lower() in title_text.lower() for kw in keywords):
+                                            news_titles.append(title_text)
 
-            insights.append(insight)
+                                if news_titles:
+                                    news_summary = "\n- ".join(news_titles[:3])
+                                    insight = f"""
+[КОНКУРЕНТ: {competitor_name}] {self.today}
+
+Последние упоминания в новостях:
+- {news_summary}
+
+Анализ: Мониторинг активности конкурента в сегменте MLM нутрициологии.
+Ключевые слова: {', '.join(keywords)}
+
+Категория: Конкурентная аналитика
+Актуальность: Средняя
+                                    """.strip()
+                                else:
+                                    insight = self._get_competitor_fallback(competitor_name, keywords)
+
+                            else:
+                                logger.debug(f"Не удалось получить данные о {competitor_name}: статус {response.status}")
+                                insight = self._get_competitor_fallback(competitor_name, keywords)
+
+                    except (asyncio.TimeoutError, aiohttp.ClientError) as e:
+                        logger.debug(f"Ошибка при сборе данных о {competitor_name}: {e}")
+                        insight = self._get_competitor_fallback(competitor_name, keywords)
+
+                    insights.append(insight)
+
+                except Exception as e:
+                    logger.warning(f"❌ Ошибка при анализе конкурента {competitor.get('name', 'unknown')}: {e}")
+                    continue
 
         logger.info(f"✅ Собрано {len(insights)} инсайтов о конкурентах")
-        return insights
+        return insights if insights else [self._get_competitor_fallback("Общий анализ", [])]
+
+    def _get_competitor_fallback(self, competitor_name: str, keywords: List[str]) -> str:
+        """Возвращает fallback данные для конкурента"""
+        return f"""
+[КОНКУРЕНТ: {competitor_name}] {self.today}
+
+Анализ конкурента в сегменте MLM нутрициологии.
+Автоматический сбор данных временно недоступен.
+
+Рекомендуется мониторить: {', '.join(keywords) if keywords else 'новости компании'}
+
+Категория: Конкурентная аналитика
+Актуальность: Низкая (fallback)
+        """.strip()
 
     async def _collect_industry_trends(self) -> List[str]:
         """Собирает тренды индустрии"""
         trends = []
 
-        for trend_query in self.sources["trends"]:
-            # TODO: Реализовать WebSearch
-            # Пока заглушка
+        async with aiohttp.ClientSession() as session:
+            for trend_query in self.sources["trends"]:
+                try:
+                    # Формируем URL для поиска в Яндекс Новостях
+                    search_query = trend_query.replace(" ", "+")
+                    search_url = f"https://yandex.ru/news/search?text={search_query}"
 
-            trend = f"""
-            [ТРЕНД: {trend_query}] {self.today}
+                    try:
+                        async with session.get(
+                            search_url,
+                            timeout=aiohttp.ClientTimeout(total=20),
+                            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+                        ) as response:
+                            if response.status == 200:
+                                html = await response.text()
+                                soup = BeautifulSoup(html, 'lxml')
 
-            Анализ трендов в нутрициологии и сетевом маркетинге.
+                                # Извлекаем заголовки новостей
+                                trend_headlines = []
+                                for elem in soup.find_all(['h2', 'h3', 'a'], limit=10):
+                                    headline = elem.get_text(strip=True)
+                                    if headline and len(headline) > 25 and len(headline) < 200:
+                                        # Фильтруем релевантные заголовки
+                                        query_keywords = trend_query.lower().split()
+                                        if any(word in headline.lower() for word in query_keywords[:3]):
+                                            trend_headlines.append(headline)
 
-            Категория: Отраслевые тренды
-            Актуальность: Средняя
-            """.strip()
+                                if trend_headlines:
+                                    # Берем топ-3 заголовка
+                                    top_headlines = trend_headlines[:3]
+                                    headlines_text = "\n- ".join(top_headlines)
 
-            trends.append(trend)
+                                    trend = f"""
+[ТРЕНД: {trend_query}] {self.today}
+
+Актуальные новости по теме:
+- {headlines_text}
+
+Анализ: Мониторинг трендов в нутрициологии и сетевом маркетинге.
+Источник: Яндекс Новости
+
+Категория: Отраслевые тренды
+Актуальность: Средняя
+                                    """.strip()
+                                else:
+                                    trend = self._get_trend_fallback(trend_query)
+
+                            else:
+                                logger.debug(f"Не удалось получить тренды для '{trend_query}': статус {response.status}")
+                                trend = self._get_trend_fallback(trend_query)
+
+                    except (asyncio.TimeoutError, aiohttp.ClientError) as e:
+                        logger.debug(f"Ошибка при сборе трендов для '{trend_query}': {e}")
+                        trend = self._get_trend_fallback(trend_query)
+
+                    trends.append(trend)
+
+                except Exception as e:
+                    logger.warning(f"❌ Ошибка при сборе тренда '{trend_query}': {e}")
+                    trends.append(self._get_trend_fallback(trend_query))
+                    continue
 
         logger.info(f"✅ Собрано {len(trends)} трендов")
-        return trends
+        return trends if trends else [self._get_trend_fallback("Общие тренды")]
+
+    def _get_trend_fallback(self, trend_query: str) -> str:
+        """Возвращает fallback данные для тренда"""
+        return f"""
+[ТРЕНД: {trend_query}] {self.today}
+
+Анализ трендов в нутрициологии и сетевом маркетинге.
+Автоматический сбор данных временно недоступен.
+
+Рекомендуется отслеживать актуальные публикации по теме: {trend_query}
+
+Категория: Отраслевые тренды
+Актуальность: Низкая (fallback)
+        """.strip()
 
     async def save_to_knowledge_base(self, data: Dict[str, List[str]]) -> int:
         """
