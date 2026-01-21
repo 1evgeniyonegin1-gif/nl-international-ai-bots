@@ -29,6 +29,15 @@ def is_admin(user_id: int) -> bool:
     return user_id in settings.admin_ids_list
 
 
+async def get_pending_count() -> int:
+    """Получить количество постов на модерации"""
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(func.count(Post.id)).where(Post.status == "pending")
+        )
+        return result.scalar() or 0
+
+
 @router.message(CommandStart())
 async def cmd_start(message: Message):
     """Обработчик команды /start"""
@@ -39,17 +48,14 @@ async def cmd_start(message: Message):
         )
         return
 
+    pending_count = await get_pending_count()
+
     await message.answer(
         "👋 <b>Добро пожаловать в AI-Контент-Менеджер!</b>\n\n"
         "Этот бот помогает создавать и публиковать контент "
         "в Telegram канал NL International.\n\n"
-        "<b>Доступные команды:</b>\n"
-        "🔹 /generate - сгенерировать новый пост\n"
-        "🔹 /pending - посты на модерации\n"
-        "🔹 /stats - статистика публикаций\n"
-        "🔹 /schedule - настройки автопостинга\n"
-        "🔹 /help - справка по командам\n\n"
-        f"<i>Канал: {settings.channel_username}</i>"
+        "🎛 <b>Выберите действие:</b>",
+        reply_markup=Keyboards.main_menu(pending_count)
     )
 
     # Логируем действие
@@ -60,6 +66,21 @@ async def cmd_start(message: Message):
         )
         session.add(action)
         await session.commit()
+
+
+@router.message(Command("menu"))
+async def cmd_menu(message: Message):
+    """Обработчик команды /menu - показать главное меню"""
+    if not is_admin(message.from_user.id):
+        return
+
+    pending_count = await get_pending_count()
+
+    await message.answer(
+        "🎛 <b>ГЛАВНОЕ МЕНЮ</b>\n\n"
+        "Выберите действие:",
+        reply_markup=Keyboards.main_menu(pending_count)
+    )
 
 
 @router.message(Command("help"))

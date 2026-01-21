@@ -10,6 +10,219 @@ class Keyboards:
     """Клавиатуры для взаимодействия с администратором"""
 
     @staticmethod
+    def main_menu(pending_count: int = 0) -> InlineKeyboardMarkup:
+        """
+        Главное меню бота
+
+        Args:
+            pending_count: Количество постов на модерации (для бейджа)
+
+        Returns:
+            InlineKeyboardMarkup
+        """
+        builder = InlineKeyboardBuilder()
+
+        # Контент
+        pending_text = f"📋 На модерации ({pending_count})" if pending_count > 0 else "📋 На модерации"
+        builder.row(
+            InlineKeyboardButton(
+                text="📝 Создать пост",
+                callback_data="menu:generate"
+            ),
+            InlineKeyboardButton(
+                text=pending_text,
+                callback_data="menu:pending"
+            )
+        )
+
+        # Аналитика
+        builder.row(
+            InlineKeyboardButton(
+                text="📊 Статистика",
+                callback_data="menu:stats"
+            ),
+            InlineKeyboardButton(
+                text="🏆 Топ посты",
+                callback_data="menu:top"
+            )
+        )
+
+        # Настройки
+        builder.row(
+            InlineKeyboardButton(
+                text="⏰ Автопостинг",
+                callback_data="menu:schedule"
+            ),
+            InlineKeyboardButton(
+                text="📺 Каналы-образцы",
+                callback_data="menu:channels"
+            )
+        )
+
+        # Справка
+        builder.row(
+            InlineKeyboardButton(
+                text="❓ Справка",
+                callback_data="menu:help"
+            )
+        )
+
+        return builder.as_markup()
+
+    @staticmethod
+    def post_type_selection_with_back() -> InlineKeyboardMarkup:
+        """
+        Клавиатура выбора типа поста с кнопкой возврата в меню
+
+        Returns:
+            InlineKeyboardMarkup
+        """
+        builder = InlineKeyboardBuilder()
+
+        builder.row(
+            InlineKeyboardButton(
+                text="📦 О продуктах",
+                callback_data="gen_type:product"
+            ),
+            InlineKeyboardButton(
+                text="💪 Мотивация",
+                callback_data="gen_type:motivation"
+            )
+        )
+        builder.row(
+            InlineKeyboardButton(
+                text="📰 Новости",
+                callback_data="gen_type:news"
+            ),
+            InlineKeyboardButton(
+                text="💡 Советы",
+                callback_data="gen_type:tips"
+            )
+        )
+        builder.row(
+            InlineKeyboardButton(
+                text="🌟 История успеха",
+                callback_data="gen_type:success_story"
+            ),
+            InlineKeyboardButton(
+                text="🎁 Промо/Акция",
+                callback_data="gen_type:promo"
+            )
+        )
+        builder.row(
+            InlineKeyboardButton(
+                text="🔙 В меню",
+                callback_data="menu:main"
+            )
+        )
+
+        return builder.as_markup()
+
+    @staticmethod
+    def channels_menu(channels_count: int = 0) -> InlineKeyboardMarkup:
+        """
+        Меню управления каналами-образцами
+
+        Args:
+            channels_count: Количество добавленных каналов
+
+        Returns:
+            InlineKeyboardMarkup
+        """
+        builder = InlineKeyboardBuilder()
+
+        builder.row(
+            InlineKeyboardButton(
+                text="📋 Список каналов",
+                callback_data="channels:list"
+            )
+        )
+        builder.row(
+            InlineKeyboardButton(
+                text="➕ Добавить канал",
+                callback_data="channels:add"
+            ),
+            InlineKeyboardButton(
+                text="📥 Загрузить посты",
+                callback_data="channels:fetch"
+            )
+        )
+        builder.row(
+            InlineKeyboardButton(
+                text="🔙 В меню",
+                callback_data="menu:main"
+            )
+        )
+
+        return builder.as_markup()
+
+    @staticmethod
+    def top_posts_menu() -> InlineKeyboardMarkup:
+        """Меню выбора топа постов"""
+        builder = InlineKeyboardBuilder()
+
+        builder.row(
+            InlineKeyboardButton(
+                text="👁 По просмотрам",
+                callback_data="top:views"
+            ),
+            InlineKeyboardButton(
+                text="❤️ По реакциям",
+                callback_data="top:reactions"
+            )
+        )
+        builder.row(
+            InlineKeyboardButton(
+                text="📈 По вовлечённости",
+                callback_data="top:engagement"
+            )
+        )
+        builder.row(
+            InlineKeyboardButton(
+                text="🔙 В меню",
+                callback_data="menu:main"
+            )
+        )
+
+        return builder.as_markup()
+
+    @staticmethod
+    def stats_menu() -> InlineKeyboardMarkup:
+        """Меню статистики с выбором периода"""
+        builder = InlineKeyboardBuilder()
+
+        builder.row(
+            InlineKeyboardButton(
+                text="📊 За 7 дней",
+                callback_data="stats:7"
+            ),
+            InlineKeyboardButton(
+                text="📊 За 30 дней",
+                callback_data="stats:30"
+            )
+        )
+        builder.row(
+            InlineKeyboardButton(
+                text="📊 Все время",
+                callback_data="stats:all"
+            )
+        )
+        builder.row(
+            InlineKeyboardButton(
+                text="🔄 Обновить метрики",
+                callback_data="stats:update"
+            )
+        )
+        builder.row(
+            InlineKeyboardButton(
+                text="🔙 В меню",
+                callback_data="menu:main"
+            )
+        )
+
+        return builder.as_markup()
+
+    @staticmethod
     def post_moderation(post_id: int, has_image: bool = False) -> InlineKeyboardMarkup:
         """
         Клавиатура для модерации поста
@@ -66,6 +279,10 @@ class Keyboards:
             InlineKeyboardButton(
                 text="❌ Отклонить",
                 callback_data=f"reject:{post_id}"
+            ),
+            InlineKeyboardButton(
+                text="🔙 В меню",
+                callback_data="menu:main"
             )
         )
 
@@ -241,6 +458,14 @@ class Keyboards:
         if nav_buttons:
             builder.row(*nav_buttons)
 
+        # Кнопка возврата в меню
+        builder.row(
+            InlineKeyboardButton(
+                text="🔙 В меню",
+                callback_data="menu:main"
+            )
+        )
+
         return builder.as_markup()
 
     @staticmethod
@@ -250,7 +475,7 @@ class Keyboards:
         builder.row(
             InlineKeyboardButton(
                 text="🔙 В меню",
-                callback_data="back_to_menu"
+                callback_data="menu:main"
             )
         )
         return builder.as_markup()
@@ -302,8 +527,8 @@ class Keyboards:
         )
         builder.row(
             InlineKeyboardButton(
-                text="🔙 Назад",
-                callback_data="back_to_menu"
+                text="🔙 В меню",
+                callback_data="menu:main"
             )
         )
 
@@ -344,6 +569,12 @@ class Keyboards:
             InlineKeyboardButton(
                 text="🔄 Обновить статистику",
                 callback_data="update_stats"
+            )
+        )
+        builder.row(
+            InlineKeyboardButton(
+                text="🔙 В меню",
+                callback_data="menu:main"
             )
         )
 

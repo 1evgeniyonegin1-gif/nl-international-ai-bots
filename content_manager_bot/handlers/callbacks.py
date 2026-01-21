@@ -7,7 +7,7 @@ from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from loguru import logger
-from sqlalchemy import select
+from sqlalchemy import select, func
 
 from shared.config.settings import settings
 from shared.database.base import AsyncSessionLocal
@@ -362,19 +362,457 @@ async def callback_cancel(callback: CallbackQuery):
 
 
 @router.callback_query(F.data == "back_to_menu")
-async def callback_back_to_menu(callback: CallbackQuery):
-    """Возврат в главное меню"""
+async def callback_back_to_menu_legacy(callback: CallbackQuery):
+    """Возврат в главное меню (legacy, redirect to new)"""
+    await callback_menu_main(callback)
+
+
+# === Обработчики главного меню ===
+
+async def get_pending_count() -> int:
+    """Получить количество постов на модерации"""
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(func.count(Post.id)).where(Post.status == "pending")
+        )
+        return result.scalar() or 0
+
+
+@router.callback_query(F.data == "menu:main")
+async def callback_menu_main(callback: CallbackQuery):
+    """Показать главное меню"""
+    if not is_admin(callback.from_user.id):
+        await callback.answer("⛔ Доступ запрещён", show_alert=True)
+        return
+
+    pending_count = await get_pending_count()
+
+    await callback.message.edit_text(
+        "🎛 <b>ГЛАВНОЕ МЕНЮ</b>\n\n"
+        "Выберите действие:",
+        reply_markup=Keyboards.main_menu(pending_count)
+    )
+    await callback.answer()
+
+
+@router.callback_query(F.data == "menu:generate")
+async def callback_menu_generate(callback: CallbackQuery):
+    """Показать меню выбора типа поста"""
     if not is_admin(callback.from_user.id):
         await callback.answer("⛔ Доступ запрещён", show_alert=True)
         return
 
     await callback.message.edit_text(
-        "📋 <b>Главное меню</b>\n\n"
-        "🔹 /generate - сгенерировать пост\n"
-        "🔹 /pending - посты на модерации\n"
-        "🔹 /stats - статистика\n"
-        "🔹 /schedule - автопостинг"
+        "📝 <b>СОЗДАНИЕ ПОСТА</b>\n\n"
+        "Выберите тип контента:",
+        reply_markup=Keyboards.post_type_selection_with_back()
     )
+    await callback.answer()
+
+
+@router.callback_query(F.data == "menu:pending")
+async def callback_menu_pending(callback: CallbackQuery):
+    """Показать посты на модерации"""
+    if not is_admin(callback.from_user.id):
+        await callback.answer("⛔ Доступ запрещён", show_alert=True)
+        return
+
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(Post)
+            .where(Post.status == "pending")
+            .order_by(Post.generated_at.desc())
+            .limit(10)
+        )
+        posts = result.scalars().all()
+
+    if not posts:
+        await callback.message.edit_text(
+            "📭 <b>Нет постов на модерации</b>\n\n"
+            "Используйте кнопку «Создать пост» для генерации нового поста.",
+            reply_markup=Keyboards.back_to_menu()
+        )
+        await callback.answer()
+        return
+
+    # Показываем список
+    type_names = ContentGenerator.get_available_post_types()
+
+    text = f"📋 <b>Посты на модерации ({len(posts)}):</b>\n\n"
+    for post in posts:
+        type_name = type_names.get(post.post_type, post.post_type)
+        preview = post.content[:80] + "..." if len(post.content) > 80 else post.content
+        text += f"📝 <b>#{post.id}</b> ({type_name})\n{preview}\n\n"
+
+    await callback.message.edit_text(text, reply_markup=Keyboards.back_to_menu())
+
+    # Показываем каждый пост с кнопками модерации
+    for post in posts:
+        type_name = type_names.get(post.post_type, post.post_type)
+        preview = post.content[:200] + "..." if len(post.content) > 200 else post.content
+        has_image = bool(post.image_url)
+
+        await callback.message.answer(
+            f"📝 <b>#{post.id}</b> ({type_name})\n\n"
+            f"{preview}\n\n"
+            f"<i>Создан: {post.generated_at.strftime('%d.%m.%Y %H:%M')}</i>",
+            reply_markup=Keyboards.post_moderation(post.id, has_image)
+        )
+
+    await callback.answer()
+
+
+@router.callback_query(F.data == "menu:stats")
+async def callback_menu_stats(callback: CallbackQuery):
+    """Показать меню статистики"""
+    if not is_admin(callback.from_user.id):
+        await callback.answer("⛔ Доступ запрещён", show_alert=True)
+        return
+
+    await callback.message.edit_text(
+        "📊 <b>СТАТИСТИКА</b>\n\n"
+        "Выберите период или действие:",
+        reply_markup=Keyboards.stats_menu()
+    )
+    await callback.answer()
+
+
+@router.callback_query(F.data == "menu:top")
+async def callback_menu_top(callback: CallbackQuery):
+    """Показать меню топ постов"""
+    if not is_admin(callback.from_user.id):
+        await callback.answer("⛔ Доступ запрещён", show_alert=True)
+        return
+
+    await callback.message.edit_text(
+        "🏆 <b>ТОП ПОСТЫ</b>\n\n"
+        "Выберите метрику для сортировки:",
+        reply_markup=Keyboards.top_posts_menu()
+    )
+    await callback.answer()
+
+
+@router.callback_query(F.data == "menu:schedule")
+async def callback_menu_schedule(callback: CallbackQuery):
+    """Показать настройки автопостинга"""
+    if not is_admin(callback.from_user.id):
+        await callback.answer("⛔ Доступ запрещён", show_alert=True)
+        return
+
+    await callback.message.edit_text(
+        "⏰ <b>АВТОПОСТИНГ</b>\n\n"
+        "Включите/выключите автоматическую генерацию\n"
+        "для каждого типа контента:",
+        reply_markup=Keyboards.auto_schedule_settings()
+    )
+    await callback.answer()
+
+
+@router.callback_query(F.data == "menu:channels")
+async def callback_menu_channels(callback: CallbackQuery):
+    """Показать меню каналов-образцов"""
+    if not is_admin(callback.from_user.id):
+        await callback.answer("⛔ Доступ запрещён", show_alert=True)
+        return
+
+    await callback.message.edit_text(
+        "📺 <b>КАНАЛЫ-ОБРАЗЦЫ</b>\n\n"
+        "Каналы используются для анализа стиля\n"
+        "и улучшения качества генерации контента.\n\n"
+        "<i>Для добавления канала отправьте команду:</i>\n"
+        "<code>/add_channel @username категория</code>",
+        reply_markup=Keyboards.channels_menu()
+    )
+    await callback.answer()
+
+
+@router.callback_query(F.data == "menu:help")
+async def callback_menu_help(callback: CallbackQuery):
+    """Показать справку"""
+    if not is_admin(callback.from_user.id):
+        await callback.answer("⛔ Доступ запрещён", show_alert=True)
+        return
+
+    await callback.message.edit_text(
+        "📖 <b>СПРАВКА</b>\n\n"
+        "<b>📝 Создание контента</b>\n"
+        "• Создать пост → выбрать тип → одобрить/отклонить\n"
+        "• Можно редактировать и перегенерировать\n"
+        "• Добавлять изображения (YandexART)\n\n"
+        "<b>📊 Аналитика</b>\n"
+        "• Просмотры, реакции, вовлечённость\n"
+        "• Топ постов по метрикам\n\n"
+        "<b>⏰ Автопостинг</b>\n"
+        "• Автоматическая генерация по расписанию\n"
+        "• Настройка для каждого типа контента\n\n"
+        "<b>📺 Каналы-образцы</b>\n"
+        "• Анализ стиля из других каналов\n"
+        "• Требует Telethon API keys\n\n"
+        "<b>Типы контента:</b>\n"
+        "📦 product | 💪 motivation | 📰 news\n"
+        "💡 tips | 🌟 success_story | 🎁 promo",
+        reply_markup=Keyboards.back_to_menu()
+    )
+    await callback.answer()
+
+
+# === Обработчики статистики ===
+
+@router.callback_query(F.data.startswith("stats:"))
+async def callback_stats_period(callback: CallbackQuery):
+    """Показать статистику за период"""
+    if not is_admin(callback.from_user.id):
+        await callback.answer("⛔ Доступ запрещён", show_alert=True)
+        return
+
+    period = callback.data.split(":")[1]
+
+    if period == "update":
+        # Обновление метрик
+        await callback.message.edit_text("⏳ Обновляю метрики постов...")
+        try:
+            from content_manager_bot.services.analytics_service import AnalyticsService
+            async with AsyncSessionLocal() as session:
+                analytics_service = AnalyticsService(session)
+                updated = await analytics_service.update_all_post_metrics(callback.bot)
+
+            await callback.message.edit_text(
+                f"✅ <b>Метрики обновлены!</b>\n\n"
+                f"Обновлено постов: {updated}",
+                reply_markup=Keyboards.stats_menu()
+            )
+        except Exception as e:
+            await callback.message.edit_text(
+                f"❌ Ошибка при обновлении:\n{str(e)}",
+                reply_markup=Keyboards.stats_menu()
+            )
+        await callback.answer()
+        return
+
+    # Статистика за период
+    async with AsyncSessionLocal() as session:
+        from sqlalchemy import func as sql_func
+
+        # Базовый запрос
+        base_query = select(Post)
+
+        if period != "all":
+            days = int(period)
+            from datetime import datetime, timedelta
+            cutoff = datetime.utcnow() - timedelta(days=days)
+            base_query = base_query.where(Post.published_at >= cutoff)
+
+        # Считаем статистику
+        stats = {}
+        for status in ["draft", "pending", "published", "rejected"]:
+            if period == "all":
+                result = await session.execute(
+                    select(sql_func.count(Post.id)).where(Post.status == status)
+                )
+            else:
+                days = int(period)
+                cutoff = datetime.utcnow() - timedelta(days=days)
+                result = await session.execute(
+                    select(sql_func.count(Post.id))
+                    .where(Post.status == status)
+                    .where(Post.generated_at >= cutoff)
+                )
+            stats[status] = result.scalar() or 0
+
+        # Общее
+        if period == "all":
+            total_result = await session.execute(select(sql_func.count(Post.id)))
+        else:
+            total_result = await session.execute(
+                select(sql_func.count(Post.id))
+                .where(Post.generated_at >= cutoff)
+            )
+        total = total_result.scalar() or 0
+
+    period_text = f"за {period} дней" if period != "all" else "за всё время"
+
+    await callback.message.edit_text(
+        f"📊 <b>Статистика {period_text}</b>\n\n"
+        f"📝 Всего сгенерировано: <b>{total}</b>\n"
+        f"✅ Опубликовано: <b>{stats['published']}</b>\n"
+        f"⏳ На модерации: <b>{stats['pending']}</b>\n"
+        f"📋 Черновики: <b>{stats['draft']}</b>\n"
+        f"❌ Отклонено: <b>{stats['rejected']}</b>",
+        reply_markup=Keyboards.stats_menu()
+    )
+    await callback.answer()
+
+
+# === Обработчики топ постов ===
+
+@router.callback_query(F.data.startswith("top:"))
+async def callback_top_posts(callback: CallbackQuery):
+    """Показать топ постов по метрике"""
+    if not is_admin(callback.from_user.id):
+        await callback.answer("⛔ Доступ запрещён", show_alert=True)
+        return
+
+    sort_by = callback.data.split(":")[1]
+
+    await callback.message.edit_text("⏳ Получаю топ постов...")
+
+    try:
+        from content_manager_bot.services.analytics_service import AnalyticsService
+        async with AsyncSessionLocal() as session:
+            analytics_service = AnalyticsService(session)
+            top_posts = await analytics_service.get_top_posts(
+                limit=10,
+                days=30,
+                sort_by=sort_by
+            )
+
+        if not top_posts:
+            await callback.message.edit_text(
+                "📭 Нет опубликованных постов за последние 30 дней",
+                reply_markup=Keyboards.top_posts_menu()
+            )
+            await callback.answer()
+            return
+
+        sort_names = {
+            'views': 'просмотрам',
+            'reactions': 'реакциям',
+            'engagement': 'вовлечённости'
+        }
+
+        type_emojis = {
+            'product': '📦',
+            'motivation': '💪',
+            'news': '📰',
+            'tips': '💡',
+            'success_story': '🌟',
+            'promo': '🎁'
+        }
+
+        response = f"🏆 <b>Топ-10 постов</b> (по {sort_names[sort_by]})\n\n"
+
+        for i, post in enumerate(top_posts, 1):
+            emoji = type_emojis.get(post['type'], '📝')
+            response += f"{i}. {emoji} #{post['id']}\n"
+            response += f"   👁 {post['views']} | ❤️ {post['reactions']} | "
+            response += f"📊 {post['engagement_rate']:.1f}%\n"
+
+        await callback.message.edit_text(
+            response,
+            reply_markup=Keyboards.top_posts_menu()
+        )
+
+    except Exception as e:
+        logger.error(f"Error getting top posts: {e}")
+        await callback.message.edit_text(
+            f"❌ Ошибка при получении топа:\n{str(e)}",
+            reply_markup=Keyboards.top_posts_menu()
+        )
+
+    await callback.answer()
+
+
+# === Обработчики каналов ===
+
+@router.callback_query(F.data == "channels:list")
+async def callback_channels_list(callback: CallbackQuery):
+    """Показать список каналов"""
+    if not is_admin(callback.from_user.id):
+        await callback.answer("⛔ Доступ запрещён", show_alert=True)
+        return
+
+    try:
+        from content_manager_bot.services.style_learning_service import get_style_service
+        style_service = get_style_service()
+        channels = await style_service.get_channels()
+
+        if not channels:
+            await callback.message.edit_text(
+                "📭 <b>Нет добавленных каналов</b>\n\n"
+                "Добавьте канал командой:\n"
+                "<code>/add_channel @username категория</code>",
+                reply_markup=Keyboards.channels_menu()
+            )
+        else:
+            text = f"📺 <b>Каналы-образцы ({len(channels)}):</b>\n\n"
+            for ch in channels:
+                text += f"• <b>{ch.title}</b>\n"
+                text += f"  🏷 {ch.style_category} | 📝 {ch.posts_count} постов\n\n"
+
+            await callback.message.edit_text(
+                text,
+                reply_markup=Keyboards.channels_menu()
+            )
+
+    except Exception as e:
+        await callback.message.edit_text(
+            f"❌ Ошибка: {str(e)}\n\n"
+            "<i>Возможно, не настроены Telethon API keys</i>",
+            reply_markup=Keyboards.channels_menu()
+        )
+
+    await callback.answer()
+
+
+@router.callback_query(F.data == "channels:add")
+async def callback_channels_add(callback: CallbackQuery):
+    """Инструкция по добавлению канала"""
+    if not is_admin(callback.from_user.id):
+        await callback.answer("⛔ Доступ запрещён", show_alert=True)
+        return
+
+    await callback.message.edit_text(
+        "➕ <b>Добавление канала</b>\n\n"
+        "Отправьте команду в формате:\n"
+        "<code>/add_channel @username категория описание</code>\n\n"
+        "<b>Категории:</b>\n"
+        "• <code>motivation</code> — мотивация\n"
+        "• <code>product</code> — продукты\n"
+        "• <code>lifestyle</code> — лайфстайл\n"
+        "• <code>business</code> — бизнес\n"
+        "• <code>general</code> — общий стиль\n\n"
+        "<b>Пример:</b>\n"
+        "<code>/add_channel @channel motivation Мотивационный канал</code>",
+        reply_markup=Keyboards.channels_menu()
+    )
+    await callback.answer()
+
+
+@router.callback_query(F.data == "channels:fetch")
+async def callback_channels_fetch(callback: CallbackQuery):
+    """Загрузить посты из каналов"""
+    if not is_admin(callback.from_user.id):
+        await callback.answer("⛔ Доступ запрещён", show_alert=True)
+        return
+
+    await callback.message.edit_text("⏳ Загружаю посты из каналов...")
+
+    try:
+        from content_manager_bot.services.style_learning_service import get_style_service
+        style_service = get_style_service()
+        results = await style_service.fetch_all_posts()
+
+        if not results:
+            await callback.message.edit_text(
+                "📭 Нет каналов для загрузки постов.\n"
+                "Сначала добавьте каналы.",
+                reply_markup=Keyboards.channels_menu()
+            )
+        else:
+            total = sum(r.get('new_posts', 0) for r in results)
+            await callback.message.edit_text(
+                f"✅ <b>Загрузка завершена!</b>\n\n"
+                f"Новых постов: {total}",
+                reply_markup=Keyboards.channels_menu()
+            )
+
+    except Exception as e:
+        logger.error(f"Error fetching posts: {e}")
+        await callback.message.edit_text(
+            f"❌ Ошибка: {str(e)}",
+            reply_markup=Keyboards.channels_menu()
+        )
+
     await callback.answer()
 
 
