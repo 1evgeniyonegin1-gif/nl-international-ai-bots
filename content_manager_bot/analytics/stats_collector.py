@@ -38,8 +38,8 @@ class StatsCollector:
         try:
             # Получаем информацию о сообщении из Telegram
             message = await self.bot.forward_message(
-                chat_id=settings.GROUP_ID,
-                from_chat_id=settings.GROUP_ID,
+                chat_id=settings.TELEGRAM_GROUP_ID,
+                from_chat_id=settings.TELEGRAM_GROUP_ID,
                 message_id=post.channel_message_id
             )
 
