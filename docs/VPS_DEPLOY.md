@@ -102,7 +102,7 @@ sudo -u postgres psql -d nl_international
 ```env
 CURATOR_BOT_TOKEN=токен_куратора
 CONTENT_MANAGER_BOT_TOKEN=токен_контент_менеджера
-CHANNEL_USERNAME=@nl_Eleva
+CHANNEL_USERNAME=@nl_international_partners
 ADMIN_TELEGRAM_IDS=756877849
 GIGACHAT_AUTH_TOKEN=токен_gigachat
 GIGACHAT_CLIENT_ID=client_id

@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ssh root@194.87.86.103 \"grep -n ''analytics\\\\|/top\\\\|/analytics'' /root/nl-international-ai-bots/content_manager_bot/handlers/admin.py | head -20\")"
+    ]
+  }
+}

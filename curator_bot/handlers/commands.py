@@ -1,6 +1,7 @@
 """
 Обработчики команд для AI-Куратора
 """
+from datetime import datetime
 from aiogram import Router, F
 from aiogram.filters import Command, CommandStart
 from aiogram.types import Message
@@ -8,8 +9,12 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.database.base import AsyncSessionLocal
+from shared.config.settings import settings
 from curator_bot.database.models import User
 from curator_bot.ai.prompts import get_welcome_message
+from curator_bot.funnels.keyboards import get_start_keyboard
+from curator_bot.analytics.funnel_stats import get_funnel_stats, format_funnel_stats
+from curator_bot.analytics.lead_scoring import get_leads_needing_attention
 from loguru import logger
 
 
@@ -20,7 +25,7 @@ router = Router(name="commands")
 async def cmd_start(message: Message):
     """
     Обработчик команды /start
-    Регистрирует нового пользователя или приветствует существующего
+    Регистрирует нового пользователя и запускает воронку квалификации
     """
     try:
         async with AsyncSessionLocal() as session:
@@ -30,6 +35,8 @@ async def cmd_start(message: Message):
             )
             user = result.scalar_one_or_none()
 
+            first_name = message.from_user.first_name or "Друг"
+
             if not user:
                 # Создаем нового пользователя
                 user = User(
@@ -38,20 +45,40 @@ async def cmd_start(message: Message):
                     first_name=message.from_user.first_name,
                     last_name=message.from_user.last_name,
                     user_type="lead",
-                    qualification="consultant"
+                    qualification="consultant",
+                    funnel_started_at=datetime.utcnow(),
+                    lead_status="new"
                 )
                 session.add(user)
                 await session.commit()
                 logger.info(f"New user registered: {message.from_user.id}")
 
-                # Отправляем приветственное сообщение
-                welcome_text = get_welcome_message(user.first_name or "Друг")
-                await message.answer(welcome_text)
-            else:
-                # Приветствуем существующего пользователя
+                # Приветственное сообщение с воронкой квалификации
+                welcome_text = f"""<b>Привет, {first_name}! 👋</b>
+
+Я AI-помощник для партнёров NL International.
+Помогу разобраться в продуктах, бизнесе и ответить на любые вопросы.
+
+<b>С чего начнём?</b>"""
+
                 await message.answer(
-                    f"С возвращением, {user.first_name}! 👋\n\n"
-                    f"Чем могу помочь сегодня?"
+                    welcome_text,
+                    reply_markup=get_start_keyboard()
+                )
+            else:
+                # Существующий пользователь — показываем воронку снова
+                user.last_activity = datetime.utcnow()
+                await session.commit()
+
+                welcome_text = f"""<b>С возвращением, {first_name}! 👋</b>
+
+Рада снова тебя видеть!
+
+<b>Чем могу помочь?</b>"""
+
+                await message.answer(
+                    welcome_text,
+                    reply_markup=get_start_keyboard()
                 )
                 logger.info(f"Existing user returned: {message.from_user.id}")
 
@@ -173,3 +200,83 @@ async def cmd_support(message: Message):
 Также ты всегда можешь задать вопрос мне!"""
 
     await message.answer(support_text)
+
+
+@router.message(Command("funnel_stats"))
+async def cmd_funnel_stats(message: Message):
+    """
+    Статистика воронки продаж (только для админов)
+    Использование: /funnel_stats [дней]
+    """
+    # Проверяем права админа
+    if message.from_user.id not in settings.admin_ids_list:
+        await message.answer("❌ Эта команда доступна только администраторам")
+        return
+
+    try:
+        # Парсим количество дней из аргументов
+        args = message.text.split()
+        period_days = 7  # по умолчанию
+        if len(args) > 1:
+            try:
+                period_days = int(args[1])
+                period_days = max(1, min(period_days, 365))  # Ограничиваем 1-365
+            except ValueError:
+                pass
+
+        await message.answer("⏳ Собираю статистику...")
+
+        # Получаем статистику
+        stats = await get_funnel_stats(period_days)
+        stats_text = format_funnel_stats(stats)
+
+        await message.answer(stats_text)
+
+    except Exception as e:
+        logger.error(f"Error in /funnel_stats command: {e}", exc_info=True)
+        await message.answer("❌ Ошибка при получении статистики")
+
+
+@router.message(Command("hot_leads"))
+async def cmd_hot_leads(message: Message):
+    """
+    Список горячих лидов (только для админов)
+    """
+    # Проверяем права админа
+    if message.from_user.id not in settings.admin_ids_list:
+        await message.answer("❌ Эта команда доступна только администраторам")
+        return
+
+    try:
+        leads = await get_leads_needing_attention()
+
+        if not leads:
+            await message.answer("🔍 Горячих лидов, требующих внимания, нет")
+            return
+
+        intent_names = {
+            "client": "Клиент",
+            "business": "Бизнес",
+        }
+
+        response = f"🔥 <b>ГОРЯЧИЕ ЛИДЫ ({len(leads)})</b>\n\n"
+
+        for i, lead in enumerate(leads[:10], 1):  # Максимум 10
+            contact = lead.phone or lead.email or "нет контакта"
+            intent = intent_names.get(lead.user_intent, lead.user_intent or "-")
+
+            response += f"""{i}. <b>{lead.first_name or 'Без имени'}</b>
+   📞 {contact}
+   🎯 {intent} | Скор: {lead.lead_score}
+   👉 @{lead.username or f'id{lead.telegram_id}'}
+
+"""
+
+        if len(leads) > 10:
+            response += f"\n<i>...и ещё {len(leads) - 10} лидов</i>"
+
+        await message.answer(response)
+
+    except Exception as e:
+        logger.error(f"Error in /hot_leads command: {e}", exc_info=True)
+        await message.answer("❌ Ошибка при получении списка лидов")

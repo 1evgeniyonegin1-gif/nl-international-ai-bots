@@ -42,6 +42,16 @@ class User(Base, TimestampMixin):
     # Прогресс обучения
     lessons_completed: Mapped[int] = mapped_column(Integer, default=0)
 
+    # Воронка продаж
+    user_intent: Mapped[Optional[str]] = mapped_column(String(50))  # client, business, curious
+    pain_point: Mapped[Optional[str]] = mapped_column(String(100))  # weight, energy, immunity, beauty, kids, sport
+    income_goal: Mapped[Optional[str]] = mapped_column(String(50))  # 10_30k, 50_100k, 200k_plus, unsure
+    funnel_step: Mapped[int] = mapped_column(Integer, default=0)  # Текущий шаг воронки
+    funnel_started_at: Mapped[Optional[datetime]] = mapped_column()  # Когда начал воронку
+    email: Mapped[Optional[str]] = mapped_column(String(100))  # Email для рассылки
+    lead_status: Mapped[str] = mapped_column(String(50), default="new")  # new, cold, qualified, hot, contact_requested, ordered, partner
+    lead_score: Mapped[int] = mapped_column(Integer, default=0)  # Скоринг лида (0-100)
+
     # Relationships
     messages: Mapped[List["ConversationMessage"]] = relationship(
         back_populates="user",

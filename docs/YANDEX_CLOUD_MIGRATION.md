@@ -136,7 +136,7 @@ nano .env
 # Telegram
 CURATOR_BOT_TOKEN=<ваш токен>
 CONTENT_MANAGER_BOT_TOKEN=<ваш токен>
-CHANNEL_USERNAME=@nl_Eleva
+CHANNEL_USERNAME=@nl_international_partners
 ADMIN_TELEGRAM_IDS=756877849
 
 # Группа с Topics

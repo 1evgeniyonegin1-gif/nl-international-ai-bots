@@ -1,85 +1,1090 @@
 {
   "greenflash": {
-    "vision_plus": {
-      "name": "GreenFlash Vision Plus",
-      "image": "greenflash/vision_plus.jpg",
-      "description": "Витамины для зрения с лютеином и зеаксантином"
-    },
-    "multivitamin": {
-      "name": "GreenFlash Мультивитамины",
-      "image": "greenflash/multivitamin.jpg",
-      "description": "Комплекс витаминов и минералов для ежедневной поддержки"
-    },
-    "omega3": {
-      "name": "GreenFlash Омега-3",
-      "image": "greenflash/omega3.jpg",
-      "description": "Рыбий жир высшего качества для сердца и мозга"
-    },
-    "vitamin_d3": {
-      "name": "GreenFlash Витамин D3",
-      "image": "greenflash/vitamin_d3.jpg",
-      "description": "Холекальциферол для иммунитета и костей"
-    },
-    "collagen": {
-      "name": "GreenFlash Коллаген",
-      "image": "greenflash/collagen.jpg",
-      "description": "Морской коллаген для кожи, волос и суставов"
-    }
-  },
-  "lovely": {
-    "face_cream": {
-      "name": "Lovely Крем для лица",
-      "image": "lovely/face_cream.jpg",
-      "description": "Увлажняющий крем с гиалуроновой кислотой"
-    },
-    "serum": {
-      "name": "Lovely Сыворотка",
-      "image": "lovely/serum.jpg",
-      "description": "Антивозрастная сыворотка с витамином C"
-    },
-    "micellar_water": {
-      "name": "Lovely Мицеллярная вода",
-      "image": "lovely/micellar_water.jpg",
-      "description": "Бережное очищение без пересушивания"
-    },
-    "body_lotion": {
-      "name": "Lovely Лосьон для тела",
-      "image": "lovely/body_lotion.jpg",
-      "description": "Питательный лосьон с маслом ши"
+    "name": "Greenflash",
+    "description": "Линейка биологически активных добавок с RMP-Complex™",
+    "products": {
+      "collagen_peptides": {
+        "name": "Collagen Peptides",
+        "category": "БАД",
+        "subcategory": "Красота",
+        "description": "Пептиды коллагена 10 000 мг для кожи, волос и ногтей",
+        "image": "greenflash/collagen_peptides.jpg",
+        "keywords": ["коллаген", "кожа", "волосы", "ногти", "красота"]
+      },
+      "collagen_formula": {
+        "name": "Collagen Formula",
+        "category": "БАД",
+        "subcategory": "Суставы",
+        "description": "Коллаген для суставов и кожи с MSM",
+        "image": "greenflash/collagen_formula.jpg",
+        "keywords": ["коллаген", "суставы", "связки"]
+      },
+      "beauty_formula": {
+        "name": "Beauty Formula",
+        "category": "БАД",
+        "subcategory": "Красота",
+        "description": "Комплекс для красоты с биотином и цинком",
+        "image": "greenflash/beauty_formula.jpg",
+        "keywords": ["красота", "биотин", "цинк"]
+      },
+      "immunity_formula": {
+        "name": "Immunity Formula",
+        "category": "БАД",
+        "subcategory": "Иммунитет",
+        "description": "Укрепление иммунитета с эхинацеей и витамином C",
+        "image": "greenflash/immunity_formula.jpg",
+        "keywords": ["иммунитет", "витамин C", "эхинацея", "защита"]
+      },
+      "vitamin_d3": {
+        "name": "Витамин D3",
+        "category": "БАД",
+        "subcategory": "Витамины",
+        "description": "2000 МЕ витамина D для костей и иммунитета",
+        "image": "greenflash/vitamin_d3.jpg",
+        "keywords": ["витамин D", "кости", "иммунитет"]
+      },
+      "multivitamin_formula": {
+        "name": "Multivitamin Formula",
+        "category": "БАД",
+        "subcategory": "Витамины",
+        "description": "Комплекс из 12 витаминов и 8 минералов",
+        "image": "greenflash/multivitamin.jpg",
+        "keywords": ["витамины", "минералы", "комплекс"]
+      },
+      "omega3": {
+        "name": "Omega-3",
+        "category": "БАД",
+        "subcategory": "Сердце",
+        "description": "Рыбий жир высокой очистки для сердца и мозга",
+        "image": "greenflash/omega3.jpg",
+        "keywords": ["омега-3", "сердце", "мозг", "рыбий жир"]
+      },
+      "cardio_formula": {
+        "name": "Cardio Formula",
+        "category": "БАД",
+        "subcategory": "Сердце",
+        "description": "Здоровье сердца с Омега-3 и коэнзимом Q10",
+        "image": "greenflash/cardio_formula.jpg",
+        "keywords": ["сердце", "коэнзим", "Q10"]
+      },
+      "marine_magnesium": {
+        "name": "Marine Magnesium",
+        "category": "БАД",
+        "subcategory": "Сердце",
+        "description": "591 мг морского магния для сердечного ритма",
+        "image": "greenflash/marine_magnesium.jpg",
+        "keywords": ["магний", "сердце", "ритм"]
+      },
+      "antistress_formula": {
+        "name": "Antistress Formula",
+        "category": "БАД",
+        "subcategory": "Нервная система",
+        "description": "Снятие стресса с магнием и витаминами группы B",
+        "image": "greenflash/antistress_formula.jpg",
+        "keywords": ["стресс", "магний", "витамины B"]
+      },
+      "sleep_formula": {
+        "name": "Sleep Formula",
+        "category": "БАД",
+        "subcategory": "Нервная система",
+        "description": "Здоровый сон с мелатонином и валерианой",
+        "image": "greenflash/sleep_formula.jpg",
+        "keywords": ["сон", "мелатонин", "валериана"]
+      },
+      "vision_formula": {
+        "name": "Vision Formula",
+        "category": "БАД",
+        "subcategory": "Зрение",
+        "description": "Здоровье глаз с лютеином и черникой",
+        "image": "greenflash/vision_formula.jpg",
+        "keywords": ["зрение", "глаза", "лютеин", "черника"]
+      },
+      "joint_formula": {
+        "name": "Joint Formula",
+        "category": "БАД",
+        "subcategory": "Суставы",
+        "description": "Здоровье суставов с глюкозамином и хондроитином",
+        "image": "greenflash/joint_formula.jpg",
+        "keywords": ["суставы", "глюкозамин", "хондроитин"]
+      },
+      "detox_step1": {
+        "name": "Detox Step 1 Plus",
+        "category": "БАД",
+        "subcategory": "Детокс",
+        "description": "Очищение кишечника с клетчаткой и пробиотиками",
+        "image": "greenflash/detox_step1.jpg",
+        "keywords": ["детокс", "очищение", "кишечник"]
+      },
+      "detox_step2": {
+        "name": "Detox Step 2",
+        "category": "БАД",
+        "subcategory": "Детокс",
+        "description": "Детокс печени с расторопшей и артишоком",
+        "image": "greenflash/detox_step2.jpg",
+        "keywords": ["детокс", "печень", "расторопша"]
+      },
+      "iron_formula": {
+        "name": "Iron Formula",
+        "category": "БАД",
+        "subcategory": "Витамины",
+        "description": "Железо в хелатной форме",
+        "image": "greenflash/iron_formula.jpg",
+        "keywords": ["железо", "анемия"]
+      },
+      "zinc_formula": {
+        "name": "Zinc Formula",
+        "category": "БАД",
+        "subcategory": "Витамины",
+        "description": "Цинк для иммунитета и кожи",
+        "image": "greenflash/zinc_formula.jpg",
+        "keywords": ["цинк", "иммунитет", "кожа"]
+      },
+      "women_formula": {
+        "name": "Women's Formula",
+        "category": "БАД",
+        "subcategory": "Для женщин",
+        "description": "Женское здоровье с витаминами E, B6 и экстрактом витекса",
+        "image": "greenflash/women_formula.jpg",
+        "keywords": ["женское здоровье", "витамин E"]
+      },
+      "men_formula": {
+        "name": "Men's Formula",
+        "category": "БАД",
+        "subcategory": "Для мужчин",
+        "description": "Мужское здоровье с цинком и селеном",
+        "image": "greenflash/men_formula.jpg",
+        "keywords": ["мужское здоровье", "цинк", "селен"]
+      },
+      "immunoglobulin_complex": {
+        "name": "Комплекс с иммуноглобулинами",
+        "category": "БАД",
+        "subcategory": "Иммунитет",
+        "description": "Защита от вирусов с иммуноглобулинами и лактоферрином",
+        "image": "greenflash/immunoglobulin.jpg",
+        "keywords": ["иммунитет", "вирусы", "защита"]
+      }
     }
   },
   "energy_diet": {
-    "smart": {
-      "name": "Energy Diet Smart",
-      "image": "energy_diet/smart.jpg",
-      "description": "Сбалансированное питание для контроля веса"
-    },
-    "shake_chocolate": {
-      "name": "Energy Diet Шоколадный коктейль",
-      "image": "energy_diet/shake_chocolate.jpg",
-      "description": "Протеиновый коктейль со вкусом шоколада"
-    },
-    "shake_vanilla": {
-      "name": "Energy Diet Ванильный коктейль",
-      "image": "energy_diet/shake_vanilla.jpg",
-      "description": "Протеиновый коктейль со вкусом ванили"
-    },
-    "soup": {
-      "name": "Energy Diet Суп",
-      "image": "energy_diet/soup.jpg",
-      "description": "Питательный суп быстрого приготовления"
+    "name": "Energy Diet",
+    "description": "Функциональное питание для контроля веса",
+    "products": {
+      "smart_chocolate": {
+        "name": "ED Smart Шоколад",
+        "category": "Питание",
+        "subcategory": "Коктейли",
+        "description": "Коктейль с PeptiSmart - шоколад (202 ккал, 16.9г белка)",
+        "image": "energy_diet/smart_chocolate.jpg",
+        "keywords": ["энерджи диет", "коктейль", "шоколад", "похудение"]
+      },
+      "smart_vanilla": {
+        "name": "ED Smart Ваниль",
+        "category": "Питание",
+        "subcategory": "Коктейли",
+        "description": "Коктейль с PeptiSmart - ваниль (205 ккал)",
+        "image": "energy_diet/smart_vanilla.jpg",
+        "keywords": ["энерджи диет", "коктейль", "ваниль", "похудение"]
+      },
+      "smart_strawberry": {
+        "name": "ED Smart Клубника",
+        "category": "Питание",
+        "subcategory": "Коктейли",
+        "description": "Коктейль с PeptiSmart - клубника (204 ккал)",
+        "image": "energy_diet/smart_strawberry.jpg",
+        "keywords": ["энерджи диет", "коктейль", "клубника", "похудение"]
+      },
+      "smart_banana": {
+        "name": "ED Smart Банан",
+        "category": "Питание",
+        "subcategory": "Коктейли",
+        "description": "Коктейль с PeptiSmart - банан (205 ккал)",
+        "image": "energy_diet/smart_banana.jpg",
+        "keywords": ["энерджи диет", "коктейль", "банан", "похудение"]
+      },
+      "smart_melon": {
+        "name": "ED Smart Дыня",
+        "category": "Питание",
+        "subcategory": "Коктейли",
+        "description": "Коктейль с PeptiSmart - дыня (204 ккал)",
+        "image": "energy_diet/smart_melon.jpg",
+        "keywords": ["энерджи диет", "коктейль", "дыня", "похудение"]
+      },
+      "smart_raspberry": {
+        "name": "ED Smart Малина",
+        "category": "Питание",
+        "subcategory": "Коктейли",
+        "description": "Коктейль с PeptiSmart - малина (204 ккал)",
+        "image": "energy_diet/smart_raspberry.jpg",
+        "keywords": ["энерджи диет", "коктейль", "малина", "похудение"]
+      },
+      "smart_caramel": {
+        "name": "ED Smart Карамель",
+        "category": "Питание",
+        "subcategory": "Коктейли",
+        "description": "Коктейль с PeptiSmart - карамель (205 ккал)",
+        "image": "energy_diet/smart_caramel.jpg",
+        "keywords": ["энерджи диет", "коктейль", "карамель", "похудение"]
+      },
+      "smart_cappuccino": {
+        "name": "ED Smart Капучино",
+        "category": "Питание",
+        "subcategory": "Коктейли",
+        "description": "Коктейль с PeptiSmart - капучино (205 ккал)",
+        "image": "energy_diet/smart_cappuccino.jpg",
+        "keywords": ["энерджи диет", "коктейль", "капучино", "кофе"]
+      },
+      "smart_latte": {
+        "name": "ED Smart Латте",
+        "category": "Питание",
+        "subcategory": "Коктейли",
+        "description": "Коктейль с PeptiSmart - латте (203 ккал)",
+        "image": "energy_diet/smart_latte.jpg",
+        "keywords": ["энерджи диет", "коктейль", "латте", "кофе"]
+      },
+      "smart_irish_cream": {
+        "name": "ED Smart Айриш Крим",
+        "category": "Питание",
+        "subcategory": "Коктейли",
+        "description": "Коктейль с PeptiSmart - айриш крим (202 ккал)",
+        "image": "energy_diet/smart_irish_cream.jpg",
+        "keywords": ["энерджи диет", "коктейль", "айриш крим"]
+      },
+      "smart_mango_passion": {
+        "name": "ED Smart Манго-Маракуйя",
+        "category": "Питание",
+        "subcategory": "Коктейли",
+        "description": "Коктейль с PeptiSmart - манго-маракуйя (205 ккал)",
+        "image": "energy_diet/smart_mango.jpg",
+        "keywords": ["энерджи диет", "коктейль", "манго", "маракуйя"]
+      },
+      "smart_coconut": {
+        "name": "ED Smart Кокос",
+        "category": "Питание",
+        "subcategory": "Коктейли",
+        "description": "Коктейль с PeptiSmart - кокос (204 ккал)",
+        "image": "energy_diet/smart_coconut.jpg",
+        "keywords": ["энерджи диет", "коктейль", "кокос"]
+      },
+      "smart_blueberry": {
+        "name": "ED Smart Черника-Голубика",
+        "category": "Питание",
+        "subcategory": "Коктейли",
+        "description": "Коктейль с PeptiSmart - черника-голубика (204 ккал)",
+        "image": "energy_diet/smart_blueberry.jpg",
+        "keywords": ["энерджи диет", "коктейль", "черника", "голубика"]
+      },
+      "smart_chocolate_muffin": {
+        "name": "ED Smart Шоколадный Маффин",
+        "category": "Питание",
+        "subcategory": "Коктейли",
+        "description": "Коктейль с PeptiSmart - шоколадный маффин (204 ккал)",
+        "image": "energy_diet/smart_choco_muffin.jpg",
+        "keywords": ["энерджи диет", "коктейль", "шоколад", "маффин"]
+      },
+      "smart_red_velvet": {
+        "name": "ED Smart Красный Бархат",
+        "category": "Питание",
+        "subcategory": "Коктейли",
+        "description": "Коктейль с PeptiSmart - красный бархат (213 ккал)",
+        "image": "energy_diet/smart_red_velvet.jpg",
+        "keywords": ["энерджи диет", "коктейль", "красный бархат"]
+      },
+      "smart_milk_chocolate": {
+        "name": "ED Smart Молочный шоколад",
+        "category": "Питание",
+        "subcategory": "Коктейли",
+        "description": "Коктейль с PeptiSmart - молочный шоколад (213 ккал)",
+        "image": "energy_diet/smart_milk_chocolate.jpg",
+        "keywords": ["энерджи диет", "коктейль", "молочный шоколад"]
+      },
+      "smart_milky_pistachio": {
+        "name": "ED Smart Milky Фисташка",
+        "category": "Питание",
+        "subcategory": "Коктейли Milky",
+        "description": "Коктейль на молочном белке - фисташка (206 ккал)",
+        "image": "energy_diet/smart_milky_pistachio.jpg",
+        "keywords": ["энерджи диет", "коктейль", "фисташка", "молочный белок"]
+      },
+      "smart_milky_strawberry": {
+        "name": "ED Smart Milky Клубничный Десерт",
+        "category": "Питание",
+        "subcategory": "Коктейли Milky",
+        "description": "Коктейль на молочном белке - клубничный десерт (205 ккал)",
+        "image": "energy_diet/smart_milky_strawberry.jpg",
+        "keywords": ["энерджи диет", "коктейль", "клубника", "молочный белок"]
+      },
+      "smart_milky_chocolate": {
+        "name": "ED Smart Milky Шоколад",
+        "category": "Питание",
+        "subcategory": "Коктейли Milky",
+        "description": "Коктейль на молочном белке - шоколад (206 ккал)",
+        "image": "energy_diet/smart_milky_chocolate.jpg",
+        "keywords": ["энерджи диет", "коктейль", "шоколад", "молочный белок"]
+      },
+      "smart_soup_tomato": {
+        "name": "ED Smart Суп Томат с базиликом",
+        "category": "Питание",
+        "subcategory": "Супы",
+        "description": "Горячий суп - томат с базиликом (197 ккал)",
+        "image": "energy_diet/soup_tomato.jpg",
+        "keywords": ["энерджи диет", "суп", "томат", "базилик"]
+      },
+      "smart_soup_mushroom": {
+        "name": "ED Smart Суп Грибы",
+        "category": "Питание",
+        "subcategory": "Супы",
+        "description": "Горячий суп - грибы (196 ккал)",
+        "image": "energy_diet/soup_mushroom.jpg",
+        "keywords": ["энерджи диет", "суп", "грибы"]
+      },
+      "smart_soup_chicken": {
+        "name": "ED Smart Суп Курица",
+        "category": "Питание",
+        "subcategory": "Супы",
+        "description": "Горячий суп - курица (199 ккал)",
+        "image": "energy_diet/soup_chicken.jpg",
+        "keywords": ["энерджи диет", "суп", "курица"]
+      },
+      "smart_soup_pea": {
+        "name": "ED Smart Суп Горох с копчёностями",
+        "category": "Питание",
+        "subcategory": "Супы",
+        "description": "Горячий суп - горох с копчёностями (201 ккал)",
+        "image": "energy_diet/soup_pea.jpg",
+        "keywords": ["энерджи диет", "суп", "горох"]
+      },
+      "classic_chocolate": {
+        "name": "Energy Diet Classic Шоколад",
+        "category": "Питание",
+        "subcategory": "Classic",
+        "description": "Классический коктейль - шоколад",
+        "image": "energy_diet/classic_chocolate.jpg",
+        "keywords": ["энерджи диет", "коктейль", "шоколад", "классик"]
+      },
+      "classic_vanilla": {
+        "name": "Energy Diet Classic Ваниль",
+        "category": "Питание",
+        "subcategory": "Classic",
+        "description": "Классический коктейль - ваниль",
+        "image": "energy_diet/classic_vanilla.jpg",
+        "keywords": ["энерджи диет", "коктейль", "ваниль", "классик"]
+      },
+      "classic_strawberry": {
+        "name": "Energy Diet Classic Клубника",
+        "category": "Питание",
+        "subcategory": "Classic",
+        "description": "Классический коктейль - клубника",
+        "image": "energy_diet/classic_strawberry.jpg",
+        "keywords": ["энерджи диет", "коктейль", "клубника", "классик"]
+      },
+      "classic_banana": {
+        "name": "Energy Diet Classic Банан",
+        "category": "Питание",
+        "subcategory": "Classic",
+        "description": "Классический коктейль - банан",
+        "image": "energy_diet/classic_banana.jpg",
+        "keywords": ["энерджи диет", "коктейль", "банан", "классик"]
+      },
+      "classic_cappuccino": {
+        "name": "Energy Diet Classic Капучино",
+        "category": "Питание",
+        "subcategory": "Classic",
+        "description": "Классический коктейль - капучино",
+        "image": "energy_diet/classic_cappuccino.jpg",
+        "keywords": ["энерджи диет", "коктейль", "капучино", "классик"]
+      },
+      "classic_caramel": {
+        "name": "Energy Diet Classic Карамель",
+        "category": "Питание",
+        "subcategory": "Classic",
+        "description": "Классический коктейль - карамель",
+        "image": "energy_diet/classic_caramel.jpg",
+        "keywords": ["энерджи диет", "коктейль", "карамель", "классик"]
+      },
+      "junior_chocolate": {
+        "name": "Energy Diet Junior Шоколад",
+        "category": "Питание",
+        "subcategory": "Для детей",
+        "description": "Детский коктейль от 3 лет - шоколад",
+        "image": "energy_diet/junior_chocolate.jpg",
+        "keywords": ["энерджи диет", "детский", "коктейль", "шоколад"]
+      },
+      "junior_vanilla": {
+        "name": "Energy Diet Junior Ваниль",
+        "category": "Питание",
+        "subcategory": "Для детей",
+        "description": "Детский коктейль от 3 лет - ваниль",
+        "image": "energy_diet/junior_vanilla.jpg",
+        "keywords": ["энерджи диет", "детский", "коктейль", "ваниль"]
+      },
+      "junior_strawberry": {
+        "name": "Energy Diet Junior Клубника",
+        "category": "Питание",
+        "subcategory": "Для детей",
+        "description": "Детский коктейль от 3 лет - клубника",
+        "image": "energy_diet/junior_strawberry.jpg",
+        "keywords": ["энерджи диет", "детский", "коктейль", "клубника"]
+      }
     }
   },
-  "other": {
-    "kids_vitamins": {
-      "name": "Детские витамины",
-      "image": "other/kids_vitamins.jpg",
-      "description": "Витаминный комплекс для детей"
-    },
-    "tea": {
-      "name": "Фиточай NL",
-      "image": "other/tea.jpg",
-      "description": "Травяной чай для здоровья и красоты"
+  "energy_slim": {
+    "name": "Energy Slim",
+    "description": "Программа для снижения веса",
+    "products": {
+      "slim_complex": {
+        "name": "Energy Slim Complex",
+        "category": "Похудение",
+        "subcategory": "БАД",
+        "description": "Комплекс для ускорения метаболизма и снижения веса",
+        "image": "energy_slim/complex.jpg",
+        "keywords": ["похудение", "метаболизм", "slim"]
+      }
+    }
+  },
+  "be_loved": {
+    "name": "Be Loved",
+    "description": "Профессиональная косметика с технологией Cell Code®57",
+    "products": {
+      "face_gel_cleanser": {
+        "name": "Гель для умывания",
+        "category": "Косметика",
+        "subcategory": "Очищение",
+        "description": "Мягкое ежедневное очищение лица",
+        "image": "be_loved/face_gel.jpg",
+        "keywords": ["очищение", "гель", "умывание"]
+      },
+      "micellar_water": {
+        "name": "Мицеллярная вода",
+        "category": "Косметика",
+        "subcategory": "Очищение",
+        "description": "Снятие макияжа без смывания",
+        "image": "be_loved/micellar_water.jpg",
+        "keywords": ["мицеллярная", "макияж", "очищение"]
+      },
+      "face_peeling": {
+        "name": "Пилинг для лица",
+        "category": "Косметика",
+        "subcategory": "Очищение",
+        "description": "Глубокое очищение и обновление кожи",
+        "image": "be_loved/peeling.jpg",
+        "keywords": ["пилинг", "очищение", "обновление"]
+      },
+      "face_scrub": {
+        "name": "Скраб для лица",
+        "category": "Косметика",
+        "subcategory": "Очищение",
+        "description": "Механическое очищение кожи",
+        "image": "be_loved/scrub.jpg",
+        "keywords": ["скраб", "очищение"]
+      },
+      "face_toner": {
+        "name": "Тоник для лица",
+        "category": "Косметика",
+        "subcategory": "Тонизирование",
+        "description": "Подготовка кожи и сужение пор",
+        "image": "be_loved/toner.jpg",
+        "keywords": ["тоник", "тонизирование", "поры"]
+      },
+      "day_cream": {
+        "name": "Дневной крем",
+        "category": "Косметика",
+        "subcategory": "Увлажнение",
+        "description": "Увлажнение и защита днём",
+        "image": "be_loved/day_cream.jpg",
+        "keywords": ["крем", "дневной", "увлажнение"]
+      },
+      "night_cream": {
+        "name": "Ночной крем",
+        "category": "Косметика",
+        "subcategory": "Питание",
+        "description": "Питание и восстановление ночью",
+        "image": "be_loved/night_cream.jpg",
+        "keywords": ["крем", "ночной", "питание"]
+      },
+      "cream_dry_skin": {
+        "name": "Крем для сухой кожи",
+        "category": "Косметика",
+        "subcategory": "Питание",
+        "description": "Интенсивное питание для сухой кожи",
+        "image": "be_loved/cream_dry.jpg",
+        "keywords": ["крем", "сухая кожа", "питание"]
+      },
+      "cream_oily_skin": {
+        "name": "Крем для жирной кожи",
+        "category": "Косметика",
+        "subcategory": "Увлажнение",
+        "description": "Матирование и увлажнение для жирной кожи",
+        "image": "be_loved/cream_oily.jpg",
+        "keywords": ["крем", "жирная кожа", "матирование"]
+      },
+      "serum_recovery": {
+        "name": "Восстанавливающая сыворотка",
+        "category": "Косметика",
+        "subcategory": "Сыворотки",
+        "description": "Регенерация повреждённой кожи",
+        "image": "be_loved/serum_recovery.jpg",
+        "keywords": ["сыворотка", "восстановление", "регенерация"]
+      },
+      "serum_instant": {
+        "name": "Сыворотка мгновенного действия",
+        "category": "Косметика",
+        "subcategory": "Сыворотки",
+        "description": "Быстрый эффект перед событием",
+        "image": "be_loved/serum_instant.jpg",
+        "keywords": ["сыворотка", "экспресс", "быстрый эффект"]
+      },
+      "serum_wrinkles": {
+        "name": "Сыворотка от морщин",
+        "category": "Косметика",
+        "subcategory": "Сыворотки",
+        "description": "Разглаживание мимических морщин",
+        "image": "be_loved/serum_wrinkles.jpg",
+        "keywords": ["сыворотка", "морщины", "anti-age"]
+      },
+      "serum_problem_skin": {
+        "name": "Сыворотка для проблемной кожи",
+        "category": "Косметика",
+        "subcategory": "Сыворотки",
+        "description": "Борьба с воспалениями и акне",
+        "image": "be_loved/serum_problem.jpg",
+        "keywords": ["сыворотка", "акне", "воспаления"]
+      },
+      "serum_perfect": {
+        "name": "Сыворотка для идеальной кожи",
+        "category": "Косметика",
+        "subcategory": "Сыворотки",
+        "description": "Выравнивание тона и текстуры",
+        "image": "be_loved/serum_perfect.jpg",
+        "keywords": ["сыворотка", "тон", "текстура"]
+      },
+      "eye_serum": {
+        "name": "Сыворотка для кожи вокруг глаз",
+        "category": "Косметика",
+        "subcategory": "Уход за глазами",
+        "description": "Убирает тёмные круги, лифтинг",
+        "image": "be_loved/eye_serum.jpg",
+        "keywords": ["глаза", "сыворотка", "лифтинг", "круги"]
+      },
+      "eye_aqua_fluid": {
+        "name": "Аква флюид для глаз",
+        "category": "Косметика",
+        "subcategory": "Уход за глазами",
+        "description": "Устраняет отёки, увлажняет",
+        "image": "be_loved/eye_fluid.jpg",
+        "keywords": ["глаза", "отёки", "увлажнение"]
+      },
+      "body_scrub": {
+        "name": "Скраб для тела",
+        "category": "Косметика",
+        "subcategory": "Тело",
+        "description": "Отшелушивание и гладкость",
+        "image": "be_loved/body_scrub.jpg",
+        "keywords": ["скраб", "тело", "гладкость"]
+      },
+      "body_lotion": {
+        "name": "Лосьон для тела",
+        "category": "Косметика",
+        "subcategory": "Тело",
+        "description": "Увлажнение после душа",
+        "image": "be_loved/body_lotion.jpg",
+        "keywords": ["лосьон", "тело", "увлажнение"]
+      },
+      "anticellulite_cream": {
+        "name": "Антицеллюлитный крем",
+        "category": "Косметика",
+        "subcategory": "Тело",
+        "description": "Борьба с целлюлитом",
+        "image": "be_loved/anticellulite.jpg",
+        "keywords": ["целлюлит", "крем", "тело"]
+      }
+    }
+  },
+  "be_loved_oriental": {
+    "name": "Be Loved Oriental",
+    "description": "Корейская косметика",
+    "products": {
+      "hydrophilic_oil": {
+        "name": "Гидрофильное масло",
+        "category": "Косметика",
+        "subcategory": "Очищение",
+        "description": "Снятие макияжа по-корейски",
+        "image": "be_loved_oriental/hydrophilic_oil.jpg",
+        "keywords": ["гидрофильное масло", "корейская косметика", "очищение"]
+      },
+      "foam_cleanser": {
+        "name": "Пенка для умывания",
+        "category": "Косметика",
+        "subcategory": "Очищение",
+        "description": "С экстрактом камелии",
+        "image": "be_loved_oriental/foam.jpg",
+        "keywords": ["пенка", "корейская косметика", "камелия"]
+      },
+      "oriental_toner": {
+        "name": "Тонер Oriental",
+        "category": "Косметика",
+        "subcategory": "Увлажнение",
+        "description": "Многослойное увлажнение",
+        "image": "be_loved_oriental/toner.jpg",
+        "keywords": ["тонер", "корейская косметика", "увлажнение"]
+      },
+      "essence": {
+        "name": "Эссенция",
+        "category": "Косметика",
+        "subcategory": "Увлажнение",
+        "description": "Интенсивное увлажнение",
+        "image": "be_loved_oriental/essence.jpg",
+        "keywords": ["эссенция", "корейская косметика", "увлажнение"]
+      },
+      "oriental_cream": {
+        "name": "Крем Oriental",
+        "category": "Косметика",
+        "subcategory": "Питание",
+        "description": "Запечатывает влагу",
+        "image": "be_loved_oriental/cream.jpg",
+        "keywords": ["крем", "корейская косметика", "питание"]
+      },
+      "sheet_masks": {
+        "name": "Тканевые маски",
+        "category": "Косметика",
+        "subcategory": "Экспресс-уход",
+        "description": "Маски с разными эффектами",
+        "image": "be_loved_oriental/masks.jpg",
+        "keywords": ["маски", "корейская косметика", "экспресс-уход"]
+      },
+      "bubble_cleanser": {
+        "name": "Бабл-пудра Creamy Bubble",
+        "category": "Косметика",
+        "subcategory": "Очищение",
+        "description": "Воздушная пудра для глубокого очищения (1 850 ₽, 11 PV)",
+        "image": "be_loved_oriental/bubble_cleanser.jpg",
+        "keywords": ["пудра", "очищение", "корейская косметика"]
+      },
+      "shower_oil": {
+        "name": "Масло для душа",
+        "category": "Косметика",
+        "subcategory": "Тело",
+        "description": "Бережное очищение и питание (890 ₽, 5.9 PV)",
+        "image": "be_loved_oriental/shower_oil.jpg",
+        "keywords": ["масло", "душ", "питание"]
+      }
+    }
+  },
+  "lovely": {
+    "name": "Lovely",
+    "description": "Доступная косметика и декоративная косметика",
+    "products": {
+      "lovely_day_cream": {
+        "name": "Дневной крем Lovely",
+        "category": "Косметика",
+        "subcategory": "Уход",
+        "description": "Увлажнение для всех типов кожи (50 мл, ~500 ₽)",
+        "image": "lovely/day_cream.jpg",
+        "keywords": ["крем", "дневной", "lovely"]
+      },
+      "lovely_night_cream": {
+        "name": "Ночной крем Lovely",
+        "category": "Косметика",
+        "subcategory": "Уход",
+        "description": "Питание для всех типов кожи (50 мл, ~550 ₽)",
+        "image": "lovely/night_cream.jpg",
+        "keywords": ["крем", "ночной", "lovely"]
+      },
+      "lovely_gel_cream": {
+        "name": "Увлажняющий гель Lovely",
+        "category": "Косметика",
+        "subcategory": "Уход",
+        "description": "Для жирной и комбинированной кожи (50 мл, ~450 ₽)",
+        "image": "lovely/gel_cream.jpg",
+        "keywords": ["гель", "увлажнение", "lovely"]
+      },
+      "lovely_serum_hyaluronic": {
+        "name": "Гиалуроновая сыворотка Lovely",
+        "category": "Косметика",
+        "subcategory": "Сыворотки",
+        "description": "Глубокое увлажнение",
+        "image": "lovely/serum_hyaluronic.jpg",
+        "keywords": ["сыворотка", "гиалурон", "lovely"]
+      },
+      "lovely_serum_vitamin_c": {
+        "name": "Сыворотка Витамин C Lovely",
+        "category": "Косметика",
+        "subcategory": "Сыворотки",
+        "description": "Сияние и тонус",
+        "image": "lovely/serum_vitamin_c.jpg",
+        "keywords": ["сыворотка", "витамин C", "lovely"]
+      },
+      "lovely_serum_retinol": {
+        "name": "Сыворотка Ретинол Lovely",
+        "category": "Косметика",
+        "subcategory": "Сыворотки",
+        "description": "Anti-age эффект",
+        "image": "lovely/serum_retinol.jpg",
+        "keywords": ["сыворотка", "ретинол", "anti-age"]
+      },
+      "lovely_shower_gel_floral": {
+        "name": "Гель для душа Цветочный",
+        "category": "Косметика",
+        "subcategory": "Тело",
+        "description": "Нежный аромат цветов (400 мл, ~300 ₽)",
+        "image": "lovely/shower_gel_floral.jpg",
+        "keywords": ["гель для душа", "цветочный", "lovely"]
+      },
+      "lovely_shower_gel_citrus": {
+        "name": "Гель для душа Цитрусовый",
+        "category": "Косметика",
+        "subcategory": "Тело",
+        "description": "Бодрящий аромат цитрусов (400 мл, ~300 ₽)",
+        "image": "lovely/shower_gel_citrus.jpg",
+        "keywords": ["гель для душа", "цитрус", "lovely"]
+      },
+      "lovely_shower_gel_fresh": {
+        "name": "Гель для душа Свежесть",
+        "category": "Косметика",
+        "subcategory": "Тело",
+        "description": "Свежий аромат (400 мл, ~300 ₽)",
+        "image": "lovely/shower_gel_fresh.jpg",
+        "keywords": ["гель для душа", "свежесть", "lovely"]
+      },
+      "lovely_hand_cream": {
+        "name": "Крем для рук Lovely",
+        "category": "Косметика",
+        "subcategory": "Руки",
+        "description": "Питание и защита",
+        "image": "lovely/hand_cream.jpg",
+        "keywords": ["крем для рук", "питание", "lovely"]
+      },
+      "lovely_body_lotion": {
+        "name": "Лосьон для тела Lovely",
+        "category": "Косметика",
+        "subcategory": "Тело",
+        "description": "Увлажнение",
+        "image": "lovely/body_lotion.jpg",
+        "keywords": ["лосьон", "тело", "увлажнение"]
+      },
+      "lovely_body_scrub": {
+        "name": "Скраб для тела Lovely",
+        "category": "Косметика",
+        "subcategory": "Тело",
+        "description": "Отшелушивание",
+        "image": "lovely/body_scrub.jpg",
+        "keywords": ["скраб", "тело", "отшелушивание"]
+      },
+      "lovely_shampoo_normal": {
+        "name": "Шампунь для нормальных волос",
+        "category": "Косметика",
+        "subcategory": "Волосы",
+        "description": "Очищение волос (400 мл)",
+        "image": "lovely/shampoo_normal.jpg",
+        "keywords": ["шампунь", "волосы", "lovely"]
+      },
+      "lovely_shampoo_dry": {
+        "name": "Шампунь для сухих волос",
+        "category": "Косметика",
+        "subcategory": "Волосы",
+        "description": "Для сухих и повреждённых волос (400 мл)",
+        "image": "lovely/shampoo_dry.jpg",
+        "keywords": ["шампунь", "сухие волосы", "lovely"]
+      },
+      "lovely_shampoo_oily": {
+        "name": "Шампунь для жирных волос",
+        "category": "Косметика",
+        "subcategory": "Волосы",
+        "description": "Для жирных у корней волос (400 мл)",
+        "image": "lovely/shampoo_oily.jpg",
+        "keywords": ["шампунь", "жирные волосы", "lovely"]
+      },
+      "lovely_shampoo_anti_loss": {
+        "name": "Шампунь против выпадения",
+        "category": "Косметика",
+        "subcategory": "Волосы",
+        "description": "Укрепление волос (400 мл)",
+        "image": "lovely/shampoo_anti_loss.jpg",
+        "keywords": ["шампунь", "выпадение", "укрепление"]
+      },
+      "lovely_conditioner": {
+        "name": "Бальзам Lovely",
+        "category": "Косметика",
+        "subcategory": "Волосы",
+        "description": "Кондиционирование волос (400 мл)",
+        "image": "lovely/conditioner.jpg",
+        "keywords": ["бальзам", "волосы", "lovely"]
+      },
+      "lovely_hair_mask": {
+        "name": "Маска для волос Lovely",
+        "category": "Косметика",
+        "subcategory": "Волосы",
+        "description": "Восстановление волос (200 мл)",
+        "image": "lovely/hair_mask.jpg",
+        "keywords": ["маска", "волосы", "lovely"]
+      },
+      "lovely_hair_spray": {
+        "name": "Спрей для волос Lovely",
+        "category": "Косметика",
+        "subcategory": "Волосы",
+        "description": "Защита и блеск (150 мл)",
+        "image": "lovely/hair_spray.jpg",
+        "keywords": ["спрей", "волосы", "блеск"]
+      },
+      "lovely_mascara": {
+        "name": "Тушь для ресниц Lovely",
+        "category": "Макияж",
+        "subcategory": "Глаза",
+        "description": "Объём и длина",
+        "image": "lovely/mascara.jpg",
+        "keywords": ["тушь", "ресницы", "lovely"]
+      },
+      "lovely_foundation": {
+        "name": "Тональный крем Lovely",
+        "category": "Макияж",
+        "subcategory": "Лицо",
+        "description": "Лёгкое покрытие (6 оттенков)",
+        "image": "lovely/foundation.jpg",
+        "keywords": ["тональный", "макияж", "lovely"]
+      },
+      "lovely_bb_cream": {
+        "name": "BB-крем Lovely",
+        "category": "Макияж",
+        "subcategory": "Лицо",
+        "description": "Уход и тон в одном",
+        "image": "lovely/bb_cream.jpg",
+        "keywords": ["BB крем", "макияж", "lovely"]
+      },
+      "lovely_concealer": {
+        "name": "Консилер Lovely",
+        "category": "Макияж",
+        "subcategory": "Лицо",
+        "description": "Маскировка несовершенств",
+        "image": "lovely/concealer.jpg",
+        "keywords": ["консилер", "макияж"]
+      },
+      "lovely_powder": {
+        "name": "Пудра компактная Lovely",
+        "category": "Макияж",
+        "subcategory": "Лицо",
+        "description": "Матирование",
+        "image": "lovely/powder.jpg",
+        "keywords": ["пудра", "макияж"]
+      },
+      "lovely_blush": {
+        "name": "Румяна Lovely",
+        "category": "Макияж",
+        "subcategory": "Лицо",
+        "description": "Свежий румянец",
+        "image": "lovely/blush.jpg",
+        "keywords": ["румяна", "макияж"]
+      },
+      "lovely_highlighter": {
+        "name": "Хайлайтер Lovely",
+        "category": "Макияж",
+        "subcategory": "Лицо",
+        "description": "Сияние кожи",
+        "image": "lovely/highlighter.jpg",
+        "keywords": ["хайлайтер", "сияние"]
+      },
+      "lovely_eyeshadow_palette": {
+        "name": "Палетка теней Lovely",
+        "category": "Макияж",
+        "subcategory": "Глаза",
+        "description": "Универсальные оттенки",
+        "image": "lovely/eyeshadow_palette.jpg",
+        "keywords": ["тени", "палетка", "глаза"]
+      },
+      "lovely_eyeliner": {
+        "name": "Подводка Lovely",
+        "category": "Макияж",
+        "subcategory": "Глаза",
+        "description": "Идеальные стрелки",
+        "image": "lovely/eyeliner.jpg",
+        "keywords": ["подводка", "стрелки"]
+      },
+      "lovely_eye_pencil": {
+        "name": "Карандаш для глаз Lovely",
+        "category": "Макияж",
+        "subcategory": "Глаза",
+        "description": "Яркий взгляд",
+        "image": "lovely/eye_pencil.jpg",
+        "keywords": ["карандаш", "глаза"]
+      },
+      "lovely_lipstick": {
+        "name": "Помада Lovely",
+        "category": "Макияж",
+        "subcategory": "Губы",
+        "description": "Яркие оттенки (12+ цветов)",
+        "image": "lovely/lipstick.jpg",
+        "keywords": ["помада", "губы", "lovely"]
+      },
+      "lovely_lip_gloss": {
+        "name": "Блеск для губ Lovely",
+        "category": "Макияж",
+        "subcategory": "Губы",
+        "description": "Глянцевое покрытие",
+        "image": "lovely/lip_gloss.jpg",
+        "keywords": ["блеск", "губы"]
+      },
+      "lovely_lip_pencil": {
+        "name": "Карандаш для губ Lovely",
+        "category": "Макияж",
+        "subcategory": "Губы",
+        "description": "Чёткий контур",
+        "image": "lovely/lip_pencil.jpg",
+        "keywords": ["карандаш", "губы"]
+      },
+      "lovely_lip_balm": {
+        "name": "Бальзам для губ Lovely",
+        "category": "Макияж",
+        "subcategory": "Губы",
+        "description": "Увлажнение и защита",
+        "image": "lovely/lip_balm.jpg",
+        "keywords": ["бальзам", "губы"]
+      },
+      "lovely_brow_pencil": {
+        "name": "Карандаш для бровей Lovely",
+        "category": "Макияж",
+        "subcategory": "Брови",
+        "description": "Естественная форма",
+        "image": "lovely/brow_pencil.jpg",
+        "keywords": ["карандаш", "брови"]
+      },
+      "lovely_brow_gel": {
+        "name": "Гель для бровей Lovely",
+        "category": "Макияж",
+        "subcategory": "Брови",
+        "description": "Укладка и фиксация",
+        "image": "lovely/brow_gel.jpg",
+        "keywords": ["гель", "брови"]
+      },
+      "lovely_silky_hair_set": {
+        "name": "Набор Silky Hair Travel Set",
+        "category": "Косметика",
+        "subcategory": "Наборы",
+        "description": "Дорожный набор для волос (990 ₽, 4.5 PV)",
+        "image": "lovely/silky_hair_set.jpg",
+        "keywords": ["набор", "волосы", "дорожный"]
+      }
+    }
+  },
+  "kids": {
+    "name": "Детская линейка",
+    "description": "Безопасная продукция для детей",
+    "products": {
+      "kids_multi": {
+        "name": "Greenflash Kids Multi",
+        "category": "Детские БАД",
+        "subcategory": "Витамины",
+        "description": "Мультивитамины для детей от 4 лет (~700 ₽)",
+        "image": "kids/multi.jpg",
+        "keywords": ["витамины", "дети", "мультивитамины"]
+      },
+      "kids_omega": {
+        "name": "Greenflash Kids Omega",
+        "category": "Детские БАД",
+        "subcategory": "Витамины",
+        "description": "Омега-3 для детей от 3 лет (~800 ₽)",
+        "image": "kids/omega.jpg",
+        "keywords": ["омега-3", "дети", "мозг"]
+      },
+      "baby_soap": {
+        "name": "Детское мыло Baby Care",
+        "category": "Детская косметика",
+        "subcategory": "0-3 года",
+        "description": "Мягкое очищение для малышей (300 мл, ~250 ₽)",
+        "image": "kids/baby_soap.jpg",
+        "keywords": ["мыло", "детское", "baby"]
+      },
+      "baby_shampoo": {
+        "name": "Шампунь Baby Care без слёз",
+        "category": "Детская косметика",
+        "subcategory": "0-3 года",
+        "description": "Для волос и тела (300 мл, ~300 ₽)",
+        "image": "kids/baby_shampoo.jpg",
+        "keywords": ["шампунь", "детский", "без слёз"]
+      },
+      "baby_diaper_cream": {
+        "name": "Крем под подгузник Baby Care",
+        "category": "Детская косметика",
+        "subcategory": "0-3 года",
+        "description": "Защита от опрелостей (100 мл, ~350 ₽)",
+        "image": "kids/diaper_cream.jpg",
+        "keywords": ["крем", "подгузник", "опрелости"]
+      },
+      "baby_oil": {
+        "name": "Детское масло Baby Care",
+        "category": "Детская косметика",
+        "subcategory": "0-3 года",
+        "description": "Массаж и увлажнение (200 мл)",
+        "image": "kids/baby_oil.jpg",
+        "keywords": ["масло", "детское", "массаж"]
+      },
+      "baby_powder": {
+        "name": "Присыпка Baby Care",
+        "category": "Детская косметика",
+        "subcategory": "0-3 года",
+        "description": "Защита кожи (100 г)",
+        "image": "kids/baby_powder.jpg",
+        "keywords": ["присыпка", "детская"]
+      },
+      "kids_shampoo_2in1": {
+        "name": "Шампунь 2в1 Kids Care",
+        "category": "Детская косметика",
+        "subcategory": "3-12 лет",
+        "description": "Для волос и тела",
+        "image": "kids/kids_shampoo.jpg",
+        "keywords": ["шампунь", "детский", "2в1"]
+      },
+      "kids_bath_foam": {
+        "name": "Пена для ванны Kids Care",
+        "category": "Детская косметика",
+        "subcategory": "3-12 лет",
+        "description": "Весёлое купание",
+        "image": "kids/bath_foam.jpg",
+        "keywords": ["пена", "ванна", "детская"]
+      },
+      "kids_toothpaste": {
+        "name": "Зубная паста Kids Care",
+        "category": "Детская косметика",
+        "subcategory": "3-12 лет",
+        "description": "Мягкая формула",
+        "image": "kids/toothpaste.jpg",
+        "keywords": ["зубная паста", "детская"]
+      },
+      "kids_lip_balm": {
+        "name": "Бальзам для губ Kids Care",
+        "category": "Детская косметика",
+        "subcategory": "3-12 лет",
+        "description": "Защита и уход",
+        "image": "kids/lip_balm.jpg",
+        "keywords": ["бальзам для губ", "детский"]
+      }
+    }
+  },
+  "home_care": {
+    "name": "Бытовая химия",
+    "description": "Экологичная и концентрированная бытовая химия",
+    "products": {
+      "laundry_gel": {
+        "name": "Гель для стирки",
+        "category": "Бытовая химия",
+        "subcategory": "Стирка",
+        "description": "Концентрированный гель для белья",
+        "image": "home_care/laundry_gel.jpg",
+        "keywords": ["гель", "стирка", "бельё"]
+      },
+      "dish_detergent": {
+        "name": "Средство для мытья посуды",
+        "category": "Бытовая химия",
+        "subcategory": "Посуда",
+        "description": "Концентрированное средство",
+        "image": "home_care/dish_soap.jpg",
+        "keywords": ["посуда", "мытьё", "средство"]
+      },
+      "universal_cleaner": {
+        "name": "Универсальное моющее средство",
+        "category": "Бытовая химия",
+        "subcategory": "Уборка",
+        "description": "Для всех поверхностей",
+        "image": "home_care/universal_cleaner.jpg",
+        "keywords": ["уборка", "моющее", "универсальное"]
+      }
     }
   }
 }

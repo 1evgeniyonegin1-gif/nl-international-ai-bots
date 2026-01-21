@@ -1,6 +1,7 @@
 """
 Обработчик текстовых сообщений для AI-Куратора
 """
+import re
 from datetime import datetime
 from aiogram import Router, F
 from aiogram.types import Message
@@ -13,10 +14,15 @@ from shared.config.settings import settings
 from shared.rag import get_rag_engine
 from curator_bot.database.models import User, ConversationMessage
 from curator_bot.ai.chat_engine import CuratorChatEngine
+from curator_bot.funnels.messages import CONTACT_THANKS
 from loguru import logger
 
 
 router = Router(name="messages")
+
+# Регулярные выражения для контактов
+PHONE_PATTERN = re.compile(r'^\+?[78]?\d{10}$|^\+7\s?\(?\d{3}\)?\s?\d{3}[-\s]?\d{2}[-\s]?\d{2}$')
+EMAIL_PATTERN = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
 
 # Инициализируем AI клиент глобально
 # Используем GigaChat (Сбер) - бесплатный
@@ -52,6 +58,40 @@ async def handle_message(message: Message):
                     "Привет! Сначала нажми /start чтобы начать работу со мной 😊"
                 )
                 return
+
+            # Проверяем, ожидает ли пользователь ввод контакта
+            if user.lead_status == "contact_requested":
+                text = message.text.strip()
+
+                # Проверяем телефон
+                phone_clean = re.sub(r'[\s\-\(\)]', '', text)
+                if PHONE_PATTERN.match(phone_clean) or (phone_clean.isdigit() and len(phone_clean) >= 10):
+                    # Нормализуем телефон
+                    if not phone_clean.startswith('+'):
+                        if phone_clean.startswith('8'):
+                            phone_clean = '+7' + phone_clean[1:]
+                        elif phone_clean.startswith('7'):
+                            phone_clean = '+' + phone_clean
+                        else:
+                            phone_clean = '+7' + phone_clean
+
+                    user.phone = phone_clean
+                    user.lead_status = "hot"
+                    await session.commit()
+
+                    logger.info(f"User {user.telegram_id} provided phone: {phone_clean}")
+                    await message.answer(CONTACT_THANKS)
+                    return
+
+                # Проверяем email
+                if EMAIL_PATTERN.match(text):
+                    user.email = text.lower()
+                    user.lead_status = "hot"
+                    await session.commit()
+
+                    logger.info(f"User {user.telegram_id} provided email: {text}")
+                    await message.answer(CONTACT_THANKS)
+                    return
 
             # Обновляем последнюю активность
             user.last_activity = datetime.now()

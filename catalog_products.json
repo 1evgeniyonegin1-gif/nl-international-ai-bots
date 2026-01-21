@@ -1,0 +1,560 @@
+[
+  {
+    "name": "ED Smart 5.0",
+    "category": "ED Smart",
+    "page": 2,
+    "description": "",
+    "composition": "Коктейли / Коктейльдер                                         6",
+    "volume": "",
+    "context": "ED Smart 5.0 • Коктейли / Коктейльдер                                         6\n\nED Smart 4.0 • Коктейли / Коктейльдер                                         9\n\nEnergy Diet HD • Коктейли / Коктейльде"
+  },
+  {
+    "name": "ED Smart 4.0",
+    "category": "ED Smart",
+    "page": 2,
+    "description": "",
+    "composition": "Коктейли / Коктейльдер                                         9",
+    "volume": "",
+    "context": "ED Smart 4.0 • Коктейли / Коктейльдер                                         9\n\nEnergy Diet HD • Коктейли / Коктейльдер                                       13\n\nEnerwood Classic • Классический чай /"
+  },
+  {
+    "name": "Energy Diet HD",
+    "category": "Energy Diet HD",
+    "page": 2,
+    "description": "Energy Diet HD",
+    "composition": "Коктейли / Коктейльдер                                       13",
+    "volume": "40 г",
+    "context": "Energy Diet HD • Коктейли / Коктейльдер                                       13\n\nEnerwood Classic • Классический чай / Классикалық шай                         15\n\n3D SLIM Program • Продукты для похуд"
+  },
+  {
+    "name": "Enerwood Classic",
+    "category": "Enerwood Classic",
+    "page": 2,
+    "description": "Enerwood Classic",
+    "composition": "Классический чай / Классикалық шай                         15",
+    "volume": "40 пакет",
+    "context": "Enerwood Classic • Классический чай / Классикалық шай                         15\n\n3D SLIM Program • Продукты для похудения / Арықтауға арналған өнімдер         17\n\nDrainEffect • Продукты для похудения"
+  },
+  {
+    "name": "White Tea",
+    "category": "Tea",
+    "page": 2,
+    "description": "White Tea SlimDose",
+    "composition": "Продукты для похудения / Арықтауға арналған өнімдер      20",
+    "volume": "28 монодоз",
+    "context": "White Tea SlimDose • Продукты для похудения / Арықтауға арналған өнімдер      20\n\n3D SLIM cosmetics • Продукты для похудения / Арықтауға арналған өнімдер       21\n\nБыть в ресурсе помогут адаптогены / "
+  },
+  {
+    "name": "Herbal Tea",
+    "category": "Herbal Tea",
+    "page": 2,
+    "description": "Herbal Tea              Авторские рецептуры из трав",
+    "composition": "Фиточай / Фитошай                                                54",
+    "volume": "25 пакет",
+    "context": "Herbal Tea • Фиточай / Фитошай                                                54\n\n2\n\f"
+  },
+  {
+    "name": "3D SLIM Program",
+    "category": "3D SLIM Program",
+    "page": 2,
+    "description": "D SLIM Program",
+    "composition": "Продукты для похудения / Арықтауға арналған өнімдер         17",
+    "volume": "40 пакет",
+    "context": "3D SLIM Program • Продукты для похудения / Арықтауға арналған өнімдер         17\n\nDrainEffect • Продукты для похудения / Арықтауға арналған өнімдер             19\n\nWhite Tea SlimDose • Продукты для по"
+  },
+  {
+    "name": "White Tea SlimDose",
+    "category": "White Tea SlimDose",
+    "page": 2,
+    "description": "White Tea SlimDose",
+    "composition": "Продукты для похудения / Арықтауға арналған өнімдер      20",
+    "volume": "",
+    "context": "White Tea SlimDose • Продукты для похудения / Арықтауға арналған өнімдер      20\n\n3D SLIM cosmetics • Продукты для похудения / Арықтауға арналған өнімдер       21\n\nБыть в ресурсе помогут адаптогены / "
+  },
+  {
+    "name": "3D SLIM cosmetics",
+    "category": "3D SLIM cosmetics",
+    "page": 2,
+    "description": "D SLIM cosmetics",
+    "composition": "Продукты для похудения / Арықтауға арналған өнімдер       21",
+    "volume": "",
+    "context": "3D SLIM cosmetics • Продукты для похудения / Арықтауға арналған өнімдер       21\n\nБыть в ресурсе помогут адаптогены / Ресурста болуға адаптогендер көмектеседі  25\n\nBioDrone • Адаптогены / Адаптогендер"
+  },
+  {
+    "name": "BioDrone",
+    "category": "BioDrone",
+    "page": 2,
+    "description": "BioDrone                   Гуминовые вещества помогут сохранить здоровье",
+    "composition": "Адаптогены / Адаптогендер                                          27",
+    "volume": "28 монодоз",
+    "context": "BioDrone • Адаптогены / Адаптогендер                                          27\n\nBioSetting • Адаптогены / Адаптогендер                                        29\n\nBioTuning • Адаптогены / Адаптогенде"
+  },
+  {
+    "name": "BioSetting",
+    "category": "BioSetting",
+    "page": 2,
+    "description": "BioSetting                 BioSetting",
+    "composition": "Адаптогены / Адаптогендер                                        29",
+    "volume": "200 мл",
+    "context": "BioSetting • Адаптогены / Адаптогендер                                        29\n\nBioTuning • Адаптогены / Адаптогендер                                         31\n\nPH Balance Stones • Адаптогены / Ада"
+  },
+  {
+    "name": "BioTuning",
+    "category": "BioTuning",
+    "page": 2,
+    "description": "BioTuning                              гель",
+    "composition": "Адаптогены / Адаптогендер                                         31",
+    "volume": "200 мл",
+    "context": "BioTuning • Адаптогены / Адаптогендер                                         31\n\nPH Balance Stones • Адаптогены / Адаптогендер                                 32\n\nМуж да жена ­— один Pro-indole / Ер "
+  },
+  {
+    "name": "PH Balance Stones",
+    "category": "PH Balance Stones",
+    "page": 2,
+    "description": "PH Balance Stones",
+    "composition": "Адаптогены / Адаптогендер                                 32",
+    "volume": "40 пакет",
+    "context": "PH Balance Stones • Адаптогены / Адаптогендер                                 32\n\nМуж да жена ­— один Pro-indole / Ер мен әйел — бір Pro-indole                 34\n\nPro-indole • БАД / ББҚ              "
+  },
+  {
+    "name": "Pro-indole",
+    "category": "Pro-indole",
+    "page": 2,
+    "description": "indole\nЕгер бас миы",
+    "composition": "БАД / ББҚ                                                        36",
+    "volume": "2 капсулы",
+    "context": "Pro-indole / Ер мен әйел — бір Pro-indole                 34\n\nPro-indole • БАД / ББҚ                                                        36\n\nBeauty blend • Напиток красоты / Сұлулық сусыны         "
+  },
+  {
+    "name": "Beauty blend",
+    "category": "Beauty blend",
+    "page": 2,
+    "description": "Beauty blend",
+    "composition": "Напиток красоты / Сұлулық сусыны                               37",
+    "volume": "30 капсул",
+    "context": "Beauty blend • Напиток красоты / Сұлулық сусыны                               37\n\nBe Best • БАД / ББҚ                                                           38\n\nMetabiotic • БАД / ББҚ              "
+  },
+  {
+    "name": "Be Best",
+    "category": "Be Best",
+    "page": 2,
+    "description": "Выносливость",
+    "composition": "БАД / ББҚ                                                           38",
+    "volume": "1 капсула",
+    "context": "Be Best • БАД / ББҚ                                                           38\n\nMetabiotic • БАД / ББҚ                                                        40\n\nLactoferra • БАД / ББҚ              "
+  },
+  {
+    "name": "Metabiotic",
+    "category": "Metabiotic",
+    "page": 2,
+    "description": "Metabiotic\n                Lactoferra",
+    "composition": "БАД / ББҚ                                                        40",
+    "volume": "28 монодоз",
+    "context": "Metabiotic • БАД / ББҚ                                                        40\n\nLactoferra • БАД / ББҚ                                                        41\n\nDetox Step 1–3 PLUS • БАД / ББҚ     "
+  },
+  {
+    "name": "Lactoferra",
+    "category": "Lactoferra",
+    "page": 2,
+    "description": "Lactoferra           Включай продуктивность на максимум",
+    "composition": "БАД / ББҚ                                                        41",
+    "volume": "90 капсул",
+    "context": "Lactoferra • БАД / ББҚ                                                        41\n\nDetox Step 1–3 PLUS • БАД / ББҚ                                               42\n\nSoft Sorb • БАД / ББҚ               "
+  },
+  {
+    "name": "Soft Sorb",
+    "category": "Soft Sorb",
+    "page": 2,
+    "description": "Soft Sorb               Быстро встать на ноги после отравления",
+    "composition": "БАД / ББҚ                                                         43",
+    "volume": "20 саше",
+    "context": "Soft Sorb • БАД / ББҚ                                                         43\n\nGelm Cleanse • БАД / ББҚ                                                      45\n\nCollagentrinity • Коллаген / Коллаге"
+  },
+  {
+    "name": "Gelm Cleanse",
+    "category": "Gelm Cleanse",
+    "page": 2,
+    "description": "Gelm Cleanse",
+    "composition": "БАД / ББҚ                                                      45",
+    "volume": "60 капсул",
+    "context": "Gelm Cleanse • БАД / ББҚ                                                      45\n\nCollagentrinity • Коллаген / Коллаген                                         46\n\nCollagen Peptides & Marine Collagen "
+  },
+  {
+    "name": "Collagentrinity",
+    "category": "Collagentrinity",
+    "page": 2,
+    "description": "Collagentrinity",
+    "composition": "Коллаген / Коллаген                                         46",
+    "volume": "30 капсул",
+    "context": "Collagentrinity • Коллаген / Коллаген                                         46\n\nCollagen Peptides & Marine Collagen • Коллаген / Коллаген                     48\n\nЛипосомальные БАД Greenflash • БАД /"
+  },
+  {
+    "name": "Collagen Peptides",
+    "category": "Collagen Peptides",
+    "page": 2,
+    "description": "Marine Collagen",
+    "composition": "Коллаген / Коллаген                     48",
+    "volume": "2 капсулы",
+    "context": "Collagen Peptides & Marine Collagen • Коллаген / Коллаген                     48\n\nЛипосомальные БАД Greenflash • БАД / ББҚ                                      49\n\nKey to health • БАД / ББҚ           "
+  },
+  {
+    "name": "Marine Collagen",
+    "category": "Marine Collagen",
+    "page": 2,
+    "description": "Marine Collagen",
+    "composition": "Коллаген / Коллаген                     48",
+    "volume": "30 капсул",
+    "context": "Marine Collagen • Коллаген / Коллаген                     48\n\nЛипосомальные БАД Greenflash • БАД / ББҚ                                      49\n\nKey to health • БАД / ББҚ                               "
+  },
+  {
+    "name": "Greenflash",
+    "category": "Greenflash",
+    "page": 2,
+    "description": "Greenflash\nDonna Bella",
+    "composition": "БАД / ББҚ                                      49",
+    "volume": "1 капсул",
+    "context": "Greenflash • БАД / ББҚ                                      49\n\nKey to health • БАД / ББҚ                                                     51\n\nHerbal Tea • Фиточай / Фитошай                        "
+  },
+  {
+    "name": "Key to health",
+    "category": "Key to health",
+    "page": 2,
+    "description": "Key to health",
+    "composition": "БАД / ББҚ                                                     51",
+    "volume": "",
+    "context": "Key to health • БАД / ББҚ                                                     51\n\nHerbal Tea • Фиточай / Фитошай                                                54\n\n2\n\f"
+  },
+  {
+    "name": "PROHELPER",
+    "category": "PROHELPER",
+    "page": 3,
+    "description": "PROHELPER                       Ребенок в восторге от вкуса жевательных таблеток,",
+    "composition": "БАД для детей / Балалар үшін ББҚ                                         59",
+    "volume": "195 мл",
+    "context": "PROHELPER • БАД для детей / Балалар үшін ББҚ                                         59\n\nOmega-3 DHA & Mg+B6 for kids • БАД для детей / Балалар үшін ББҚ                      60\n\nBaby Cosmetics • Косме"
+  },
+  {
+    "name": "Omega-3 DHA & Mg+B6 for kids",
+    "category": "Omega-3 DHA & Mg+B6 for kids",
+    "page": 3,
+    "description": "",
+    "composition": "БАД для детей / Балалар үшін ББҚ                      60",
+    "volume": "",
+    "context": "Omega-3 DHA & Mg+B6 for kids • БАД для детей / Балалар үшін ББҚ                      60\n\nBaby Cosmetics • Косметика для малышей / Сәбилерге арналған косметика                62\n\nKids Cosmetics • Косме"
+  },
+  {
+    "name": "Baby Cosmetics",
+    "category": "Baby Cosmetics",
+    "page": 3,
+    "description": "Baby Cosmetics",
+    "composition": "Косметика для малышей / Сәбилерге арналған косметика                62",
+    "volume": "",
+    "context": "Baby Cosmetics • Косметика для малышей / Сәбилерге арналған косметика                62\n\nKids Cosmetics • Косметика для детей / Балаларға арналған косметика                  63\n\nДля животных / Жануарл"
+  },
+  {
+    "name": "Kids Cosmetics",
+    "category": "Kids Cosmetics",
+    "page": 3,
+    "description": "Kids Cosmetics",
+    "composition": "Косметика для детей / Балаларға арналған косметика                  63",
+    "volume": "",
+    "context": "Kids Cosmetics • Косметика для детей / Балаларға арналған косметика                  63\n\nДля животных / Жануарларға арналған\n\nNL Pets • Витаминные комплексы для животных / Жануарларға арналған дәрумен"
+  },
+  {
+    "name": "NL Pets",
+    "category": "NL Pets",
+    "page": 3,
+    "description": "NL Pets витамины\nи косметика\nдля животных",
+    "composition": "Витаминные комплексы для животных / Жануарларға арналған дәрумендік кешен  65",
+    "volume": "",
+    "context": "NL Pets • Витаминные комплексы для животных / Жануарларға арналған дәрумендік кешен  65\n\nNL Pets • Косметика по уходу для животных / Жануарларға арналған                     67\n\nкүтім косметикасы\n\nУхо"
+  },
+  {
+    "name": "Biome",
+    "category": "Biome",
+    "page": 3,
+    "description": "Biome\nУхоженная кожа",
+    "composition": "Косметика для лица / Бетке арналған косметика                                72",
+    "volume": "30 мл",
+    "context": "Biome • Косметика для лица / Бетке арналған косметика                                72\n\nBe Loved Oriental • Косметика для лица / Бетке арналған косметика                    74\n\nBe Loved Body • Уход з"
+  },
+  {
+    "name": "Be Loved Oriental",
+    "category": "Be Loved Oriental",
+    "page": 3,
+    "description": "Be Loved Oriental",
+    "composition": "Косметика для лица / Бетке арналған косметика                    74",
+    "volume": "145 мл",
+    "context": "Be Loved Oriental • Косметика для лица / Бетке арналған косметика                    74\n\nBe Loved Body • Уход за телом / Дене күтімі                                          76\n\nOccuba • Косметика для"
+  },
+  {
+    "name": "Be Loved Body",
+    "category": "Be Loved Body",
+    "page": 3,
+    "description": "Be Loved Body",
+    "composition": "Уход за телом / Дене күтімі                                          76",
+    "volume": "15 г",
+    "context": "Be Loved Body • Уход за телом / Дене күтімі                                          76\n\nOccuba • Косметика для волос / Шашқа арналған косметика                              78\n\nThe LAB • Мужская косм"
+  },
+  {
+    "name": "Be Loved Sun",
+    "category": "Be Loved Sun",
+    "page": 3,
+    "description": "Be Loved Sun",
+    "composition": "Защита от солнца / Күннен қорғау                                      87",
+    "volume": "50 мл",
+    "context": "Be Loved Sun • Защита от солнца / Күннен қорғау                                      87\n\nДом / Үй\n\nFineffect Textile • Текстиль для уборки / Тазалауға арналған тоқыма                  89\n\nПользатека  "
+  },
+  {
+    "name": "Occuba",
+    "category": "Occuba",
+    "page": 3,
+    "description": "Protection поможет справиться",
+    "composition": "Косметика для волос / Шашқа арналған косметика                              78",
+    "volume": "250 мл",
+    "context": "Occuba • Косметика для волос / Шашқа арналған косметика                              78\n\nThe LAB • Мужская косметика / Ерлерге арналған косметика                             82\n\nSklaer • Зубные пасты "
+  },
+  {
+    "name": "The LAB",
+    "category": "The LAB",
+    "page": 3,
+    "description": "The LAB            Удобная функциональная упаковка со стильным дизайном",
+    "composition": "Мужская косметика / Ерлерге арналған косметика                             82",
+    "volume": "105 мл",
+    "context": "The LAB • Мужская косметика / Ерлерге арналған косметика                             82\n\nSklaer • Зубные пасты / Тіс пасталары                                                84\n\nSmartum Max • Восстана"
+  },
+  {
+    "name": "Sklaer",
+    "category": "Sklaer",
+    "page": 3,
+    "description": "Sklaer подарят тебе\n                  уверенность в себе. Они бережно очистят и осветлят зубы,\n   White          укрепят эмаль и снизят чувствительность.",
+    "composition": "Зубные пасты / Тіс пасталары                                                84",
+    "volume": "250 мл",
+    "context": "Sklaer • Зубные пасты / Тіс пасталары                                                84\n\nSmartum Max • Восстанавливающий гель / Қалпына келтіруші гель                        86\n\nBe Loved Sun • Защита "
+  },
+  {
+    "name": "Smartum Max",
+    "category": "Smartum Max",
+    "page": 3,
+    "description": "Smartum Max",
+    "composition": "Восстанавливающий гель / Қалпына келтіруші гель                        86",
+    "volume": "30 мл",
+    "context": "Smartum Max • Восстанавливающий гель / Қалпына келтіруші гель                        86\n\nBe Loved Sun • Защита от солнца / Күннен қорғау                                      87\n\nДом / Үй\n\nFineffect Te"
+  },
+  {
+    "name": "Fineffect Textile",
+    "category": "Fineffect Textile",
+    "page": 3,
+    "description": "Fineffect Textile",
+    "composition": "Текстиль для уборки / Тазалауға арналған тоқыма                  89",
+    "volume": "",
+    "context": "Fineffect Textile • Текстиль для уборки / Тазалауға арналған тоқыма                  89\n\nПользатека                                                                           90\n\nВсе продукты NL / Барл"
+  },
+  {
+    "name": "ED Smart",
+    "category": "ED Smart",
+    "page": 6,
+    "description": "ED Smart в свой рацион.\nВсе остальное мы уже сделали за тебя",
+    "composition": "Всего ~ 120 ккал в порции*                           RU",
+    "volume": "15 саше",
+    "context": "ED Smart в свой рацион.\nВсе остальное мы уже сделали за тебя\n\nӨз рационыңа ED Smart коктейлін қос.\nБарлық қалғанын біз сен үшін істеп қойдық\n\n       Быстрый и по-\n       настоящему вкусный\n       прие"
+  },
+  {
+    "name": "ED SMART",
+    "category": "ED Smart",
+    "page": 8,
+    "description": "",
+    "composition": "Peptismart® ақуыз-пептидті матрица: мицелярлық казеин,       Кофе",
+    "volume": "",
+    "context": "ED SMART жаңа               Ванильді\n            буынында. КFVR есептеуді, қиналып тамақ дайындауды және        пломбир\n            күрделі диеталарды ұмыт — біз с үеншін бәрін жасап қойдық.     Шокол"
+  },
+  {
+    "name": "Black Tea",
+    "category": "Tea",
+    "page": 15,
+    "description": "",
+    "composition": "Black Tea: черный байховый индийский чай, мята, мелисса,      Пакетик залить",
+    "volume": "200 мл",
+    "context": "Black Tea       • Black Tea: черный байховый индийский чай, мята, мелисса,      Пакетик залить\n                     смородина, чабрец. Богатый вкус черного чая с нотой сморо-    200 мл кипятка,\n   Gre"
+  },
+  {
+    "name": "Green Tea",
+    "category": "Tea",
+    "page": 15,
+    "description": "зеленый байховый китайский чай, мята, цедра\n                     лимона, ромашка, шиповник, чага, ягоды годжи. Легкий\n                     и освежающий для раскрытия внутреннего потенциала.",
+    "composition": "Deep Black: черный байховый цейлонский чай, чага, ягоды",
+    "volume": "40 г",
+    "context": "Green Tea         динового листа, подобно музыке, уносит в мир красочных грез.  заваривать\n                                                                                   3–5 минут.\n15             "
+  },
+  {
+    "name": "Red Tea",
+    "category": "Tea",
+    "page": 15,
+    "description": "кислый вкус для погружения\n                     в себя и снятия нервного напряжения.",
+    "composition": "Mix Tea: чайное ассорти. Выбирайте под настроение и",
+    "volume": "28 монодоз",
+    "context": "Red Tea: каркаде, яблоко, малина, чага, шиповник, ягоды\n                     годжи. Приятный сладковато-кислый вкус для погружения\n                     в себя и снятия нервного напряжения.\n\n          "
+  },
+  {
+    "name": "Mix Tea",
+    "category": "Tea",
+    "page": 15,
+    "description": "чайное ассорти. Выбирайте под настроение и\n                     найдите любимый вкус.",
+    "composition": "Бірегей авторлық қоспалар                                     KZ",
+    "volume": "",
+    "context": "Mix Tea: чайное ассорти. Выбирайте под настроение и\n                     найдите любимый вкус.\n\n                   • Бірегей авторлық қоспалар                                     KZ\n\n                 "
+  },
+  {
+    "name": "3D SLIM program",
+    "category": "3D SLIM Program",
+    "page": 17,
+    "description": "обеспечивает результат, который           White Tea\n                       останется с тобой надолго.                                 Collagen Peptides",
+    "composition": "",
+    "volume": "",
+    "context": "3D SLIM program™ обеспечивает результат, который           White Tea\n                       останется с тобой надолго.                                 Collagen Peptides\n\n                       DrainEf"
+  },
+  {
+    "name": "Vitamin C\n                                                                         liposomal",
+    "category": "Vitamin C liposomal",
+    "page": 41,
+    "description": "Vitamin C\n                                                                         liposomal, Zinc,\n                Lactoferra",
+    "composition": "Иммуноглобулин ақуыздары ағзаның вирустар мен          күніне 2-3",
+    "volume": "3\n                                                                         капсула",
+    "context": "Vitamin C\n                                                                         liposomal, Zinc,\n                Lactoferra — иммунитетті күшейтудің заманауи             Metabiotic\n                "
+  },
+  {
+    "name": "Detox Step 1 plus",
+    "category": "Detox Step",
+    "page": 42,
+    "description": "plus\n                                          DrainEffect Green",
+    "composition": "30 капсул                       женского и мужского здоровья",
+    "volume": "30 капсул",
+    "context": "Detox Step 1 plus — мягкое очищение кишечника. Компоненты\n                       формулы налаживают работу кишечника по часам, избавляют от\n                       сбоев и устраняют ощущения дискомфорт"
+  },
+  {
+    "name": "Detox Step 2 plus",
+    "category": "Detox Step",
+    "page": 42,
+    "description": "plus                                                              Be Best male\n                                      хелатная форма железа для системы\nформула очищения печени",
+    "composition": "40 капсул   кроветворения",
+    "volume": "40 капсул",
+    "context": "Detox Step 2 plus — очищение и защита печени, регуляция\n                       жирового и холестеринового обмена. Помогает оптимизировать\n                       работу печени и улучшить желчеотток, от"
+  },
+  {
+    "name": "Detox Step 3 plus",
+    "category": "Detox Step",
+    "page": 42,
+    "description": "plus                     Vitamin C liposomal\n                                                                               Be Best female\nформула очищения почек",
+    "composition": "Тазартудың 3 кезеңі                                    KZ",
+    "volume": "40 капсул",
+    "context": "Detox Step 3 plus — очищение почек, профилактика отеков и\n                       инфекций мочеполовой системы. Настраивает водно-солевой\n                       баланс в организме, способствует уменьше"
+  },
+  {
+    "name": "5-НТР liposomal",
+    "category": "5-HTP liposomal",
+    "page": 50,
+    "description": "НТР liposomal",
+    "composition": "Metabrain liposomal — нейроадаптоген для улучшения работы",
+    "volume": "1 капсула",
+    "context": "5-НТР liposomal — нейромедиатор, стимулирует выработку\n                                 организмом серотонина и поддерживает эмоциональное\n                                 равновесие. Получайте удовол"
+  },
+  {
+    "name": "Metabrain liposomal",
+    "category": "Metabrain liposomal",
+    "page": 50,
+    "description": "Metabrain liposomal",
+    "composition": "Neuromedium liposomal — корректор биоритмов, который",
+    "volume": "1 капсула",
+    "context": "Metabrain liposomal — нейроадаптоген для улучшения работы\n                                 мозга. Помогает быстро решать любые задачи, запоминать\n                                 тонны информации и ра"
+  },
+  {
+    "name": "Neuromedium liposomal",
+    "category": "Neuromedium liposomal",
+    "page": 50,
+    "description": "Neuromedium liposomal",
+    "composition": "Vitamin C liposomal — антиоксидант для активной поддержки",
+    "volume": "28 монодоз",
+    "context": "Neuromedium liposomal — корректор биоритмов, который\n                                 стимулирует выработку организмом мелатонина,\n                                 ускоряет засыпание и дарит глубокий,"
+  },
+  {
+    "name": "Vitamin C liposomal",
+    "category": "Vitamin C liposomal",
+    "page": 50,
+    "description": "Vitamin C liposomal",
+    "composition": "40 капсул    активные формы витамина C для",
+    "volume": "40 капсул",
+    "context": "Vitamin C liposomal — антиоксидант для активной поддержки\n                                 иммунитета в сочетании с мощным бьюти-эффектом.\n                                 Бонус для любителей проводит"
+  },
+  {
+    "name": "Metabrain\n                                                                                liposomal",
+    "category": "Metabrain liposomal",
+    "page": 51,
+    "description": "Формулы БАД",
+    "composition": "",
+    "volume": "",
+    "context": "Metabrain\n                                                                                liposomal\n                  ! Формулы БАД — эксклюзивная разработка                       Metabiotic\n         "
+  },
+  {
+    "name": "Neuromedium\n                 liposomal",
+    "category": "Neuromedium liposomal",
+    "page": 53,
+    "description": "Neuromedium\n                 liposomal",
+    "composition": "",
+    "volume": "",
+    "context": "Neuromedium\n                 liposomal\n\n                 Сон\n                 Ұйқы\n\nББҚ. ДӘРІЛІК ЗАТ БОЛЫП ТАБЫЛМАЙДЫ. ПАЙДАЛАНАР АЛДЫНДА МАМАНМЕН КЕҢЕСКЕН ЖӨН\nБАД. НЕ ЯВЛЯЕТСЯ ЛЕКАРСТВЕННЫМ СРЕДСТВОМ"
+  },
+  {
+    "name": "NL pets",
+    "category": "NL Pets",
+    "page": 68,
+    "description": "",
+    "composition": "",
+    "volume": "",
+    "context": "NL pets косметикасымен            тұқымдағы\nарқылы білдір             қамқорлық жасаңыз. Қамқор сусабын жүнді жұмсақ                мысықтар мен\n                          тазартады және теріні құрғатп"
+  },
+  {
+    "name": "SKLAER",
+    "category": "Sklaer",
+    "page": 84,
+    "description": "минуты утром и вечером.\n                  Подходит для ежедневного использования.",
+    "composition": "",
+    "volume": "",
+    "context": "SKLAER!\n\n                  Способ применения:\n                  небольшое количество зубной пасты нанести на зубную\n                  щетку. Чистить зубы 2–3 минуты утром и вечером.\n                  "
+  },
+  {
+    "name": "MIX Tea",
+    "category": "Tea",
+    "page": 93,
+    "description": "",
+    "composition": "чайное ассорти               BioTuning                              гель",
+    "volume": "200 мл",
+    "context": "MIX Tea • чайное ассорти               BioTuning                              гель • 200 мл\n                                       Комплексный адаптоген на основе\nHerbal Tea                           "
+  },
+  {
+    "name": "DrainEffect Green",
+    "category": "DrainEffect",
+    "page": 93,
+    "description": "DrainEffect Green",
+    "composition": "40 г  Food Control 2 in 1",
+    "volume": "40 пакет",
+    "context": "DrainEffect Green • 20 стиков\n40 пакетиков                           устройство и картридж • 650 мл • 40 г  Food Control 2 in 1 • 40 капсул\n                                       цвета: серый, бирюзов"
+  },
+  {
+    "name": "DrainEffect Red",
+    "category": "DrainEffect",
+    "page": 93,
+    "description": "DrainEffect Red Low Carb\nсистемы\n                                       дренирующий напиток",
+    "composition": "әйел денсаулығы үшін                                          Detox box plus",
+    "volume": "",
+    "context": "DrainEffect Red Low Carb\nсистемы\n                                       дренирующий напиток • 20 стиков\n\n93\n\f"
+  },
+  {
+    "name": "3D Slim Program",
+    "category": "3D SLIM Program",
+    "page": 100,
+    "description": "plus\n                                          DrainEffect Green",
+    "composition": "40 капсула  ішекті тазалау формуласы",
+    "volume": "40 капсула",
+    "context": "3D Slim Program              бағдарламасы: ішек, бауыр, бүйрек\nсүйемелдеу үшін                                                             40 капсуладан тұратын 3 кешен\n                               "
+  }
+]

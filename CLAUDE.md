@@ -215,7 +215,7 @@ journalctl -u nl-bots -f  # проверить логи
 # Telegram
 CURATOR_BOT_TOKEN=...
 CONTENT_MANAGER_BOT_TOKEN=...
-CHANNEL_USERNAME=@nl_Eleva
+CHANNEL_USERNAME=@nl_international_partners
 ADMIN_TELEGRAM_IDS=756877849
 
 # Группа с Topics

@@ -9,7 +9,8 @@ from aiogram.client.default import DefaultBotProperties
 from shared.config.settings import settings
 from shared.utils.logger import setup_logger
 from shared.database.base import init_db
-from curator_bot.handlers import messages, commands
+from curator_bot.handlers import messages, commands, callbacks
+from curator_bot.scheduler.reminder_scheduler import setup_reminder_scheduler, shutdown_scheduler
 
 
 # Настраиваем логгер
@@ -37,9 +38,14 @@ async def main():
 
     # Регистрируем роутеры
     dp.include_router(commands.router)
-    dp.include_router(messages.router)
+    dp.include_router(callbacks.router)  # Воронка продаж (callback-кнопки)
+    dp.include_router(messages.router)   # Должен быть последним (обрабатывает все текстовые сообщения)
 
     logger.info("✅ Handlers registered")
+
+    # Запускаем планировщик напоминаний
+    setup_reminder_scheduler(bot)
+    logger.info("✅ Reminder scheduler started")
 
     # Запускаем polling
     try:
@@ -47,6 +53,7 @@ async def main():
         logger.info(f"Model: {settings.curator_ai_model}")
         await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
     finally:
+        shutdown_scheduler()
         await bot.session.close()
         logger.info("👋 AI-Curator Bot stopped")
 
