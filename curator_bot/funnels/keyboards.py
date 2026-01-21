@@ -169,6 +169,10 @@ def get_product_interest_keyboard() -> InlineKeyboardMarkup:
             text="❓ Есть вопросы",
             callback_data="product_questions"
         )],
+        [InlineKeyboardButton(
+            text="← Назад",
+            callback_data="back_to_step1"
+        )],
     ])
 
 
@@ -182,6 +186,10 @@ def get_order_keyboard(product_link: str) -> InlineKeyboardMarkup:
         [InlineKeyboardButton(
             text="❓ У меня вопрос",
             callback_data="product_questions"
+        )],
+        [InlineKeyboardButton(
+            text="← Назад",
+            callback_data="back_to_product_interest"
         )],
     ])
 
@@ -197,6 +205,10 @@ def get_business_continue_keyboard() -> InlineKeyboardMarkup:
             text="Показать расчёт →",
             callback_data="business_calc"
         )],
+        [InlineKeyboardButton(
+            text="← Назад",
+            callback_data="back_to_income"
+        )],
     ])
 
 
@@ -206,6 +218,10 @@ def get_business_next_keyboard() -> InlineKeyboardMarkup:
         [InlineKeyboardButton(
             text="Да, расскажи →",
             callback_data="business_next"
+        )],
+        [InlineKeyboardButton(
+            text="← Назад",
+            callback_data="back_to_calc"
         )],
     ])
 
@@ -220,6 +236,10 @@ def get_registration_keyboard(registration_link: str) -> InlineKeyboardMarkup:
         [InlineKeyboardButton(
             text="❓ Есть вопросы",
             callback_data="business_questions"
+        )],
+        [InlineKeyboardButton(
+            text="← Назад",
+            callback_data="back_to_growth"
         )],
     ])
 
@@ -284,5 +304,81 @@ def get_ask_question_keyboard() -> InlineKeyboardMarkup:
         [InlineKeyboardButton(
             text="❓ Задать вопрос",
             callback_data="ask_question"
+        )],
+    ])
+
+
+# ============================================
+# Воронка "Узнать больше" — провокационные вопросы
+# ============================================
+
+def get_curious_keyboard() -> InlineKeyboardMarkup:
+    """Клавиатура с провокационными вопросами для curious"""
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(
+            text="🚨 Это развод или нет?",
+            callback_data="curious_scam"
+        )],
+        [InlineKeyboardButton(
+            text="💸 Почему многие бросают NL?",
+            callback_data="curious_quit"
+        )],
+        [InlineKeyboardButton(
+            text="🤷 Кому НЕ подойдёт NL?",
+            callback_data="curious_not_for"
+        )],
+        [InlineKeyboardButton(
+            text="⚠️ Что скрывают про Energy Diet?",
+            callback_data="curious_hidden"
+        )],
+        [InlineKeyboardButton(
+            text="← Назад",
+            callback_data="back_to_start"
+        )],
+    ])
+
+
+def get_curious_response_business_keyboard() -> InlineKeyboardMarkup:
+    """Клавиатура после ответа curious — переход в бизнес"""
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(
+            text="💼 Расскажи подробнее про бизнес",
+            callback_data="intent_business"
+        )],
+        [InlineKeyboardButton(
+            text="🔄 Ещё вопросы",
+            callback_data="intent_curious"
+        )],
+    ])
+
+
+def get_curious_response_health_keyboard() -> InlineKeyboardMarkup:
+    """Клавиатура после ответа curious — переход в здоровье"""
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(
+            text="🍎 Расскажи подробнее про здоровье",
+            callback_data="intent_client"
+        )],
+        [InlineKeyboardButton(
+            text="🔄 Ещё вопросы",
+            callback_data="intent_curious"
+        )],
+    ])
+
+
+def get_curious_response_both_keyboard() -> InlineKeyboardMarkup:
+    """Клавиатура после ответа curious — выбор направления"""
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(
+            text="🍎 Про здоровье",
+            callback_data="intent_client"
+        )],
+        [InlineKeyboardButton(
+            text="💼 Про бизнес",
+            callback_data="intent_business"
+        )],
+        [InlineKeyboardButton(
+            text="🔄 Ещё вопросы",
+            callback_data="intent_curious"
         )],
     ])

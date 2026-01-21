@@ -22,6 +22,10 @@ from curator_bot.funnels.keyboards import (
     get_contact_request_keyboard,
     get_start_keyboard,
     get_back_to_start_keyboard,
+    get_curious_keyboard,
+    get_curious_response_business_keyboard,
+    get_curious_response_health_keyboard,
+    get_curious_response_both_keyboard,
 )
 from curator_bot.funnels.messages import (
     WELCOME_CLIENT,
@@ -49,6 +53,10 @@ from curator_bot.funnels.messages import (
     CONTACT_EMAIL_REQUEST,
     CONTACT_THANKS,
     CONTACT_SKIP,
+    CURIOUS_SCAM,
+    CURIOUS_QUIT,
+    CURIOUS_NOT_FOR,
+    CURIOUS_HIDDEN,
 )
 from curator_bot.funnels.referral_links import (
     get_shop_link,
@@ -182,7 +190,7 @@ async def handle_curious_intent(callback: CallbackQuery):
 
     await callback.message.edit_text(
         WELCOME_CURIOUS,
-        reply_markup=get_start_keyboard()
+        reply_markup=get_curious_keyboard()
     )
 
 
@@ -686,4 +694,152 @@ async def handle_reminder_later(callback: CallbackQuery):
     await callback.message.edit_text(
         "Хорошо, напишу позже! 👌\n\n"
         "Если что-то понадобится раньше — просто напиши."
+    )
+
+
+# ============================================
+# ДОПОЛНИТЕЛЬНАЯ НАВИГАЦИЯ "НАЗАД"
+# ============================================
+
+@router.callback_query(F.data == "back_to_step1")
+async def handle_back_to_step1(callback: CallbackQuery):
+    """Возврат к шагу 1 воронки похудения (история Марины)"""
+    await callback.answer()
+
+    await callback.message.edit_text(
+        CLIENT_WEIGHT_STEP_1,
+        reply_markup=get_continue_keyboard()
+    )
+
+
+@router.callback_query(F.data == "back_to_product_interest")
+async def handle_back_to_product_interest(callback: CallbackQuery):
+    """Возврат к шагу 2 (описание продукта)"""
+    await callback.answer()
+
+    await callback.message.edit_text(
+        CLIENT_WEIGHT_STEP_2,
+        reply_markup=get_product_interest_keyboard()
+    )
+
+
+@router.callback_query(F.data == "back_to_income")
+async def handle_back_to_income(callback: CallbackQuery):
+    """Возврат к выбору цели дохода (бизнес)"""
+    await callback.answer()
+
+    await callback.message.edit_text(
+        WELCOME_BUSINESS,
+        reply_markup=get_income_goal_keyboard()
+    )
+
+
+@router.callback_query(F.data == "back_to_calc")
+async def handle_back_to_calc(callback: CallbackQuery):
+    """Возврат к расчёту дохода"""
+    await callback.answer()
+
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(User).where(User.telegram_id == callback.from_user.id)
+        )
+        user = result.scalar_one_or_none()
+
+    income_goal = user.income_goal if user else "50_100k"
+
+    # Выбираем сообщение в зависимости от цели
+    messages = {
+        "10_30k": BUSINESS_STEP_1_10_30K,
+        "50_100k": BUSINESS_STEP_1_50_100K,
+        "200k_plus": BUSINESS_STEP_1_200K,
+        "unsure": BUSINESS_STEP_1_UNSURE,
+    }
+    message = messages.get(income_goal, BUSINESS_STEP_1_50_100K)
+
+    await callback.message.edit_text(
+        message,
+        reply_markup=get_business_continue_keyboard()
+    )
+
+
+@router.callback_query(F.data == "back_to_growth")
+async def handle_back_to_growth(callback: CallbackQuery):
+    """Возврат к расчёту дохода (BUSINESS_STEP_2_CALC)"""
+    await callback.answer()
+
+    await callback.message.edit_text(
+        BUSINESS_STEP_2_CALC,
+        reply_markup=get_business_next_keyboard()
+    )
+
+
+# ============================================
+# ПРОВОКАЦИОННАЯ ВОРОНКА "УЗНАТЬ БОЛЬШЕ"
+# ============================================
+
+@router.callback_query(F.data == "curious_scam")
+async def handle_curious_scam(callback: CallbackQuery):
+    """Вопрос: Это развод или нет?"""
+    await callback.answer()
+
+    await log_funnel_event(
+        telegram_id=callback.from_user.id,
+        event_type="curious_question",
+        event_data={"question": "scam"}
+    )
+
+    await callback.message.edit_text(
+        CURIOUS_SCAM,
+        reply_markup=get_curious_response_business_keyboard()
+    )
+
+
+@router.callback_query(F.data == "curious_quit")
+async def handle_curious_quit(callback: CallbackQuery):
+    """Вопрос: Почему многие бросают NL?"""
+    await callback.answer()
+
+    await log_funnel_event(
+        telegram_id=callback.from_user.id,
+        event_type="curious_question",
+        event_data={"question": "quit"}
+    )
+
+    await callback.message.edit_text(
+        CURIOUS_QUIT,
+        reply_markup=get_curious_response_business_keyboard()
+    )
+
+
+@router.callback_query(F.data == "curious_not_for")
+async def handle_curious_not_for(callback: CallbackQuery):
+    """Вопрос: Кому НЕ подойдёт NL?"""
+    await callback.answer()
+
+    await log_funnel_event(
+        telegram_id=callback.from_user.id,
+        event_type="curious_question",
+        event_data={"question": "not_for"}
+    )
+
+    await callback.message.edit_text(
+        CURIOUS_NOT_FOR,
+        reply_markup=get_curious_response_both_keyboard()
+    )
+
+
+@router.callback_query(F.data == "curious_hidden")
+async def handle_curious_hidden(callback: CallbackQuery):
+    """Вопрос: Что скрывают про Energy Diet?"""
+    await callback.answer()
+
+    await log_funnel_event(
+        telegram_id=callback.from_user.id,
+        event_type="curious_question",
+        event_data={"question": "hidden"}
+    )
+
+    await callback.message.edit_text(
+        CURIOUS_HIDDEN,
+        reply_markup=get_curious_response_health_keyboard()
     )

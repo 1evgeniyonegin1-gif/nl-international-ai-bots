@@ -19,6 +19,7 @@ from curator_bot.funnels.keyboards import (
     get_pain_keyboard,
     get_income_goal_keyboard,
     get_start_keyboard,
+    get_curious_keyboard,
 )
 from loguru import logger
 
@@ -107,7 +108,10 @@ async def handle_curious_menu(message: Message):
             user.last_activity = datetime.now()
             await session.commit()
 
-    await message.answer(WELCOME_CURIOUS)
+    await message.answer(
+        WELCOME_CURIOUS,
+        reply_markup=get_curious_keyboard()
+    )
 
 
 @router.message(F.text == "❓ Задать вопрос")
