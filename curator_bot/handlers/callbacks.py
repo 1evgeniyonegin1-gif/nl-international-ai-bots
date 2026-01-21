@@ -204,6 +204,17 @@ async def handle_back_to_start(callback: CallbackQuery):
     )
 
 
+@router.callback_query(F.data == "back_to_pain")
+async def handle_back_to_pain(callback: CallbackQuery):
+    """Возврат к выбору боли (для воронки клиентов)"""
+    await callback.answer()
+
+    await callback.message.edit_text(
+        WELCOME_CLIENT,
+        reply_markup=get_pain_keyboard()
+    )
+
+
 # ============================================
 # ЭТАП 1.2: ВЫБОР БОЛИ (для клиентов)
 # ============================================

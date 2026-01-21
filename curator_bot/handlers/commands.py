@@ -12,7 +12,7 @@ from shared.database.base import AsyncSessionLocal
 from shared.config.settings import settings
 from curator_bot.database.models import User
 from curator_bot.ai.prompts import get_welcome_message
-from curator_bot.funnels.keyboards import get_start_keyboard
+from curator_bot.funnels.keyboards import get_start_keyboard, get_main_menu_reply_keyboard
 from curator_bot.analytics.funnel_stats import get_funnel_stats, format_funnel_stats
 from curator_bot.analytics.lead_scoring import get_leads_needing_attention
 from loguru import logger
@@ -61,6 +61,12 @@ async def cmd_start(message: Message):
 
 <b>С чего начнём?</b>"""
 
+                # Отправляем Reply-клавиатуру (главное меню)
+                await message.answer(
+                    "👇 Главное меню:",
+                    reply_markup=get_main_menu_reply_keyboard()
+                )
+                # Отправляем Inline-клавиатуру (выбор пути)
                 await message.answer(
                     welcome_text,
                     reply_markup=get_start_keyboard()
@@ -76,6 +82,12 @@ async def cmd_start(message: Message):
 
 <b>Чем могу помочь?</b>"""
 
+                # Отправляем Reply-клавиатуру (главное меню)
+                await message.answer(
+                    "👇 Главное меню:",
+                    reply_markup=get_main_menu_reply_keyboard()
+                )
+                # Отправляем Inline-клавиатуру (выбор пути)
                 await message.answer(
                     welcome_text,
                     reply_markup=get_start_keyboard()

@@ -1,7 +1,23 @@
 """
 Inline-клавиатуры для воронки продаж
 """
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
+
+
+# ============================================
+# ГЛАВНОЕ МЕНЮ (Reply-кнопки внизу экрана)
+# ============================================
+
+def get_main_menu_reply_keyboard() -> ReplyKeyboardMarkup:
+    """Reply-кнопки внизу экрана (всегда видны)"""
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="🍎 Здоровье"), KeyboardButton(text="💼 Бизнес"), KeyboardButton(text="💡 Узнать больше")],
+            [KeyboardButton(text="❓ Задать вопрос"), KeyboardButton(text="🏠 Главное меню")]
+        ],
+        resize_keyboard=True,
+        is_persistent=True
+    )
 
 
 # ============================================
@@ -57,6 +73,10 @@ def get_pain_keyboard() -> InlineKeyboardMarkup:
             text="🏃 Спорт и восстановление",
             callback_data="pain_sport"
         )],
+        [InlineKeyboardButton(
+            text="← Назад",
+            callback_data="back_to_start"
+        )],
     ])
 
 
@@ -83,6 +103,10 @@ def get_income_goal_keyboard() -> InlineKeyboardMarkup:
             text="🤔 Пока не уверен, расскажи",
             callback_data="income_unsure"
         )],
+        [InlineKeyboardButton(
+            text="← Назад",
+            callback_data="back_to_start"
+        )],
     ])
 
 
@@ -96,6 +120,10 @@ def get_continue_keyboard() -> InlineKeyboardMarkup:
         [InlineKeyboardButton(
             text="Продолжить →",
             callback_data="funnel_continue"
+        )],
+        [InlineKeyboardButton(
+            text="← Назад",
+            callback_data="back_to_pain"
         )],
     ])
 
@@ -118,6 +146,10 @@ def get_weight_goal_keyboard() -> InlineKeyboardMarkup:
         [InlineKeyboardButton(
             text="Хочу поддерживать вес",
             callback_data="weight_maintain"
+        )],
+        [InlineKeyboardButton(
+            text="← Назад",
+            callback_data="back_to_pain"
         )],
     ])
 
