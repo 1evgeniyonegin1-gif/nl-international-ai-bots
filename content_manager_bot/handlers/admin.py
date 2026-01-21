@@ -50,11 +50,18 @@ async def cmd_start(message: Message):
 
     pending_count = await get_pending_count()
 
+    # Отправляем приветствие с reply-клавиатурой (кнопки внизу)
     await message.answer(
         "👋 <b>Добро пожаловать в AI-Контент-Менеджер!</b>\n\n"
         "Этот бот помогает создавать и публиковать контент "
         "в Telegram канал NL International.\n\n"
-        "🎛 <b>Выберите действие:</b>",
+        "⬇️ <b>Используйте кнопки внизу для навигации</b>",
+        reply_markup=Keyboards.reply_main_menu()
+    )
+
+    # Также показываем inline меню
+    await message.answer(
+        "🎛 <b>Или выберите действие здесь:</b>",
         reply_markup=Keyboards.main_menu(pending_count)
     )
 
@@ -71,6 +78,116 @@ async def cmd_start(message: Message):
 @router.message(Command("menu"))
 async def cmd_menu(message: Message):
     """Обработчик команды /menu - показать главное меню"""
+    if not is_admin(message.from_user.id):
+        return
+
+    pending_count = await get_pending_count()
+
+    await message.answer(
+        "🎛 <b>ГЛАВНОЕ МЕНЮ</b>\n\n"
+        "Выберите действие:",
+        reply_markup=Keyboards.main_menu(pending_count)
+    )
+
+
+# === Обработчики текстовых кнопок (Reply Keyboard) ===
+
+@router.message(F.text == "📝 Создать пост")
+async def btn_create_post(message: Message):
+    """Кнопка: Создать пост"""
+    if not is_admin(message.from_user.id):
+        return
+
+    await message.answer(
+        "📝 <b>СОЗДАНИЕ ПОСТА</b>\n\n"
+        "Выберите тип контента:",
+        reply_markup=Keyboards.post_type_selection_with_back()
+    )
+
+
+@router.message(F.text == "📋 На модерации")
+async def btn_pending(message: Message):
+    """Кнопка: На модерации"""
+    if not is_admin(message.from_user.id):
+        return
+
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(Post)
+            .where(Post.status == "pending")
+            .order_by(Post.generated_at.desc())
+            .limit(10)
+        )
+        posts = result.scalars().all()
+
+    if not posts:
+        await message.answer(
+            "📭 <b>Нет постов на модерации</b>\n\n"
+            "Используйте кнопку «📝 Создать пост» для генерации.",
+            reply_markup=Keyboards.back_to_menu()
+        )
+        return
+
+    type_names = ContentGenerator.get_available_post_types()
+
+    await message.answer(f"📋 <b>Посты на модерации ({len(posts)}):</b>")
+
+    for post in posts:
+        type_name = type_names.get(post.post_type, post.post_type)
+        preview = post.content[:200] + "..." if len(post.content) > 200 else post.content
+        has_image = bool(post.image_url)
+
+        await message.answer(
+            f"📝 <b>#{post.id}</b> ({type_name})\n\n"
+            f"{preview}\n\n"
+            f"<i>Создан: {post.generated_at.strftime('%d.%m.%Y %H:%M')}</i>",
+            reply_markup=Keyboards.post_moderation(post.id, has_image)
+        )
+
+
+@router.message(F.text == "📊 Статистика")
+async def btn_stats(message: Message):
+    """Кнопка: Статистика"""
+    if not is_admin(message.from_user.id):
+        return
+
+    await message.answer(
+        "📊 <b>СТАТИСТИКА</b>\n\n"
+        "Выберите период:",
+        reply_markup=Keyboards.stats_menu()
+    )
+
+
+@router.message(F.text == "🏆 Топ посты")
+async def btn_top(message: Message):
+    """Кнопка: Топ посты"""
+    if not is_admin(message.from_user.id):
+        return
+
+    await message.answer(
+        "🏆 <b>ТОП ПОСТЫ</b>\n\n"
+        "Выберите метрику для сортировки:",
+        reply_markup=Keyboards.top_posts_menu()
+    )
+
+
+@router.message(F.text == "⏰ Автопостинг")
+async def btn_schedule(message: Message):
+    """Кнопка: Автопостинг"""
+    if not is_admin(message.from_user.id):
+        return
+
+    await message.answer(
+        "⏰ <b>АВТОПОСТИНГ</b>\n\n"
+        "Включите/выключите автоматическую генерацию\n"
+        "для каждого типа контента:",
+        reply_markup=Keyboards.auto_schedule_settings()
+    )
+
+
+@router.message(F.text == "🎛 Меню")
+async def btn_menu(message: Message):
+    """Кнопка: Меню (показать inline меню)"""
     if not is_admin(message.from_user.id):
         return
 

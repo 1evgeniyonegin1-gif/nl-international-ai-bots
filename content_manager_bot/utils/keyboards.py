@@ -1,13 +1,41 @@
 """
 Inline клавиатуры для контент-менеджер бота
 """
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 from typing import Optional
 
 
 class Keyboards:
     """Клавиатуры для взаимодействия с администратором"""
+
+    @staticmethod
+    def reply_main_menu() -> ReplyKeyboardMarkup:
+        """
+        Reply-клавиатура (кнопки внизу экрана) для быстрого доступа к функциям.
+        Всегда видна рядом с полем ввода текста.
+        """
+        builder = ReplyKeyboardBuilder()
+
+        # Ряд 1: Основные действия
+        builder.row(
+            KeyboardButton(text="📝 Создать пост"),
+            KeyboardButton(text="📋 На модерации")
+        )
+
+        # Ряд 2: Аналитика
+        builder.row(
+            KeyboardButton(text="📊 Статистика"),
+            KeyboardButton(text="🏆 Топ посты")
+        )
+
+        # Ряд 3: Настройки
+        builder.row(
+            KeyboardButton(text="⏰ Автопостинг"),
+            KeyboardButton(text="🎛 Меню")
+        )
+
+        return builder.as_markup(resize_keyboard=True, persistent=True)
 
     @staticmethod
     def main_menu(pending_count: int = 0) -> InlineKeyboardMarkup:
