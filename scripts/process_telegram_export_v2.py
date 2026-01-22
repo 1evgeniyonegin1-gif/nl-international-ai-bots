@@ -10,6 +10,10 @@
 5. FAQ и ответы на возражения
 6. Информация о продуктах
 7. Бизнес и мотивация
+
+ВАЖНО: Данные разделяются на:
+- EVERGREEN (вечные) — без цен, акций, дат — для RAG базы знаний
+- TIME_SENSITIVE (временные) — с ценами, акциями — только для примеров постов
 """
 
 import json
@@ -133,6 +137,32 @@ class TelegramKnowledgeExtractor:
             'BioSetting', 'Herbal Tea', 'Detox', 'Детокс', 'Be Loved',
         ]
 
+        # Паттерны для определения временных данных (цены, акции, даты)
+        self.time_sensitive_patterns = [
+            r'\d+\s*₽',                    # 1500₽
+            r'\d+\s*руб',                  # 1500 рублей
+            r'\d+\s*rub',                  # 1500 rub
+            r'цена\s*:?\s*\d+',            # цена: 1500
+            r'стоит\s*\d+',                # стоит 1500
+            r'всего\s*\d+',                # всего 1500
+            r'акция',                      # акция
+            r'скидк[аи]',                  # скидка/скидки
+            r'промо',                      # промо
+            r'только сегодня',             # только сегодня
+            r'до конца (недели|месяца|года)',  # до конца месяца
+            r'распродаж',                  # распродажа
+            r'специальн\w+ цен',           # специальная цена
+            r'вместо\s*\d+',               # вместо 2000
+            r'-\d+%',                      # -20%
+            r'\d+%\s*скидк',               # 20% скидка
+        ]
+
+        # Категории которые ВСЕГДА вечные (не проверяем на цены)
+        self.always_evergreen = ['training', 'faq', 'motivation']
+
+        # Категории которые нужно проверять на временные данные
+        self.check_for_time_sensitive = ['products', 'recommendations', 'business', 'success_stories', 'post_examples']
+
     def load_export(self) -> bool:
         """Загружает данные из экспорта Telegram"""
         print("=" * 60)
@@ -213,6 +243,49 @@ class TelegramKnowledgeExtractor:
                 products.append(product)
         return list(set(products))
 
+    def is_time_sensitive(self, text: str) -> bool:
+        """Проверяет, содержит ли текст временные данные (цены, акции)"""
+        text_lower = text.lower()
+        for pattern in self.time_sensitive_patterns:
+            if re.search(pattern, text_lower, re.IGNORECASE):
+                return True
+        return False
+
+    def clean_prices_from_text(self, text: str) -> str:
+        """Удаляет цены и акционную информацию из текста для evergreen версии"""
+        cleaned = text
+
+        # Удаляем цены в рублях
+        cleaned = re.sub(r'\d+\s*₽', '[цена по запросу]', cleaned)
+        cleaned = re.sub(r'\d+\s*руб\w*', '[цена по запросу]', cleaned)
+        cleaned = re.sub(r'\d+\s*rub\w*', '[цена по запросу]', cleaned, flags=re.IGNORECASE)
+
+        # Удаляем конструкции "цена: XXXX"
+        cleaned = re.sub(r'цена\s*:?\s*\d+\s*(₽|руб\w*)?', '[цена по запросу]', cleaned, flags=re.IGNORECASE)
+
+        # Удаляем "стоит XXXX"
+        cleaned = re.sub(r'стоит\s*\d+\s*(₽|руб\w*)?', 'стоит [цена по запросу]', cleaned, flags=re.IGNORECASE)
+
+        # Удаляем "вместо XXXX"
+        cleaned = re.sub(r'вместо\s*\d+\s*(₽|руб\w*)?', '', cleaned, flags=re.IGNORECASE)
+
+        # Удаляем проценты скидок
+        cleaned = re.sub(r'-?\d+%\s*(скидк\w*)?', '', cleaned, flags=re.IGNORECASE)
+
+        # Удаляем "только сегодня", "до конца месяца" и т.д.
+        cleaned = re.sub(r'только сегодня\s*[-—]?\s*', '', cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r'до конца\s+(недели|месяца|года)\s*', '', cleaned, flags=re.IGNORECASE)
+
+        # Удаляем слова "акция", "промо", "распродажа" в заголовках
+        cleaned = re.sub(r'🎉?\s*акция\s*🎉?', '', cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r'промо\s*:?\s*', '', cleaned, flags=re.IGNORECASE)
+
+        # Убираем множественные пробелы и пустые строки
+        cleaned = re.sub(r'  +', ' ', cleaned)
+        cleaned = re.sub(r'\n\s*\n\s*\n+', '\n\n', cleaned)
+
+        return cleaned.strip()
+
     def calculate_quality_score(self, msg: dict, text: str) -> int:
         """Оценивает качество контента (0-100)"""
         score = 0
@@ -282,17 +355,22 @@ class TelegramKnowledgeExtractor:
             if quality < 25:
                 continue
 
+            # Определяем временную чувствительность
+            time_sensitive = self.is_time_sensitive(text)
+
             # Создаём запись
             entry = {
                 'id': msg.get('id'),
                 'date': msg.get('date', ''),
                 'text': text,
+                'text_cleaned': self.clean_prices_from_text(text) if time_sensitive else text,
                 'author': msg.get('from', msg.get('actor', '')),
                 'quality_score': quality,
                 'products_mentioned': self.extract_products_mentioned(text),
                 'has_photo': bool(msg.get('photo')),
                 'photo_path': msg.get('photo', ''),
                 'categories': categories,
+                'is_time_sensitive': time_sensitive,
             }
 
             # Добавляем в каждую подходящую категорию
@@ -410,70 +488,119 @@ class TelegramKnowledgeExtractor:
         return output_dir
 
     def create_rag_documents(self, output_dir: Path):
-        """Создаёт документы в формате для RAG базы знаний"""
+        """Создаёт документы в формате для RAG базы знаний
+
+        Разделяет на:
+        - EVERGREEN (вечные) — для RAG, используют очищенный текст без цен
+        - PROMO (примеры постов с ценами) — только для генерации контента
+        """
         print("\n" + "=" * 60)
-        print("СОЗДАНИЕ RAG ДОКУМЕНТОВ")
+        print("СОЗДАНИЕ RAG ДОКУМЕНТОВ (с разделением)")
         print("=" * 60)
 
+        # Основная папка RAG (evergreen контент)
         rag_dir = Path(__file__).parent.parent / 'content' / 'knowledge_base' / 'from_telegram'
         rag_dir.mkdir(exist_ok=True, parents=True)
 
-        # Маппинг категорий на названия файлов RAG
-        category_to_rag = {
-            'recommendations': 'telegram_recommendations_{}.txt',
-            'training': 'telegram_training_{}.txt',
-            'post_examples': 'telegram_post_examples_{}.txt',
-            'success_stories': 'telegram_success_stories_{}.txt',
-            'faq': 'telegram_faq_{}.txt',
-            'products': 'telegram_products_{}.txt',
-            'business': 'telegram_business_{}.txt',
-            'motivation': 'telegram_motivation_{}.txt',
+        # Папка для примеров постов с ценами (для контент-бота)
+        promo_dir = Path(__file__).parent.parent / 'content' / 'knowledge_base' / 'promo_examples'
+        promo_dir.mkdir(exist_ok=True, parents=True)
+
+        # Заголовки документов
+        title_map = {
+            'recommendations': 'Рекомендации по продуктам NL International',
+            'training': 'Обучающие материалы NL International',
+            'post_examples': 'Примеры постов NL International',
+            'success_stories': 'Истории успеха партнёров NL International',
+            'faq': 'Часто задаваемые вопросы о NL International',
+            'products': 'Информация о продуктах NL International',
+            'business': 'Бизнес с NL International',
+            'motivation': 'Мотивация и вдохновение NL International',
         }
 
-        created_files = 0
+        created_evergreen = 0
+        created_promo = 0
 
         for category, entries in self.extracted_content.items():
-            if not entries or category not in category_to_rag:
+            if not entries:
                 continue
 
-            # Берём топ-30 самых качественных для RAG
-            top_entries = sorted(entries, key=lambda x: -x['quality_score'])[:30]
+            # Сортируем по качеству
+            sorted_entries = sorted(entries, key=lambda x: -x['quality_score'])
 
-            # Группируем по 10 записей в файл (чтобы не было слишком длинных)
-            for chunk_idx in range(0, len(top_entries), 10):
-                chunk = top_entries[chunk_idx:chunk_idx + 10]
-                file_num = chunk_idx // 10 + 1
+            # Разделяем на evergreen и time_sensitive
+            if category in self.always_evergreen:
+                # Эти категории всегда вечные
+                evergreen_entries = sorted_entries[:30]
+                promo_entries = []
+            else:
+                # Для остальных — разделяем
+                evergreen_entries = [e for e in sorted_entries if not e['is_time_sensitive']][:30]
+                promo_entries = [e for e in sorted_entries if e['is_time_sensitive']][:20]
 
-                filename = category_to_rag[category].format(file_num)
-                filepath = rag_dir / filename
+            # === СОЗДАЁМ EVERGREEN ДОКУМЕНТЫ ===
+            if evergreen_entries:
+                for chunk_idx in range(0, len(evergreen_entries), 10):
+                    chunk = evergreen_entries[chunk_idx:chunk_idx + 10]
+                    file_num = chunk_idx // 10 + 1
 
-                with open(filepath, 'w', encoding='utf-8') as f:
-                    # Заголовок документа
-                    title_map = {
-                        'recommendations': 'Рекомендации по продуктам NL International',
-                        'training': 'Обучающие материалы NL International',
-                        'post_examples': 'Примеры постов NL International',
-                        'success_stories': 'Истории успеха партнёров NL International',
-                        'faq': 'Часто задаваемые вопросы о NL International',
-                        'products': 'Информация о продуктах NL International',
-                        'business': 'Бизнес с NL International',
-                        'motivation': 'Мотивация и вдохновение NL International',
-                    }
+                    filename = f'telegram_{category}_evergreen_{file_num}.txt'
+                    filepath = rag_dir / filename
 
-                    f.write(f"# {title_map.get(category, category)}\n\n")
-                    f.write(f"Источник: Рабочий канал NL International\n")
-                    f.write(f"Категория: {category}\n")
-                    f.write(f"Дата актуальности: 2024-2026\n\n")
-                    f.write("---\n\n")
-
-                    for entry in chunk:
-                        f.write(f"{entry['text']}\n\n")
+                    with open(filepath, 'w', encoding='utf-8') as f:
+                        f.write(f"# {title_map.get(category, category)}\n\n")
+                        f.write(f"Источник: Рабочий канал NL International\n")
+                        f.write(f"Категория: {category}\n")
+                        f.write(f"Тип: EVERGREEN (вечный контент)\n")
+                        f.write(f"Примечание: Цены и акции могут измениться, уточняйте актуальную информацию\n\n")
                         f.write("---\n\n")
 
-                created_files += 1
+                        for entry in chunk:
+                            # Используем очищенный текст для evergreen
+                            text_to_use = entry.get('text_cleaned', entry['text'])
+                            f.write(f"{text_to_use}\n\n")
+                            f.write("---\n\n")
 
-        print(f"Создано RAG документов: {created_files}")
-        print(f"Папка: {rag_dir}")
+                    created_evergreen += 1
+
+            # === СОЗДАЁМ PROMO ДОКУМЕНТЫ (примеры постов с ценами) ===
+            if promo_entries:
+                for chunk_idx in range(0, len(promo_entries), 10):
+                    chunk = promo_entries[chunk_idx:chunk_idx + 10]
+                    file_num = chunk_idx // 10 + 1
+
+                    filename = f'telegram_{category}_promo_{file_num}.txt'
+                    filepath = promo_dir / filename
+
+                    with open(filepath, 'w', encoding='utf-8') as f:
+                        f.write(f"# Примеры постов: {title_map.get(category, category)}\n\n")
+                        f.write(f"Источник: Рабочий канал NL International\n")
+                        f.write(f"Категория: {category}\n")
+                        f.write(f"Тип: PROMO (примеры с ценами/акциями)\n")
+                        f.write(f"⚠️ ВАЖНО: Цены и акции в этих примерах УСТАРЕЛИ!\n")
+                        f.write(f"Используйте только как ШАБЛОНЫ для структуры постов.\n\n")
+                        f.write("---\n\n")
+
+                        for entry in chunk:
+                            f.write(f"[Пример от {entry['date'][:10]}]\n\n")
+                            f.write(f"{entry['text']}\n\n")
+                            f.write("---\n\n")
+
+                    created_promo += 1
+
+        print(f"\nСоздано EVERGREEN документов: {created_evergreen}")
+        print(f"  Папка: {rag_dir}")
+        print(f"\nСоздано PROMO примеров: {created_promo}")
+        print(f"  Папка: {promo_dir}")
+
+        # Статистика по разделению
+        print("\n--- Статистика по разделению ---")
+        for category, entries in self.extracted_content.items():
+            if not entries:
+                continue
+            evergreen_count = sum(1 for e in entries if not e['is_time_sensitive'])
+            promo_count = sum(1 for e in entries if e['is_time_sensitive'])
+            print(f"  {category}: {evergreen_count} evergreen, {promo_count} promo")
 
         return rag_dir
 
