@@ -1,0 +1,48 @@
+{
+  "source": "C:\\Users\\mafio\\Downloads\\Telegram Desktop\\ChatExport_2026-01-22",
+  "channel_name": "РАБОЧИЙ КАНАЛ NL 🩶",
+  "processed_date": "2026-01-22T09:24:49.482708",
+  "total_messages": 10550,
+  "categories": {
+    "motivation": {
+      "total_found": 354,
+      "saved": 100,
+      "avg_quality": 53.45
+    },
+    "success_stories": {
+      "total_found": 209,
+      "saved": 100,
+      "avg_quality": 49.1
+    },
+    "products": {
+      "total_found": 543,
+      "saved": 100,
+      "avg_quality": 60.0
+    },
+    "training": {
+      "total_found": 114,
+      "saved": 100,
+      "avg_quality": 45.5
+    },
+    "faq": {
+      "total_found": 116,
+      "saved": 100,
+      "avg_quality": 43.2
+    },
+    "recommendations": {
+      "total_found": 71,
+      "saved": 71,
+      "avg_quality": 43.16901408450704
+    },
+    "business": {
+      "total_found": 132,
+      "saved": 100,
+      "avg_quality": 45.35
+    },
+    "post_examples": {
+      "total_found": 25,
+      "saved": 25,
+      "avg_quality": 45.4
+    }
+  }
+}
