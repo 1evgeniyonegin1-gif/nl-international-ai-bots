@@ -154,6 +154,136 @@ def get_weight_goal_keyboard() -> InlineKeyboardMarkup:
     ])
 
 
+def get_energy_goal_keyboard() -> InlineKeyboardMarkup:
+    """Клавиатура выбора проблемы с энергией"""
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(
+            text="🌅 Не могу проснуться",
+            callback_data="energy_morning"
+        )],
+        [InlineKeyboardButton(
+            text="😴 Спад энергии после обеда",
+            callback_data="energy_afternoon"
+        )],
+        [InlineKeyboardButton(
+            text="🔋 Хроническая усталость",
+            callback_data="energy_chronic"
+        )],
+        [InlineKeyboardButton(
+            text="😰 Стресс и выгорание",
+            callback_data="energy_stress"
+        )],
+        [InlineKeyboardButton(
+            text="← Назад",
+            callback_data="back_to_pain"
+        )],
+    ])
+
+
+def get_immunity_goal_keyboard() -> InlineKeyboardMarkup:
+    """Клавиатура выбора проблемы с иммунитетом"""
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(
+            text="🤧 Частые простуды (3-4+ раз в год)",
+            callback_data="immunity_frequent_colds"
+        )],
+        [InlineKeyboardButton(
+            text="🔄 Долгое восстановление после болезни",
+            callback_data="immunity_recovery"
+        )],
+        [InlineKeyboardButton(
+            text="❄️ Зимняя поддержка иммунитета",
+            callback_data="immunity_winter"
+        )],
+        [InlineKeyboardButton(
+            text="👶 Для ребёнка (садик/школа)",
+            callback_data="immunity_kids"
+        )],
+        [InlineKeyboardButton(
+            text="← Назад",
+            callback_data="back_to_pain"
+        )],
+    ])
+
+
+def get_beauty_goal_keyboard() -> InlineKeyboardMarkup:
+    """Клавиатура выбора проблемы с красотой"""
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(
+            text="✨ Упругость кожи, морщины",
+            callback_data="beauty_skin"
+        )],
+        [InlineKeyboardButton(
+            text="💇 Волосы (выпадение, рост)",
+            callback_data="beauty_hair"
+        )],
+        [InlineKeyboardButton(
+            text="💅 Ногти (ломкость, слоение)",
+            callback_data="beauty_nails"
+        )],
+        [InlineKeyboardButton(
+            text="🌟 Всё вместе (комплексно)",
+            callback_data="beauty_complex"
+        )],
+        [InlineKeyboardButton(
+            text="← Назад",
+            callback_data="back_to_pain"
+        )],
+    ])
+
+
+def get_kids_goal_keyboard() -> InlineKeyboardMarkup:
+    """Клавиатура выбора проблемы для детей"""
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(
+            text="🤧 Частые болезни (садик/школа)",
+            callback_data="kids_immunity"
+        )],
+        [InlineKeyboardButton(
+            text="🧠 Концентрация, память, учёба",
+            callback_data="kids_brain"
+        )],
+        [InlineKeyboardButton(
+            text="📏 Рост, кости, зубы",
+            callback_data="kids_growth"
+        )],
+        [InlineKeyboardButton(
+            text="🌟 Всё вместе (комплекс)",
+            callback_data="kids_complex"
+        )],
+        [InlineKeyboardButton(
+            text="← Назад",
+            callback_data="back_to_pain"
+        )],
+    ])
+
+
+def get_sport_goal_keyboard() -> InlineKeyboardMarkup:
+    """Клавиатура выбора цели для спортсменов"""
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(
+            text="💪 Набор мышечной массы",
+            callback_data="sport_mass"
+        )],
+        [InlineKeyboardButton(
+            text="🔥 Сушка / снижение % жира",
+            callback_data="sport_cut"
+        )],
+        [InlineKeyboardButton(
+            text="🏃 Выносливость (бег, кроссфит)",
+            callback_data="sport_endurance"
+        )],
+        [InlineKeyboardButton(
+            text="🔄 Быстрое восстановление",
+            callback_data="sport_recovery"
+        )],
+        [InlineKeyboardButton(
+            text="← Назад",
+            callback_data="back_to_pain"
+        )],
+    ])
+
+
 def get_product_interest_keyboard() -> InlineKeyboardMarkup:
     """Кнопки интереса к продукту после описания"""
     return InlineKeyboardMarkup(inline_keyboard=[

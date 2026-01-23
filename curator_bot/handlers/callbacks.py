@@ -14,6 +14,11 @@ from curator_bot.funnels.keyboards import (
     get_income_goal_keyboard,
     get_continue_keyboard,
     get_weight_goal_keyboard,
+    get_energy_goal_keyboard,
+    get_immunity_goal_keyboard,
+    get_beauty_goal_keyboard,
+    get_kids_goal_keyboard,
+    get_sport_goal_keyboard,
     get_product_interest_keyboard,
     get_order_keyboard,
     get_business_continue_keyboard,
@@ -37,10 +42,24 @@ from curator_bot.funnels.messages import (
     get_client_weight_recommendation,
     CLIENT_ENERGY_STEP_1,
     CLIENT_ENERGY_STEP_2,
+    CLIENT_ENERGY_STEP_3,
+    get_client_energy_recommendation,
     CLIENT_IMMUNITY_STEP_1,
+    CLIENT_IMMUNITY_STEP_2,
+    CLIENT_IMMUNITY_STEP_3,
+    get_client_immunity_recommendation,
     CLIENT_BEAUTY_STEP_1,
+    CLIENT_BEAUTY_STEP_2,
+    CLIENT_BEAUTY_STEP_3,
+    get_client_beauty_recommendation,
     CLIENT_KIDS_STEP_1,
+    CLIENT_KIDS_STEP_2,
+    CLIENT_KIDS_STEP_3,
+    get_client_kids_recommendation,
     CLIENT_SPORT_STEP_1,
+    CLIENT_SPORT_STEP_2,
+    CLIENT_SPORT_STEP_3,
+    get_client_sport_recommendation,
     BUSINESS_STEP_1_10_30K,
     BUSINESS_STEP_1_50_100K,
     BUSINESS_STEP_1_200K,
@@ -380,6 +399,105 @@ async def handle_funnel_continue(callback: CallbackQuery):
                 CLIENT_WEIGHT_STEP_3,
                 reply_markup=get_weight_goal_keyboard()
             )
+    elif pain_point == "energy":
+        if current_step == 2:
+            # Переход к шагу 3 (объяснение)
+            await update_user_funnel(
+                telegram_id=callback.from_user.id,
+                funnel_step=3
+            )
+            await callback.message.edit_text(
+                CLIENT_ENERGY_STEP_2,
+                reply_markup=get_product_interest_keyboard()
+            )
+        elif current_step == 3:
+            # Переход к шагу 4 (персонализация)
+            await update_user_funnel(
+                telegram_id=callback.from_user.id,
+                funnel_step=4
+            )
+            await callback.message.edit_text(
+                CLIENT_ENERGY_STEP_3,
+                reply_markup=get_energy_goal_keyboard()
+            )
+    elif pain_point == "immunity":
+        if current_step == 2:
+            # Переход к шагу 3 (объяснение)
+            await update_user_funnel(
+                telegram_id=callback.from_user.id,
+                funnel_step=3
+            )
+            await callback.message.edit_text(
+                CLIENT_IMMUNITY_STEP_2,
+                reply_markup=get_product_interest_keyboard()
+            )
+        elif current_step == 3:
+            # Переход к шагу 4 (персонализация)
+            await update_user_funnel(
+                telegram_id=callback.from_user.id,
+                funnel_step=4
+            )
+            await callback.message.edit_text(
+                CLIENT_IMMUNITY_STEP_3,
+                reply_markup=get_immunity_goal_keyboard()
+            )
+    elif pain_point == "beauty":
+        if current_step == 2:
+            await update_user_funnel(
+                telegram_id=callback.from_user.id,
+                funnel_step=3
+            )
+            await callback.message.edit_text(
+                CLIENT_BEAUTY_STEP_2,
+                reply_markup=get_product_interest_keyboard()
+            )
+        elif current_step == 3:
+            await update_user_funnel(
+                telegram_id=callback.from_user.id,
+                funnel_step=4
+            )
+            await callback.message.edit_text(
+                CLIENT_BEAUTY_STEP_3,
+                reply_markup=get_beauty_goal_keyboard()
+            )
+    elif pain_point == "kids":
+        if current_step == 2:
+            await update_user_funnel(
+                telegram_id=callback.from_user.id,
+                funnel_step=3
+            )
+            await callback.message.edit_text(
+                CLIENT_KIDS_STEP_2,
+                reply_markup=get_product_interest_keyboard()
+            )
+        elif current_step == 3:
+            await update_user_funnel(
+                telegram_id=callback.from_user.id,
+                funnel_step=4
+            )
+            await callback.message.edit_text(
+                CLIENT_KIDS_STEP_3,
+                reply_markup=get_kids_goal_keyboard()
+            )
+    elif pain_point == "sport":
+        if current_step == 2:
+            await update_user_funnel(
+                telegram_id=callback.from_user.id,
+                funnel_step=3
+            )
+            await callback.message.edit_text(
+                CLIENT_SPORT_STEP_2,
+                reply_markup=get_product_interest_keyboard()
+            )
+        elif current_step == 3:
+            await update_user_funnel(
+                telegram_id=callback.from_user.id,
+                funnel_step=4
+            )
+            await callback.message.edit_text(
+                CLIENT_SPORT_STEP_3,
+                reply_markup=get_sport_goal_keyboard()
+            )
     else:
         # Для других болей — сразу показываем рекомендацию продукта
         await update_user_funnel(
@@ -399,7 +517,7 @@ async def handle_product_select(callback: CallbackQuery):
     """Клиент нажал 'Да, подбери для меня'"""
     await callback.answer()
 
-    # Для похудения — спрашиваем цель по весу
+    # Получаем пользователя
     async with AsyncSessionLocal() as session:
         result = await session.execute(
             select(User).where(User.telegram_id == callback.from_user.id)
@@ -407,9 +525,40 @@ async def handle_product_select(callback: CallbackQuery):
         user = result.scalar_one_or_none()
 
     if user and user.pain_point == "weight":
+        # Для похудения — спрашиваем цель по весу
         await callback.message.edit_text(
             CLIENT_WEIGHT_STEP_3,
             reply_markup=get_weight_goal_keyboard()
+        )
+    elif user and user.pain_point == "energy":
+        # Для энергии — спрашиваем проблему
+        await callback.message.edit_text(
+            CLIENT_ENERGY_STEP_3,
+            reply_markup=get_energy_goal_keyboard()
+        )
+    elif user and user.pain_point == "immunity":
+        # Для иммунитета — спрашиваем проблему
+        await callback.message.edit_text(
+            CLIENT_IMMUNITY_STEP_3,
+            reply_markup=get_immunity_goal_keyboard()
+        )
+    elif user and user.pain_point == "beauty":
+        # Для красоты — спрашиваем проблему
+        await callback.message.edit_text(
+            CLIENT_BEAUTY_STEP_3,
+            reply_markup=get_beauty_goal_keyboard()
+        )
+    elif user and user.pain_point == "kids":
+        # Для детей — спрашиваем проблему
+        await callback.message.edit_text(
+            CLIENT_KIDS_STEP_3,
+            reply_markup=get_kids_goal_keyboard()
+        )
+    elif user and user.pain_point == "sport":
+        # Для спорта — спрашиваем цель
+        await callback.message.edit_text(
+            CLIENT_SPORT_STEP_3,
+            reply_markup=get_sport_goal_keyboard()
         )
     else:
         # Для других болей — показываем рекомендацию
@@ -478,6 +627,166 @@ async def handle_weight_goal(callback: CallbackQuery):
     )
 
     recommendation = get_client_weight_recommendation(weight_goal)
+
+    await callback.message.edit_text(
+        recommendation,
+        reply_markup=get_order_keyboard(get_shop_link()),
+        disable_web_page_preview=True
+    )
+
+
+# ============================================
+# ВЫБОР ПРОБЛЕМЫ С ЭНЕРГИЕЙ
+# ============================================
+
+@router.callback_query(F.data.startswith("energy_"))
+async def handle_energy_goal(callback: CallbackQuery):
+    """Обработка выбора проблемы с энергией"""
+    await callback.answer()
+
+    energy_goal = callback.data  # energy_morning, energy_afternoon, etc.
+
+    await update_user_funnel(
+        telegram_id=callback.from_user.id,
+        funnel_step=5,
+        lead_status="hot"
+    )
+
+    await log_funnel_event(
+        telegram_id=callback.from_user.id,
+        event_type="product_shown",
+        event_data={"energy_goal": energy_goal}
+    )
+
+    recommendation = get_client_energy_recommendation(energy_goal)
+
+    await callback.message.edit_text(
+        recommendation,
+        reply_markup=get_order_keyboard(get_shop_link()),
+        disable_web_page_preview=True
+    )
+
+
+# ============================================
+# ВЫБОР ПРОБЛЕМЫ С ИММУНИТЕТОМ
+# ============================================
+
+@router.callback_query(F.data.startswith("immunity_"))
+async def handle_immunity_goal(callback: CallbackQuery):
+    """Обработка выбора проблемы с иммунитетом"""
+    await callback.answer()
+
+    immunity_goal = callback.data
+
+    await update_user_funnel(
+        telegram_id=callback.from_user.id,
+        funnel_step=5,
+        lead_status="hot"
+    )
+
+    await log_funnel_event(
+        telegram_id=callback.from_user.id,
+        event_type="product_shown",
+        event_data={"immunity_goal": immunity_goal}
+    )
+
+    recommendation = get_client_immunity_recommendation(immunity_goal)
+
+    await callback.message.edit_text(
+        recommendation,
+        reply_markup=get_order_keyboard(get_shop_link()),
+        disable_web_page_preview=True
+    )
+
+
+# ============================================
+# ВЫБОР ПРОБЛЕМЫ С КРАСОТОЙ
+# ============================================
+
+@router.callback_query(F.data.startswith("beauty_"))
+async def handle_beauty_goal(callback: CallbackQuery):
+    """Обработка выбора проблемы с красотой"""
+    await callback.answer()
+
+    beauty_goal = callback.data
+
+    await update_user_funnel(
+        telegram_id=callback.from_user.id,
+        funnel_step=5,
+        lead_status="hot"
+    )
+
+    await log_funnel_event(
+        telegram_id=callback.from_user.id,
+        event_type="product_shown",
+        event_data={"beauty_goal": beauty_goal}
+    )
+
+    recommendation = get_client_beauty_recommendation(beauty_goal)
+
+    await callback.message.edit_text(
+        recommendation,
+        reply_markup=get_order_keyboard(get_shop_link()),
+        disable_web_page_preview=True
+    )
+
+
+# ============================================
+# ВЫБОР ПРОБЛЕМЫ ДЛЯ ДЕТЕЙ
+# ============================================
+
+@router.callback_query(F.data.startswith("kids_"))
+async def handle_kids_goal(callback: CallbackQuery):
+    """Обработка выбора проблемы для детей"""
+    await callback.answer()
+
+    kids_goal = callback.data
+
+    await update_user_funnel(
+        telegram_id=callback.from_user.id,
+        funnel_step=5,
+        lead_status="hot"
+    )
+
+    await log_funnel_event(
+        telegram_id=callback.from_user.id,
+        event_type="product_shown",
+        event_data={"kids_goal": kids_goal}
+    )
+
+    recommendation = get_client_kids_recommendation(kids_goal)
+
+    await callback.message.edit_text(
+        recommendation,
+        reply_markup=get_order_keyboard(get_shop_link()),
+        disable_web_page_preview=True
+    )
+
+
+# ============================================
+# ВЫБОР ЦЕЛИ ДЛЯ СПОРТСМЕНОВ
+# ============================================
+
+@router.callback_query(F.data.startswith("sport_"))
+async def handle_sport_goal(callback: CallbackQuery):
+    """Обработка выбора цели для спортсменов"""
+    await callback.answer()
+
+    sport_goal = callback.data
+
+    await update_user_funnel(
+        telegram_id=callback.from_user.id,
+        funnel_step=5,
+        lead_status="hot"
+    )
+
+    await log_funnel_event(
+        telegram_id=callback.from_user.id,
+        event_type="product_shown",
+        event_data={"sport_goal": sport_goal}
+    )
+
+    recommendation = get_client_sport_recommendation(sport_goal)
 
     await callback.message.edit_text(
         recommendation,
