@@ -69,3 +69,15 @@ content/training_materials/**/*.mp4
 # Vector database
 chroma_db/
 vector_db/
+nul
+
+# Temporary content folders (processed materials)
+content/nl_assistant_materials/
+content/nl_knowledge/
+content/nl_photos_categorized/
+content/nl_products_detailed/
+content/unified_products/
+
+# Temporary files
+полный каталог/
+цены на все продукты.txt
