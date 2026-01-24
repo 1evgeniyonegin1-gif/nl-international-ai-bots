@@ -18,7 +18,7 @@ class Settings(BaseSettings):
 
     # Group with Topics (for content publishing)
     group_id: str = Field(default="", env="GROUP_ID")
-    curator_bot_username: str = Field(default="@nl_curator_bot", env="CURATOR_BOT_USERNAME")
+    curator_bot_username: str = Field(default="@nl_mentor1_bot", env="CURATOR_BOT_USERNAME")
 
     # Topic IDs (message_thread_id for each topic)
     topic_products: int = Field(default=0, env="TOPIC_PRODUCTS")

@@ -1,5 +1,6 @@
 """
-Основной AI движок для Куратора с интегрированной системой персон
+Основной AI движок для Куратора с интегрированной системой персон.
+Интегрирована диалоговая воронка для естественного ведения разговора.
 """
 from typing import List, Dict, Optional
 from datetime import datetime
@@ -9,12 +10,14 @@ from shared.ai_clients.openai_client import OpenAIClient
 from shared.persona import PersonaManager, PERSONA_CHARACTERISTICS
 from curator_bot.ai.prompts import get_curator_system_prompt, get_rag_instruction
 from curator_bot.database.models import User, ConversationMessage
+from curator_bot.funnels.conversational_funnel import get_conversational_funnel, ConversationalFunnel
 
 
 class CuratorChatEngine:
     """
     Движок для генерации ответов куратора с использованием AI и RAG.
     Интегрирована система персон для адаптации стиля общения.
+    Интегрирована диалоговая воронка для естественного ведения разговора.
     """
 
     def __init__(self, ai_client):
@@ -30,7 +33,11 @@ class CuratorChatEngine:
         self.persona_manager = PersonaManager()
         self.use_persona_system = True
 
-        logger.info("Curator chat engine initialized with PersonaManager")
+        # Диалоговая воронка для естественного ведения разговора
+        self.conversational_funnel = get_conversational_funnel()
+        self.use_conversational_mode = True  # Включить диалоговый режим
+
+        logger.info("Curator chat engine initialized with PersonaManager and ConversationalFunnel")
 
     async def generate_response(
         self,
@@ -66,6 +73,15 @@ class CuratorChatEngine:
 
             # Определяем температуру по умолчанию
             temperature = 0.7
+
+            # Добавляем инструкции диалоговой воронки
+            if self.use_conversational_mode:
+                funnel_instructions = self.conversational_funnel.get_ai_instructions(
+                    user_id=user.telegram_id,
+                    message=user_message
+                )
+                system_prompt = system_prompt + "\n\n" + funnel_instructions
+                logger.info(f"Added conversational funnel instructions for user {user.telegram_id}")
 
             # Добавляем контекст персоны если включена система
             if use_persona and self.use_persona_system:

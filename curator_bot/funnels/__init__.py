@@ -7,6 +7,7 @@
 - client_funnel.py - Цепочка для клиентов
 - business_funnel.py - Цепочка для бизнеса
 - referral_links.py - Генерация реферальных ссылок
+- conversational_funnel.py - Диалоговая воронка (без кнопок)
 """
 
 from curator_bot.funnels.keyboards import (
@@ -20,6 +21,12 @@ from curator_bot.funnels.referral_links import (
     get_shop_link,
     get_client_registration_link,
 )
+from curator_bot.funnels.conversational_funnel import (
+    ConversationalFunnel,
+    get_conversational_funnel,
+    ConversationStage,
+    UserIntent,
+)
 
 __all__ = [
     "get_start_keyboard",
@@ -29,4 +36,9 @@ __all__ = [
     "get_registration_link",
     "get_shop_link",
     "get_client_registration_link",
+    # Conversational funnel
+    "ConversationalFunnel",
+    "get_conversational_funnel",
+    "ConversationStage",
+    "UserIntent",
 ]

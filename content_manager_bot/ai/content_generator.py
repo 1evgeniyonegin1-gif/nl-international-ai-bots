@@ -3,6 +3,7 @@
 Поддерживает генерацию изображений через YandexART
 Поддерживает обучение на образцах стиля из каналов
 Интегрирована система персон и настроений
+Интегрирована RAG система для использования базы знаний
 """
 from typing import Optional, Tuple, List
 from datetime import datetime
@@ -15,6 +16,7 @@ from shared.ai_clients.openai_client import OpenAIClient
 from shared.config.settings import settings
 from shared.style_monitor import get_style_service
 from shared.persona import PersonaManager, PersonaContext
+from shared.rag import get_rag_engine, RAGEngine
 from content_manager_bot.ai.prompts import ContentPrompts
 from content_manager_bot.utils.product_reference import ProductReferenceManager
 
@@ -93,6 +95,111 @@ class ContentGenerator:
         self.persona_manager = PersonaManager()
         self.use_persona_system = True  # Можно отключить для тестирования
         logger.info("PersonaManager initialized for content generation")
+
+        # RAG система для использования базы знаний
+        self._rag_engine: Optional[RAGEngine] = None
+        self.use_knowledge_base = True  # Использовать примеры из базы знаний
+        logger.info("RAG knowledge base integration enabled")
+
+    async def _get_rag_engine(self) -> RAGEngine:
+        """Получить RAG engine (ленивая инициализация)."""
+        if self._rag_engine is None:
+            self._rag_engine = await get_rag_engine()
+        return self._rag_engine
+
+    async def _get_knowledge_context(
+        self,
+        post_type: str,
+        custom_topic: Optional[str] = None,
+        limit: int = 3
+    ) -> str:
+        """
+        Получает релевантный контекст из базы знаний для генерации поста.
+
+        Args:
+            post_type: Тип поста
+            custom_topic: Дополнительная тема
+            limit: Максимум документов
+
+        Returns:
+            str: Отформатированный контекст из базы знаний
+        """
+        if not self.use_knowledge_base:
+            return ""
+
+        # Маппинг типов постов на категории RAG
+        type_to_category = {
+            "product": "products",
+            "product_deep_dive": "products",
+            "product_comparison": "products",
+            "motivation": "motivation",
+            "success_story": "success_stories",
+            "transformation": "success_stories",
+            "business_lifestyle": "business",
+            "business": "business",
+            "business_myths": "business",
+            "tips": "training",
+            "news": "news",
+            "promo": "promo_examples",
+            "myth_busting": "faq",
+            "faq": "faq"
+        }
+
+        category = type_to_category.get(post_type, None)
+
+        # Формируем поисковый запрос
+        search_query = f"пост {post_type}"
+        if custom_topic:
+            search_query = f"{custom_topic} {post_type}"
+
+        try:
+            rag_engine = await self._get_rag_engine()
+            results = await rag_engine.retrieve(
+                query=search_query,
+                category=category,
+                top_k=limit,
+                min_similarity=0.3  # Низкий порог для большего покрытия
+            )
+
+            if not results:
+                # Пробуем без категории
+                results = await rag_engine.retrieve(
+                    query=search_query,
+                    category=None,
+                    top_k=limit,
+                    min_similarity=0.25
+                )
+
+            if not results:
+                return ""
+
+            # Форматируем примеры
+            examples = []
+            for i, doc in enumerate(results, 1):
+                # Берём только первые 600 символов для краткости
+                content = doc.content[:600]
+                if len(doc.content) > 600:
+                    content += "..."
+                examples.append(f"ПРИМЕР {i} (источник: {doc.source or 'база знаний'}):\n{content}")
+
+            context_block = """
+
+### ПРИМЕРЫ ИЗ БАЗЫ ЗНАНИЙ (используй как образец стиля и информации):
+
+{}
+
+### ВАЖНО:
+- Используй факты и стиль из примеров
+- НЕ копируй дословно, создавай уникальный контент
+- Адаптируй под текущую тему и персону
+""".format("\n\n---\n\n".join(examples))
+
+            logger.info(f"Added {len(results)} knowledge base examples for {post_type}")
+            return context_block
+
+        except Exception as e:
+            logger.warning(f"Could not get knowledge context: {e}")
+            return ""
 
     async def _get_style_samples(
         self,
@@ -270,6 +377,16 @@ class ContentGenerator:
                     user_prompt = user_prompt + style_block
                     logger.info(f"Added {len(style_samples)} style samples to prompt")
 
+            # Добавляем контекст из базы знаний (RAG)
+            if self.use_knowledge_base:
+                knowledge_context = await self._get_knowledge_context(
+                    post_type=post_type,
+                    custom_topic=custom_topic,
+                    limit=2  # 2 примера чтобы не перегружать промпт
+                )
+                if knowledge_context:
+                    user_prompt = user_prompt + knowledge_context
+
             # Выбираем клиент в зависимости от типа поста
             ai_client, model_name = self._get_client_for_post_type(post_type)
 
@@ -285,9 +402,17 @@ class ContentGenerator:
                        f" (temp={temperature})" +
                        (f" [persona: {persona_context.persona_version}]" if persona_context else ""))
 
+            # Получаем SYSTEM_PROMPT — персона-специфичный если есть
+            if persona_context:
+                system_prompt = ContentPrompts.get_system_prompt_for_persona(
+                    persona_context.persona_version
+                )
+            else:
+                system_prompt = ContentPrompts.SYSTEM_PROMPT
+
             # Генерируем контент
             content = await ai_client.generate_response(
-                system_prompt=ContentPrompts.SYSTEM_PROMPT,
+                system_prompt=system_prompt,
                 user_message=user_prompt,
                 temperature=temperature,
                 max_tokens=1000
