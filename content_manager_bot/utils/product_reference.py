@@ -27,8 +27,8 @@ class ProductReferenceManager:
             base_path = project_root / "content" / "unified_products"
 
         self.base_path = Path(base_path)
-        # Маппинг хранится в product_images (legacy)
-        self.mapping_file = project_root / "content" / "product_images" / "products_mapping.json"
+        # Новый маппинг в unified_products с keywords
+        self.mapping_file = project_root / "content" / "unified_products" / "full_products_mapping.json"
         self._mapping: Optional[Dict[str, Any]] = None
         self._photo_cache: Dict[str, str] = {}  # Кэш найденных фото
 
@@ -242,131 +242,76 @@ class ProductReferenceManager:
         """
         return self.load_mapping()
 
-    def extract_product_from_content(self, content: str) -> Optional[tuple[str, str, Dict[str, Any]]]:
+    def extract_product_from_content(self, content: str) -> Optional[tuple[str, str, Path]]:
         """
         Пытается извлечь упоминание продукта из текста контента
+        Использует keywords из full_products_mapping.json
 
         Args:
             content: Текст поста
 
         Returns:
-            tuple: (category, product_key, product_info) или None
+            tuple: (keyword, folder_path, photo_path) или None
         """
-        # Расширенный список ключевых слов для поиска продуктов
-        product_keywords = {
-            # === GREENFLASH ===
-            "vision": ("greenflash", "vision_plus"),
-            "vision plus": ("greenflash", "vision_plus"),
-            "зрение": ("greenflash", "vision_plus"),
-            "лютеин": ("greenflash", "vision_plus"),
-            "глаза": ("greenflash", "vision_plus"),
+        mapping = self.load_mapping()
+        keywords_map = mapping.get("keywords", {})
 
-            "мультивитамин": ("greenflash", "multivitamin"),
-            "multivitamin": ("greenflash", "multivitamin"),
-            "витамины": ("greenflash", "multivitamin"),
-            "витаминный комплекс": ("greenflash", "multivitamin"),
-
-            "омега": ("greenflash", "omega3"),
-            "omega": ("greenflash", "omega3"),
-            "omega-3": ("greenflash", "omega3"),
-            "омега-3": ("greenflash", "omega3"),
-            "рыбий жир": ("greenflash", "omega3"),
-            "для мозга": ("greenflash", "omega3"),
-
-            "витамин d": ("greenflash", "vitamin_d3"),
-            "витамин д": ("greenflash", "vitamin_d3"),
-            "vitamin d": ("greenflash", "vitamin_d3"),
-            "d3": ("greenflash", "vitamin_d3"),
-            "д3": ("greenflash", "vitamin_d3"),
-            "солнечный витамин": ("greenflash", "vitamin_d3"),
-
-            "коллаген": ("greenflash", "collagen"),
-            "collagen": ("greenflash", "collagen"),
-            "морщины": ("greenflash", "collagen"),
-            "кожа": ("greenflash", "collagen"),
-            "суставы": ("greenflash", "collagen"),
-
-            "детокс": ("greenflash", "detox"),
-            "detox": ("greenflash", "detox"),
-            "очищение": ("greenflash", "detox"),
-            "клетчатка": ("greenflash", "detox"),
-
-            # === LOVELY (косметика) ===
-            "крем для лица": ("lovely", "face_cream"),
-            "крем": ("lovely", "face_cream"),
-            "face cream": ("lovely", "face_cream"),
-
-            "сыворотка": ("lovely", "serum"),
-            "serum": ("lovely", "serum"),
-
-            "мицеллярн": ("lovely", "micellar_water"),
-            "micellar": ("lovely", "micellar_water"),
-            "мицеллярка": ("lovely", "micellar_water"),
-
-            "лосьон": ("lovely", "body_lotion"),
-            "lotion": ("lovely", "body_lotion"),
-            "для тела": ("lovely", "body_lotion"),
-
-            "lovely": ("lovely", "face_cream"),
-            "косметика nl": ("lovely", "face_cream"),
-
-            # === ENERGY DIET ===
-            "energy diet smart": ("energy_diet", "smart_chocolate"),
-            "energy diet": ("energy_diet", "smart_chocolate"),
-            "энерджи диет": ("energy_diet", "smart_chocolate"),
-            "ed smart": ("energy_diet", "smart_chocolate"),
-            "ед смарт": ("energy_diet", "smart_chocolate"),
-            "ed pro": ("energy_diet", "pro"),
-            "ед про": ("energy_diet", "pro"),
-            "ed start": ("energy_diet", "start"),
-            "ед старт": ("energy_diet", "start"),
-
-            # ED Smart вкусы
-            "коктейль": ("energy_diet", "smart_chocolate"),
-            "shake": ("energy_diet", "smart_chocolate"),
-            "шоколад": ("energy_diet", "smart_chocolate"),
-            "шоколадный": ("energy_diet", "smart_chocolate"),
-            "капучино": ("energy_diet", "smart_cappuccino"),
-            "ваниль": ("energy_diet", "smart_vanilla"),
-            "клубника": ("energy_diet", "smart_strawberry"),
-            "ягод": ("energy_diet", "smart_raspberry"),
-            "малин": ("energy_diet", "smart_raspberry"),
-            "банан": ("energy_diet", "smart_banana"),
-            "карамель": ("energy_diet", "smart_caramel"),
-            "латте": ("energy_diet", "smart_latte"),
-
-            "похудение": ("energy_diet", "smart"),
-            "похудеть": ("energy_diet", "smart"),
-            "сбросить вес": ("energy_diet", "smart"),
-            "снижение веса": ("energy_diet", "smart"),
-            "диета": ("energy_diet", "smart"),
-            "калории": ("energy_diet", "smart"),
-            "сытость": ("energy_diet", "smart"),
-
-            # === ДРУГОЕ ===
-            "детские витамины": ("other", "kids_vitamins"),
-            "детские": ("other", "kids_vitamins"),
-            "детям": ("other", "kids_vitamins"),
-            "для детей": ("other", "kids_vitamins"),
-
-            "чай": ("other", "tea"),
-            "tea": ("other", "tea"),
-            "травяной чай": ("other", "tea"),
-        }
+        if not keywords_map:
+            logger.warning("No keywords found in mapping")
+            return None
 
         content_lower = content.lower()
 
-        # Ищем ключевые слова в тексте (сначала более специфичные)
-        # Сортируем по длине ключа, чтобы сначала искать более длинные совпадения
-        sorted_keywords = sorted(product_keywords.keys(), key=len, reverse=True)
+        # Сортируем по длине ключа (сначала более специфичные)
+        sorted_keywords = sorted(keywords_map.keys(), key=len, reverse=True)
 
         for keyword in sorted_keywords:
             if keyword in content_lower:
-                category, product_key = product_keywords[keyword]
-                product_info = self.get_product_info(product_key, category)
-                if product_info:
-                    logger.info(f"Found product reference in content: {product_info['name']}")
-                    return category, product_key, product_info
+                folder_path = keywords_map[keyword]
+                # Ищем фото в папке
+                photo_path = self._find_photo_in_folder(folder_path)
+                if photo_path:
+                    logger.info(f"Found product by keyword '{keyword}': {photo_path}")
+                    return keyword, folder_path, photo_path
+                else:
+                    logger.warning(f"Keyword '{keyword}' found but no photo in {folder_path}")
+
+        return None
+
+    def _find_photo_in_folder(self, folder_path: str) -> Optional[Path]:
+        """
+        Ищет фото в папке unified_products/{folder_path}/photos/
+
+        Args:
+            folder_path: Путь относительно unified_products (например "omega/omega")
+
+        Returns:
+            Path к первому найденному фото или None
+        """
+        # Пробуем разные варианты структуры
+        search_paths = [
+            self.base_path / folder_path / "photos",
+            self.base_path / folder_path,
+        ]
+
+        for search_path in search_paths:
+            if not search_path.exists():
+                continue
+
+            # Ищем jpg
+            jpg_files = list(search_path.glob("*.jpg"))
+            if jpg_files:
+                return jpg_files[0]
+
+            # Ищем png
+            png_files = list(search_path.glob("*.png"))
+            if png_files:
+                return png_files[0]
+
+            # Ищем jpeg
+            jpeg_files = list(search_path.glob("*.jpeg"))
+            if jpeg_files:
+                return jpeg_files[0]
 
         return None
 

@@ -75,6 +75,7 @@ class EditPostStates(StatesGroup):
     waiting_for_edit = State()
     waiting_for_feedback = State()
     waiting_for_custom_time = State()
+    waiting_for_manual_edit = State()  # Ручное редактирование текста
 
 
 # === Генерация по типу ===
@@ -389,6 +390,43 @@ async def callback_regenerate(callback: CallbackQuery, state: FSMContext):
         "AI учтёт ваши пожелания при генерации нового варианта.\n\n"
         "<i>Или отправьте /cancel для отмены</i>"
     )
+    await callback.answer()
+
+
+# === Ручное редактирование ===
+
+@router.callback_query(F.data.startswith("manual_edit:"))
+async def callback_manual_edit(callback: CallbackQuery, state: FSMContext):
+    """Начало ручного редактирования поста"""
+    if not is_admin(callback.from_user.id):
+        await callback.answer("⛔ Доступ запрещён", show_alert=True)
+        return
+
+    post_id = int(callback.data.split(":")[1])
+
+    # Получаем текущий текст поста для показа
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(Post).where(Post.id == post_id)
+        )
+        post = result.scalar_one_or_none()
+
+        if not post:
+            await callback.answer("❌ Пост не найден", show_alert=True)
+            return
+
+        # Сохраняем ID поста в состояние
+        await state.update_data(manual_edit_post_id=post_id)
+        await state.set_state(EditPostStates.waiting_for_manual_edit)
+
+        await callback.message.edit_text(
+            f"✏️ <b>Ручное редактирование поста #{post_id}</b>\n\n"
+            f"<b>Текущий текст:</b>\n"
+            f"<code>{post.content[:500]}{'...' if len(post.content) > 500 else ''}</code>\n\n"
+            "📝 <b>Отправьте новый текст поста целиком.</b>\n"
+            "Ваш текст полностью заменит текущий.\n\n"
+            "<i>Или отправьте /cancel для отмены</i>"
+        )
     await callback.answer()
 
 
@@ -970,6 +1008,75 @@ async def process_edit_instructions(message: Message, state: FSMContext):
         except Exception as e:
             logger.error(f"Error editing post: {e}")
             await status_msg.edit_text(f"❌ Ошибка редактирования: {str(e)}")
+
+    await state.clear()
+
+
+@router.message(EditPostStates.waiting_for_manual_edit)
+async def process_manual_edit_text(message: Message, state: FSMContext):
+    """Обработка нового текста при ручном редактировании"""
+    if not is_admin(message.from_user.id):
+        return
+
+    if message.text == "/cancel":
+        await state.clear()
+        await message.answer("❌ Редактирование отменено")
+        return
+
+    data = await state.get_data()
+    post_id = data.get("manual_edit_post_id")
+
+    if not post_id:
+        await state.clear()
+        return
+
+    new_text = message.text.strip()
+
+    if len(new_text) < 50:
+        await message.answer(
+            "⚠️ Текст слишком короткий (минимум 50 символов).\n"
+            "Отправьте более развёрнутый текст или /cancel для отмены."
+        )
+        return
+
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(Post).where(Post.id == post_id)
+        )
+        post = result.scalar_one_or_none()
+
+        if not post:
+            await message.answer("❌ Пост не найден")
+            await state.clear()
+            return
+
+        # Сохраняем новый текст
+        post.content = new_text
+
+        action = AdminAction(
+            admin_id=message.from_user.id,
+            post_id=post_id,
+            action="manual_edit",
+            details={"new_length": len(new_text)}
+        )
+        session.add(action)
+
+        await session.commit()
+
+        type_names = ContentGenerator.get_available_post_types()
+        type_name = type_names.get(post.post_type, post.post_type)
+        has_image = bool(post.image_url)
+
+        await message.answer(
+            f"✅ <b>Текст обновлён!</b>\n\n"
+            f"📝 <b>Пост ({type_name})</b>\n"
+            f"ID: #{post_id}\n\n"
+            f"{new_text}\n\n"
+            f"<i>Что делаем с постом?</i>",
+            reply_markup=Keyboards.post_moderation(post_id, has_image)
+        )
+
+        logger.info(f"Post #{post_id} manually edited by admin {message.from_user.id}")
 
     await state.clear()
 

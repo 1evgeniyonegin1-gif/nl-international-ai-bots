@@ -5,6 +5,7 @@
 Интегрирована система персон и настроений
 Интегрирована RAG система для использования базы знаний
 """
+import random
 from typing import Optional, Tuple, List
 from datetime import datetime
 from loguru import logger
@@ -355,9 +356,26 @@ class ContentGenerator:
                     self.persona_manager.set_mood(mood)
 
                 # Получаем контекст персоны с hook'ом
+                # Формируем переменные для hook'ов
+                topic_for_hook = custom_topic or self._get_topic_for_post_type(post_type)
+                hook_variables = {
+                    "topic": topic_for_hook,
+                    "story": "одну важную историю",
+                    "myth": "распространённое заблуждение",
+                    "percentage": str(random.randint(70, 95)),
+                    "product": "продукт NL",
+                    "mechanism": "этот процесс",
+                    "period": "месяц",
+                    "person": "партнёром",
+                    "situation": "что-то не получается",
+                    "opinion": "это невозможно",
+                    "action": "ждать идеального момента",
+                    "year": "2025",
+                }
                 persona_context = self.persona_manager.get_persona_context(
                     post_type=post_type,
-                    include_hook=True
+                    include_hook=True,
+                    hook_variables=hook_variables
                 )
 
                 # Добавляем дополнение к промпту с информацией о персоне
@@ -520,6 +538,32 @@ class ContentGenerator:
             logger.error(f"Error editing post: {e}")
             raise
 
+    def _get_topic_for_post_type(self, post_type: str) -> str:
+        """
+        Возвращает тему для типа поста (используется в hook_variables).
+
+        Args:
+            post_type: Тип поста
+
+        Returns:
+            str: Тема для подстановки в hook
+        """
+        topic_map = {
+            "product": "продуктах NL",
+            "motivation": "мотивации",
+            "news": "новостях компании",
+            "tips": "полезных советах",
+            "success_story": "успехе",
+            "transformation": "трансформации",
+            "business_lifestyle": "образе жизни",
+            "promo": "акции",
+            "myth_busting": "мифах",
+            "faq": "частых вопросах",
+            "business": "бизнесе",
+            "business_myths": "мифах о сетевом"
+        }
+        return topic_map.get(post_type, "важном")
+
     def _clean_content(self, content: str) -> str:
         """
         Очищает сгенерированный контент от артефактов
@@ -571,21 +615,20 @@ class ContentGenerator:
         if not persona_context:
             return content
 
-        # === 1. ПРИНУДИТЕЛЬНЫЙ HOOK ===
+        # === 1. ПРОВЕРКА HOOK (без принудительной вставки) ===
+        # Принудительная вставка убрана - AI получает hook через промпт
+        # с правильно заполненными переменными
         if persona_context.hook:
             hook = persona_context.hook.strip()
-            # Проверяем начинается ли контент с hook (с учётом возможных эмодзи в начале)
-            content_start = content[:150].lower()
-            hook_lower = hook.lower()
-
-            # Убираем эмодзи из начала для сравнения
+            # Проверяем начинается ли контент с hook (для логирования)
             import re
             content_text_start = re.sub(r'^[\U0001F300-\U0001F9FF\s]+', '', content[:150]).lower()
+            hook_lower = hook.lower()
 
             if not content_text_start.startswith(hook_lower[:30]):
-                # Hook не в начале - вставляем принудительно
-                logger.info(f"[POST-PROCESSING] Hook not found at start, inserting: {hook[:50]}...")
-                content = f"{hook}\n\n{content}"
+                # Hook не в начале - только логируем, не вставляем
+                # (AI должен сам использовать hook из промпта)
+                logger.debug(f"[POST-PROCESSING] Hook не в начале поста: {hook[:50]}...")
 
         # === 2. ВАЛИДАЦИЯ ЭМОДЗИ ===
         # Определяем минимум эмодзи для персоны
@@ -731,21 +774,20 @@ class ContentGenerator:
         try:
             # === 1. СНАЧАЛА ВСЕГДА ИЩЕМ ГОТОВОЕ ФОТО ===
             if use_product_reference and post_type == "product":
-                # Ищем упоминание конкретного продукта
-                product_info_tuple = self.product_reference.extract_product_from_content(post_content)
-                if product_info_tuple:
-                    category, product_key, product_info = product_info_tuple
-                    logger.info(f"[ФОТО] Найден продукт в тексте: {category}/{product_key} - {product_info['name']}")
-                    photo_path = self.product_reference._find_product_photo(product_key, category)
+                # Ищем упоминание конкретного продукта (новый формат: keyword, folder_path, photo_path)
+                product_result = self.product_reference.extract_product_from_content(post_content)
+                if product_result:
+                    keyword, folder_path, photo_path = product_result
+                    logger.info(f"[ФОТО] Найден продукт в тексте: '{keyword}' → {folder_path}")
                     if photo_path and photo_path.exists():
                         # Читаем фото и конвертируем в base64
                         import base64
                         with open(photo_path, 'rb') as f:
                             image_base64 = base64.b64encode(f.read()).decode('utf-8')
-                        logger.info(f"[ФОТО] ✅ Используем готовое фото: {product_info['name']} ({photo_path})")
-                        return image_base64, f"готовое фото: {product_info['name']}"
+                        logger.info(f"[ФОТО] ✅ Используем готовое фото: {photo_path}")
+                        return image_base64, f"готовое фото: {keyword} ({photo_path.name})"
                     else:
-                        logger.warning(f"[ФОТО] ❌ Фото не найдено для {product_info['name']}, путь: {photo_path}")
+                        logger.warning(f"[ФОТО] ❌ Фото не найдено для '{keyword}', путь: {photo_path}")
                 else:
                     logger.warning(f"[ФОТО] ❌ Продукт не распознан в тексте поста (первые 200 символов): {post_content[:200]}")
 
@@ -758,24 +800,26 @@ class ContentGenerator:
 
             # Пробуем найти reference image для image-to-image
             reference_image = None
-            product_info = None
+            product_keyword = None
 
             if use_product_reference and post_type == "product":
-                product_info_tuple = self.product_reference.extract_product_from_content(post_content)
-                if product_info_tuple:
-                    category, product_key, product_info = product_info_tuple
-                    reference_image = self.product_reference.get_product_image_base64(product_key, category)
-                    if reference_image:
-                        logger.info(f"Using reference image for generation: {product_info['name']}")
+                product_result = self.product_reference.extract_product_from_content(post_content)
+                if product_result:
+                    product_keyword, folder_path, photo_path = product_result
+                    if photo_path and photo_path.exists():
+                        import base64
+                        with open(photo_path, 'rb') as f:
+                            reference_image = base64.b64encode(f.read()).decode('utf-8')
+                        if reference_image:
+                            logger.info(f"Using reference image for generation: {product_keyword}")
 
             # Генерируем изображение
-            if reference_image and product_info:
+            if reference_image and product_keyword:
                 # Image-to-image режим
                 if not custom_prompt:
                     custom_prompt = self.yandexart_client._generate_image_prompt(post_type, post_content, style)
-                    custom_prompt = self.product_reference.generate_image_to_image_prompt(
-                        product_info, custom_prompt
-                    )
+                    # Простой промпт для image-to-image
+                    custom_prompt = f"Улучши фон этого изображения продукта. {custom_prompt}"
 
                 image_base64 = await self.yandexart_client.generate_image(
                     prompt=custom_prompt,

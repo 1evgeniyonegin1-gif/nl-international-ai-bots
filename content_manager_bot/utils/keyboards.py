@@ -276,12 +276,22 @@ class Keyboards:
         )
         builder.row(
             InlineKeyboardButton(
-                text="📝 Редактировать",
+                text="📝 AI-редактор",
                 callback_data=f"edit:{post_id}"
             ),
             InlineKeyboardButton(
                 text="🔄 Перегенерировать",
                 callback_data=f"regenerate:{post_id}"
+            )
+        )
+        builder.row(
+            InlineKeyboardButton(
+                text="✏️ Свой текст",
+                callback_data=f"manual_edit:{post_id}"
+            ),
+            InlineKeyboardButton(
+                text="❌ Отклонить",
+                callback_data=f"reject:{post_id}"
             )
         )
         # Кнопки для изображений
