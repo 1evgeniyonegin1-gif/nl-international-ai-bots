@@ -1,8 +1,11 @@
 """
 Утилита для работы с фото продуктов NL International.
 Находит и отправляет фото продуктов клиентам.
+
+Использует полный маппинг из full_products_mapping.json (~200 продуктов)
 """
 import os
+import json
 import random
 from pathlib import Path
 from typing import Optional, List
@@ -11,66 +14,31 @@ from loguru import logger
 # Базовый путь к фото продуктов
 UNIFIED_PRODUCTS_PATH = Path(__file__).parent.parent.parent / "content" / "unified_products"
 
+# Загружаем полный маппинг из JSON
+MAPPING_FILE = UNIFIED_PRODUCTS_PATH / "full_products_mapping.json"
 
-# Маппинг ключевых слов на папки с фото
-PRODUCT_FOLDERS = {
-    # ED Smart
-    "ed_smart": ["ed_smart", "energy_diet"],
-    "ed smart": ["ed_smart", "energy_diet"],
-    "коктейль": ["ed_smart", "energy_diet"],
-    "шоколад": ["ed_smart", "energy_diet"],
-    "ваниль": ["ed_smart", "energy_diet"],
-    "капучино": ["ed_smart", "energy_diet"],
-    "фисташка": ["ed_smart", "energy_diet"],
+# Кэш маппинга
+_keywords_cache: Optional[dict] = None
+_categories_cache: Optional[dict] = None
 
-    # Greenflash БАД
-    "collagen": ["collagen", "greenflash"],
-    "коллаген": ["collagen", "greenflash"],
-    "omega": ["omega", "greenflash"],
-    "омега": ["omega", "greenflash"],
-    "vitamin": ["vitamin_d", "greenflash"],
-    "витамин": ["vitamin_d", "greenflash"],
-    "greenflash": ["greenflash"],
-    "детокс": ["greenflash"],
-    "detox": ["greenflash"],
 
-    # 3D Slim
-    "3d slim": ["3d_slim"],
-    "draineffect": ["draineffect", "3d_slim"],
-    "дрейн": ["draineffect", "3d_slim"],
-    "похудение": ["3d_slim", "draineffect"],
+def _load_mapping():
+    """Загружает маппинг из JSON файла"""
+    global _keywords_cache, _categories_cache
 
-    # Для детей
-    "happy smile": ["happy_smile", "nlka"],
-    "для детей": ["nlka", "happy_smile"],
-    "детские": ["nlka", "happy_smile"],
-    "nlka": ["nlka"],
-    "prohelper": ["prohelper", "nlka"],
+    if _keywords_cache is not None:
+        return
 
-    # Косметика
-    "beloved": ["beloved"],
-    "be loved": ["beloved"],
-    "косметика": ["beloved"],
-    "крем": ["beloved"],
-    "сыворотка": ["beloved"],
-
-    # Волосы
-    "occuba": ["occuba"],
-    "шампунь": ["occuba"],
-    "волосы": ["occuba"],
-
-    # Другое
-    "biodrone": ["biodrone"],
-    "биодрон": ["biodrone"],
-    "biotuning": ["biotuning"],
-    "fineffect": ["fineffect"],
-    "enerwood": ["enerwood"],
-    "чай": ["enerwood"],
-    "sport": ["sport"],
-    "спорт": ["sport"],
-    "стартовый набор": ["starter_kit"],
-    "starter": ["starter_kit"],
-}
+    try:
+        with open(MAPPING_FILE, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            _keywords_cache = data.get("keywords", {})
+            _categories_cache = data.get("categories", {})
+            logger.info(f"Loaded product mapping: {len(_keywords_cache)} keywords, {len(_categories_cache)} categories")
+    except Exception as e:
+        logger.error(f"Failed to load product mapping: {e}")
+        _keywords_cache = {}
+        _categories_cache = {}
 
 
 def find_product_photos(product_name: str, limit: int = 5) -> List[str]:
@@ -84,38 +52,44 @@ def find_product_photos(product_name: str, limit: int = 5) -> List[str]:
     Returns:
         Список путей к фото
     """
+    _load_mapping()
+
     photos = []
-    product_lower = product_name.lower()
+    product_lower = product_name.lower().strip()
 
-    # Находим подходящие папки
-    folders_to_search = []
-    for keyword, folder_list in PRODUCT_FOLDERS.items():
-        if keyword in product_lower:
-            folders_to_search.extend(folder_list)
+    # Сначала ищем точное совпадение в маппинге
+    folder_path = None
 
-    # Если ничего не нашли - ищем по всем папкам
-    if not folders_to_search:
-        folders_to_search = list(UNIFIED_PRODUCTS_PATH.iterdir()) if UNIFIED_PRODUCTS_PATH.exists() else []
-        folders_to_search = [f.name for f in folders_to_search if f.is_dir() and not f.name.startswith('_')]
+    # Пробуем найти точное ключевое слово
+    if product_lower in _keywords_cache:
+        folder_path = _keywords_cache[product_lower]
+        logger.info(f"Exact match for '{product_lower}' -> {folder_path}")
+    else:
+        # Ищем частичное совпадение
+        for keyword, path in _keywords_cache.items():
+            if keyword in product_lower or product_lower in keyword:
+                folder_path = path
+                logger.info(f"Partial match '{keyword}' in '{product_lower}' -> {folder_path}")
+                break
 
-    # Убираем дубликаты и ищем фото
-    folders_to_search = list(set(folders_to_search))
+    # Если нашли папку - ищем в ней фото
+    if folder_path:
+        full_path = UNIFIED_PRODUCTS_PATH / folder_path / "photos"
+        if full_path.exists():
+            for photo_path in full_path.glob("*.jpg"):
+                photos.append(str(photo_path))
+            for photo_path in full_path.glob("*.png"):
+                photos.append(str(photo_path))
 
-    for folder_name in folders_to_search:
-        folder_path = UNIFIED_PRODUCTS_PATH / folder_name
+            logger.info(f"Found {len(photos)} photos in {full_path}")
 
-        if not folder_path.exists():
-            continue
-
-        # Рекурсивно ищем jpg файлы
-        for photo_path in folder_path.rglob("*.jpg"):
-            photos.append(str(photo_path))
-
-        for photo_path in folder_path.rglob("*.png"):
-            photos.append(str(photo_path))
-
-        if len(photos) >= limit * 3:  # Собираем больше для рандома
-            break
+    # Если ничего не нашли - пробуем fallback на general
+    if not photos:
+        general_path = UNIFIED_PRODUCTS_PATH / "general" / "photos"
+        if general_path.exists():
+            for photo_path in list(general_path.glob("*.jpg"))[:limit * 3]:
+                photos.append(str(photo_path))
+            logger.warning(f"No specific photos for '{product_name}', using general")
 
     # Перемешиваем и возвращаем
     if photos:
@@ -153,15 +127,15 @@ def get_photo_for_pain(pain: str) -> Optional[str]:
         Путь к фото или None
     """
     pain_to_product = {
-        "weight": "ed smart шоколад",
-        "energy": "greenflash витамин",
-        "immunity": "greenflash витамин",
+        "weight": "ed smart",
+        "energy": "greenflash",
+        "immunity": "vitamin d",
         "beauty": "collagen",
-        "skin": "beloved",
+        "skin": "occuba",
         "kids": "happy smile",
-        "sport": "ed smart",
+        "sport": "energy pro",
         "detox": "draineffect",
-        "sleep": "greenflash",
+        "sleep": "magnesium marine",
     }
 
     product_hint = pain_to_product.get(pain, "ed smart")
@@ -177,6 +151,10 @@ CATEGORY_PHOTO_MAP = {
     "3D Slim": "3d_slim",
     "Уход за волосами": "occuba",
     "Чай и напитки": "enerwood",
+    "Коллаген": "collagen",
+    "Омега-3": "omega",
+    "Витамин D": "vitamin_d",
+    "Спорт": "sport",
 }
 
 
@@ -190,14 +168,65 @@ def get_photo_by_category(category: str) -> Optional[str]:
     Returns:
         Путь к фото или None
     """
+    _load_mapping()
+
+    # Проверяем в старом маппинге
     folder = CATEGORY_PHOTO_MAP.get(category)
     if folder:
         return get_random_product_photo(folder)
+
+    # Проверяем в новом маппинге категорий
+    category_lower = category.lower()
+    if category_lower in _categories_cache:
+        paths = _categories_cache[category_lower]
+        if paths:
+            # Берём первый путь из категории
+            folder_path = paths[0]
+            full_path = UNIFIED_PRODUCTS_PATH / folder_path / "photos"
+            if full_path.exists():
+                photos = list(full_path.glob("*.jpg")) + list(full_path.glob("*.png"))
+                if photos:
+                    return str(random.choice(photos))
+
     return None
+
+
+def get_all_photos_for_category(category: str, limit: int = 20) -> List[str]:
+    """
+    Возвращает все фото для категории.
+
+    Args:
+        category: Название категории
+        limit: Максимум фото
+
+    Returns:
+        Список путей к фото
+    """
+    _load_mapping()
+
+    photos = []
+    category_lower = category.lower()
+
+    if category_lower in _categories_cache:
+        for folder_path in _categories_cache[category_lower]:
+            full_path = UNIFIED_PRODUCTS_PATH / folder_path / "photos"
+            if full_path.exists():
+                for photo in full_path.glob("*.jpg"):
+                    photos.append(str(photo))
+                    if len(photos) >= limit:
+                        break
+                for photo in full_path.glob("*.png"):
+                    photos.append(str(photo))
+                    if len(photos) >= limit:
+                        break
+
+    random.shuffle(photos)
+    return photos[:limit]
 
 
 # Проверка наличия фото при импорте
 if UNIFIED_PRODUCTS_PATH.exists():
+    _load_mapping()
     total_photos = sum(1 for _ in UNIFIED_PRODUCTS_PATH.rglob("*.jpg"))
     logger.info(f"Product photos loaded: {total_photos} photos in {UNIFIED_PRODUCTS_PATH}")
 else:

@@ -10,7 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.database.base import AsyncSessionLocal
-from shared.ai_clients.gigachat_client import GigaChatClient
+from shared.ai_clients.yandexgpt_client import YandexGPTClient
 from shared.config.settings import settings
 from shared.rag import get_rag_engine
 from curator_bot.database.models import User, ConversationMessage
@@ -34,11 +34,8 @@ PHONE_PATTERN = re.compile(r'^\+?[78]?\d{10}$|^\+7\s?\(?\d{3}\)?\s?\d{3}[-\s]?\d
 EMAIL_PATTERN = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
 
 # Инициализируем AI клиент глобально
-# Используем GigaChat (Сбер) - бесплатный
-ai_client = GigaChatClient(
-    auth_token=settings.gigachat_auth_token,
-    model="GigaChat"
-)
+# Используем YandexGPT-32k (грант 4000 руб)
+ai_client = YandexGPTClient()  # Берёт настройки из .env автоматически
 
 # Инициализируем движок чата
 chat_engine = CuratorChatEngine(ai_client=ai_client)
