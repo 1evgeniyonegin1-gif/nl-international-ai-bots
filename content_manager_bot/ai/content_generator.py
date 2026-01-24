@@ -735,21 +735,19 @@ class ContentGenerator:
                 product_info_tuple = self.product_reference.extract_product_from_content(post_content)
                 if product_info_tuple:
                     category, product_key, product_info = product_info_tuple
+                    logger.info(f"[ФОТО] Найден продукт в тексте: {category}/{product_key} - {product_info['name']}")
                     photo_path = self.product_reference._find_product_photo(product_key, category)
                     if photo_path and photo_path.exists():
                         # Читаем фото и конвертируем в base64
                         import base64
                         with open(photo_path, 'rb') as f:
                             image_base64 = base64.b64encode(f.read()).decode('utf-8')
-                        logger.info(f"[ФОТО] Используем готовое фото продукта: {product_info['name']} ({photo_path})")
+                        logger.info(f"[ФОТО] ✅ Используем готовое фото: {product_info['name']} ({photo_path})")
                         return image_base64, f"готовое фото: {product_info['name']}"
-
-                # === 2. СЛУЧАЙНОЕ ФОТО ИЗ КАТЕГОРИИ ===
-                random_photo = self.product_reference.get_random_product_photo()
-                if random_photo:
-                    image_base64, photo_path = random_photo
-                    logger.info(f"[ФОТО] Случайное фото продукта: {photo_path}")
-                    return image_base64, f"случайное фото: {photo_path.name}"
+                    else:
+                        logger.warning(f"[ФОТО] ❌ Фото не найдено для {product_info['name']}, путь: {photo_path}")
+                else:
+                    logger.warning(f"[ФОТО] ❌ Продукт не распознан в тексте поста (первые 200 символов): {post_content[:200]}")
 
             # === 3. ТОЛЬКО ЕСЛИ НЕТ ГОТОВЫХ — ГЕНЕРИРУЕМ ===
             if not self.yandexart_client:
