@@ -70,11 +70,18 @@ class ProductReferenceManager:
 
         if category:
             # Поиск в конкретной категории
-            if category in mapping and product_key in mapping[category]:
-                return mapping[category][product_key]
+            # JSON структура: {"greenflash": {"products": {"omega3": {...}}}}
+            if category in mapping:
+                cat_data = mapping[category]
+                # Если есть вложенность "products", берём её
+                products = cat_data.get("products", cat_data)
+                if product_key in products:
+                    return products[product_key]
         else:
             # Поиск по всем категориям
-            for cat_name, products in mapping.items():
+            for cat_name, cat_data in mapping.items():
+                # Если есть вложенность "products", берём её
+                products = cat_data.get("products", cat_data) if isinstance(cat_data, dict) else {}
                 if product_key in products:
                     return products[product_key]
 

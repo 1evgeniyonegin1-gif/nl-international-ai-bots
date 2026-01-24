@@ -207,15 +207,19 @@ async def handle_message(message: Message):
                 product_tuple = product_manager.extract_product_from_content(combined_text)
                 if product_tuple:
                     category, product_key, product_info = product_tuple
+                    logger.info(f"[PRODUCT] Found: {category}/{product_key} - {product_info['name']}")
                     photo_path = product_manager._find_product_photo(product_key, category)
+                    logger.info(f"[PRODUCT] Photo path: {photo_path}, exists={photo_path.exists() if photo_path else False}")
                     if photo_path and photo_path.exists():
                         await message.answer_photo(
                             photo=FSInputFile(photo_path),
                             caption=f"📦 {product_info['name']}"
                         )
-                        logger.info(f"Sent product photo: {product_info['name']} (found in combined text)")
+                        logger.info(f"[PRODUCT] ✅ Sent photo: {product_info['name']}")
+                else:
+                    logger.debug(f"[PRODUCT] No product found in: {combined_text[:100]}")
             except Exception as photo_error:
-                logger.debug(f"Could not send product photo: {photo_error}")
+                logger.error(f"[PRODUCT] ❌ Error sending photo: {photo_error}", exc_info=True)
 
             logger.info(f"Response sent to user {user.telegram_id}")
 
