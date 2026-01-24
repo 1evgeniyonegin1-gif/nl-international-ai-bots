@@ -4,7 +4,7 @@
 import os
 import json
 import base64
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Tuple
 from pathlib import Path
 from loguru import logger
 
@@ -19,14 +19,18 @@ class ProductReferenceManager:
         Args:
             base_path: Базовый путь к папке с изображениями продуктов
         """
+        # Определяем путь относительно корня проекта
+        project_root = Path(__file__).parent.parent.parent
+
         if base_path is None:
-            # Определяем путь относительно корня проекта
-            project_root = Path(__file__).parent.parent.parent
-            base_path = project_root / "content" / "product_images"
+            # Используем unified_products для реальных фото
+            base_path = project_root / "content" / "unified_products"
 
         self.base_path = Path(base_path)
-        self.mapping_file = self.base_path / "products_mapping.json"
+        # Маппинг хранится в product_images (legacy)
+        self.mapping_file = project_root / "content" / "product_images" / "products_mapping.json"
         self._mapping: Optional[Dict[str, Any]] = None
+        self._photo_cache: Dict[str, str] = {}  # Кэш найденных фото
 
     def load_mapping(self) -> Dict[str, Any]:
         """
@@ -87,24 +91,117 @@ class ProductReferenceManager:
         Returns:
             str: Base64-encoded изображение или None
         """
+        # Проверяем кэш
+        cache_key = f"{category}_{product_key}"
+        if cache_key in self._photo_cache:
+            return self._photo_cache[cache_key]
+
         product_info = self.get_product_info(product_key, category)
         if not product_info:
             logger.warning(f"Product not found: {product_key} in category {category}")
             return None
 
-        image_path = self.base_path / product_info["image"]
-        if not image_path.exists():
-            logger.warning(f"Product image not found: {image_path}")
+        # Ищем фото в unified_products структуре
+        image_path = self._find_product_photo(product_key, category)
+        if not image_path:
+            logger.warning(f"Product image not found for: {product_key}")
             return None
 
         try:
             with open(image_path, 'rb') as f:
                 image_data = f.read()
                 image_base64 = base64.b64encode(image_data).decode('utf-8')
-                logger.info(f"Loaded product image: {product_info['name']}")
+                self._photo_cache[cache_key] = image_base64
+                logger.info(f"Loaded product image: {product_info['name']} from {image_path}")
                 return image_base64
         except Exception as e:
             logger.error(f"Error loading product image: {e}")
+            return None
+
+    def _find_product_photo(self, product_key: str, category: Optional[str] = None) -> Optional[Path]:
+        """
+        Ищет фото продукта в структуре unified_products/
+
+        Структура: unified_products/{brand}/{product}/photos/*.jpg
+
+        Args:
+            product_key: Ключ продукта
+            category: Категория (бренд)
+
+        Returns:
+            Path: Путь к фото или None
+        """
+        search_paths = []
+
+        if category:
+            # Ищем в конкретной категории
+            search_paths.append(self.base_path / category / product_key / "photos")
+            # Альтернативные написания
+            search_paths.append(self.base_path / category.lower() / product_key.lower() / "photos")
+            search_paths.append(self.base_path / category / "*" / "photos")
+
+        # Ищем по всем категориям
+        for brand_dir in self.base_path.iterdir():
+            if brand_dir.is_dir():
+                product_dir = brand_dir / product_key / "photos"
+                if product_dir.exists():
+                    search_paths.insert(0, product_dir)
+
+                # Ищем похожие названия
+                for product_dir in brand_dir.iterdir():
+                    if product_dir.is_dir() and product_key.lower() in product_dir.name.lower():
+                        photos_dir = product_dir / "photos"
+                        if photos_dir.exists():
+                            search_paths.insert(0, photos_dir)
+
+        # Ищем первое доступное фото
+        for search_path in search_paths:
+            if not search_path.exists():
+                continue
+
+            jpg_files = list(search_path.glob("*.jpg"))
+            if jpg_files:
+                # Берём первое фото
+                return jpg_files[0]
+
+            # Пробуем PNG
+            png_files = list(search_path.glob("*.png"))
+            if png_files:
+                return png_files[0]
+
+        return None
+
+    def get_random_product_photo(self, category: Optional[str] = None) -> Optional[Tuple[str, Path]]:
+        """
+        Получает случайное фото продукта из unified_products/
+
+        Args:
+            category: Категория для фильтрации
+
+        Returns:
+            Tuple[str, Path]: (base64, путь к файлу) или None
+        """
+        import random
+
+        all_photos = []
+
+        search_path = self.base_path / category if category else self.base_path
+
+        if search_path.exists():
+            for photo in search_path.rglob("*.jpg"):
+                all_photos.append(photo)
+
+        if not all_photos:
+            return None
+
+        photo_path = random.choice(all_photos)
+
+        try:
+            with open(photo_path, 'rb') as f:
+                image_base64 = base64.b64encode(f.read()).decode('utf-8')
+                return image_base64, photo_path
+        except Exception as e:
+            logger.error(f"Error loading random photo: {e}")
             return None
 
     def find_product_by_name(self, product_name: str) -> Optional[tuple[str, str, Dict[str, Any]]]:

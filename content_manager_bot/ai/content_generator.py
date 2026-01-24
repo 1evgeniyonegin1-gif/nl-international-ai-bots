@@ -421,6 +421,9 @@ class ContentGenerator:
             # Очищаем контент от возможных артефактов
             content = self._clean_content(content)
 
+            # Применяем post-processing для гарантии соблюдения инструкций
+            content = self._apply_post_processing(content, persona_context)
+
             logger.info(f"Post generated successfully with {model_name}: {len(content)} chars")
 
             return content, user_prompt
@@ -545,6 +548,94 @@ class ContentGenerator:
             content = content.replace("\n\n\n", "\n\n")
 
         return content.strip()
+
+    def _apply_post_processing(
+        self,
+        content: str,
+        persona_context: Optional[PersonaContext]
+    ) -> str:
+        """
+        Применяет post-processing для гарантии соблюдения инструкций AI.
+
+        Исправляет типичные проблемы:
+        1. AI игнорирует hook - принудительно вставляем в начало
+        2. AI мало эмодзи - добавляем из набора персоны
+
+        Args:
+            content: Сгенерированный контент
+            persona_context: Контекст персоны (если использовалась)
+
+        Returns:
+            str: Контент с гарантированным соблюдением инструкций
+        """
+        if not persona_context:
+            return content
+
+        # === 1. ПРИНУДИТЕЛЬНЫЙ HOOK ===
+        if persona_context.hook:
+            hook = persona_context.hook.strip()
+            # Проверяем начинается ли контент с hook (с учётом возможных эмодзи в начале)
+            content_start = content[:150].lower()
+            hook_lower = hook.lower()
+
+            # Убираем эмодзи из начала для сравнения
+            import re
+            content_text_start = re.sub(r'^[\U0001F300-\U0001F9FF\s]+', '', content[:150]).lower()
+
+            if not content_text_start.startswith(hook_lower[:30]):
+                # Hook не в начале - вставляем принудительно
+                logger.info(f"[POST-PROCESSING] Hook not found at start, inserting: {hook[:50]}...")
+                content = f"{hook}\n\n{content}"
+
+        # === 2. ВАЛИДАЦИЯ ЭМОДЗИ ===
+        # Определяем минимум эмодзи для персоны
+        emoji_requirements = {
+            "crazy": 5,      # Безумный Данил - много эмодзи
+            "friend": 4,     # Дружелюбный - достаточно эмодзи
+            "rebel": 3,      # Бунтарь - умеренно
+            "expert": 2,     # Эксперт - мало
+            "philosopher": 2,  # Философ - мало
+            "tired": 1       # Уставший - минимум
+        }
+
+        min_emojis = emoji_requirements.get(persona_context.persona_version, 2)
+        current_emojis = self._count_emojis(content)
+
+        if current_emojis < min_emojis and persona_context.emoji:
+            # Добавляем эмодзи из набора персоны
+            needed = min_emojis - current_emojis
+            import random
+            emojis_to_add = random.sample(
+                persona_context.emoji,
+                min(needed, len(persona_context.emoji))
+            )
+
+            # Вставляем эмодзи в разные места текста
+            lines = content.split('\n')
+            for i, emoji in enumerate(emojis_to_add):
+                insert_pos = (i * len(lines)) // len(emojis_to_add)
+                if insert_pos < len(lines) and lines[insert_pos].strip():
+                    # Добавляем в конец строки
+                    lines[insert_pos] = lines[insert_pos].rstrip() + f" {emoji}"
+
+            content = '\n'.join(lines)
+            logger.info(f"[POST-PROCESSING] Added {len(emojis_to_add)} emojis for {persona_context.persona_version}")
+
+        return content
+
+    def _count_emojis(self, text: str) -> int:
+        """Подсчитывает количество эмодзи в тексте"""
+        import re
+        emoji_pattern = re.compile(
+            "[\U0001F300-\U0001F9FF"  # Misc Symbols, Emoticons, etc.
+            "\U00002600-\U000027BF"    # Misc symbols
+            "\U0001F600-\U0001F64F"    # Emoticons
+            "\U0001F680-\U0001F6FF"    # Transport
+            "\U0001F1E0-\U0001F1FF"    # Flags
+            "]+",
+            flags=re.UNICODE
+        )
+        return len(emoji_pattern.findall(text))
 
     @staticmethod
     def get_available_post_types() -> dict:

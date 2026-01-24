@@ -12,7 +12,8 @@ from shared.database.base import AsyncSessionLocal
 from shared.config.settings import settings
 from curator_bot.database.models import User
 from curator_bot.ai.prompts import get_welcome_message
-from curator_bot.funnels.keyboards import get_start_keyboard, get_main_menu_reply_keyboard
+# Кнопки убраны - диалоговый режим
+# from curator_bot.funnels.keyboards import get_start_keyboard, get_main_menu_reply_keyboard
 from curator_bot.analytics.funnel_stats import get_funnel_stats, format_funnel_stats
 from curator_bot.analytics.lead_scoring import get_leads_needing_attention
 from loguru import logger
@@ -25,7 +26,7 @@ router = Router(name="commands")
 async def cmd_start(message: Message):
     """
     Обработчик команды /start
-    Регистрирует нового пользователя и запускает воронку квалификации
+    Регистрирует нового пользователя и начинает ДИАЛОГОВЫЙ режим (без кнопок)
     """
     try:
         async with AsyncSessionLocal() as session:
@@ -53,45 +54,29 @@ async def cmd_start(message: Message):
                 await session.commit()
                 logger.info(f"New user registered: {message.from_user.id}")
 
-                # Приветственное сообщение с воронкой квалификации
-                welcome_text = f"""<b>Привет, {first_name}! 👋</b>
+                # ДИАЛОГОВЫЙ РЕЖИМ - без кнопок, нативное общение
+                welcome_text = f"""Привет, {first_name}! 👋
 
-Я AI-помощник для партнёров NL International.
-Помогу разобраться в продуктах, бизнесе и ответить на любые вопросы.
+Я Данил — твой AI-помощник в NL International.
 
-<b>С чего начнём?</b>"""
+Расскажи, что тебя привело? Может, интересуют продукты для здоровья? Или хочешь узнать про бизнес-возможности?
 
-                # Отправляем Reply-клавиатуру (главное меню)
-                await message.answer(
-                    "👇 Главное меню:",
-                    reply_markup=get_main_menu_reply_keyboard()
-                )
-                # Отправляем Inline-клавиатуру (выбор пути)
-                await message.answer(
-                    welcome_text,
-                    reply_markup=get_start_keyboard()
-                )
+Просто напиши, как будто общаешься с другом 😊"""
+
+                await message.answer(welcome_text)
+
             else:
-                # Существующий пользователь — показываем воронку снова
+                # Существующий пользователь — диалоговый режим
                 user.last_activity = datetime.utcnow()
                 await session.commit()
 
-                welcome_text = f"""<b>С возвращением, {first_name}! 👋</b>
+                welcome_text = f"""С возвращением, {first_name}! 👋
 
-Рада снова тебя видеть!
+Рад снова тебя видеть! Чем могу помочь сегодня?
 
-<b>Чем могу помочь?</b>"""
+Расскажи, что на уме — я весь внимание 💬"""
 
-                # Отправляем Reply-клавиатуру (главное меню)
-                await message.answer(
-                    "👇 Главное меню:",
-                    reply_markup=get_main_menu_reply_keyboard()
-                )
-                # Отправляем Inline-клавиатуру (выбор пути)
-                await message.answer(
-                    welcome_text,
-                    reply_markup=get_start_keyboard()
-                )
+                await message.answer(welcome_text)
                 logger.info(f"Existing user returned: {message.from_user.id}")
 
     except Exception as e:

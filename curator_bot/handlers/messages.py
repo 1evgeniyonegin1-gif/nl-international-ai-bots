@@ -14,13 +14,14 @@ from shared.config.settings import settings
 from shared.rag import get_rag_engine
 from curator_bot.database.models import User, ConversationMessage
 from curator_bot.ai.chat_engine import CuratorChatEngine
-from curator_bot.funnels.messages import CONTACT_THANKS, WELCOME_CLIENT, WELCOME_BUSINESS, WELCOME_CURIOUS
-from curator_bot.funnels.keyboards import (
-    get_pain_keyboard,
-    get_income_goal_keyboard,
-    get_start_keyboard,
-    get_curious_keyboard,
-)
+from curator_bot.funnels.messages import CONTACT_THANKS
+# Кнопки убраны - диалоговый режим
+# from curator_bot.funnels.keyboards import (
+#     get_pain_keyboard,
+#     get_income_goal_keyboard,
+#     get_start_keyboard,
+#     get_curious_keyboard,
+# )
 from loguru import logger
 
 
@@ -42,117 +43,11 @@ chat_engine = CuratorChatEngine(ai_client=ai_client)
 
 
 # ============================================
-# ОБРАБОТЧИКИ REPLY-КНОПОК (главное меню)
+# REPLY-КНОПКИ УБРАНЫ - ДИАЛОГОВЫЙ РЕЖИМ
 # ============================================
-
-@router.message(F.text == "🍎 Здоровье")
-async def handle_health_menu(message: Message):
-    """Reply-кнопка: Здоровье"""
-    async with AsyncSessionLocal() as session:
-        # Обновляем intent пользователя
-        result = await session.execute(
-            select(User).where(User.telegram_id == message.from_user.id)
-        )
-        user = result.scalar_one_or_none()
-
-        if user:
-            user.user_intent = "client"
-            user.funnel_step = 1
-            user.lead_status = "qualified"
-            user.last_activity = datetime.now()
-            await session.commit()
-
-    await message.answer(
-        WELCOME_CLIENT,
-        reply_markup=get_pain_keyboard()
-    )
-
-
-@router.message(F.text == "💼 Бизнес")
-async def handle_business_menu(message: Message):
-    """Reply-кнопка: Бизнес"""
-    async with AsyncSessionLocal() as session:
-        # Обновляем intent пользователя
-        result = await session.execute(
-            select(User).where(User.telegram_id == message.from_user.id)
-        )
-        user = result.scalar_one_or_none()
-
-        if user:
-            user.user_intent = "business"
-            user.funnel_step = 1
-            user.lead_status = "qualified"
-            user.last_activity = datetime.now()
-            await session.commit()
-
-    await message.answer(
-        WELCOME_BUSINESS,
-        reply_markup=get_income_goal_keyboard()
-    )
-
-
-@router.message(F.text == "💡 Узнать больше")
-async def handle_curious_menu(message: Message):
-    """Reply-кнопка: Узнать больше"""
-    async with AsyncSessionLocal() as session:
-        # Обновляем intent пользователя
-        result = await session.execute(
-            select(User).where(User.telegram_id == message.from_user.id)
-        )
-        user = result.scalar_one_or_none()
-
-        if user:
-            user.user_intent = "curious"
-            user.funnel_step = 1
-            user.lead_status = "cold"
-            user.last_activity = datetime.now()
-            await session.commit()
-
-    await message.answer(
-        WELCOME_CURIOUS,
-        reply_markup=get_curious_keyboard()
-    )
-
-
-@router.message(F.text == "❓ Задать вопрос")
-async def handle_ask_question(message: Message):
-    """Reply-кнопка: Задать вопрос"""
-    await message.answer(
-        "<b>Конечно, задавай! 💬</b>\n\n"
-        "Просто напиши свой вопрос — отвечу подробно."
-    )
-
-
-@router.message(F.text == "🏠 Главное меню")
-async def handle_main_menu(message: Message):
-    """Reply-кнопка: Главное меню"""
-    async with AsyncSessionLocal() as session:
-        # Сбрасываем воронку
-        result = await session.execute(
-            select(User).where(User.telegram_id == message.from_user.id)
-        )
-        user = result.scalar_one_or_none()
-
-        if user:
-            user.user_intent = None
-            user.pain_point = None
-            user.income_goal = None
-            user.funnel_step = 0
-            user.last_activity = datetime.now()
-            await session.commit()
-
-    welcome_text = """<b>Привет! 👋</b>
-
-Я AI-помощник для партнёров NL International.
-Помогу разобраться в продуктах, бизнесе и ответить на любые вопросы.
-
-<b>С чего начнём?</b>"""
-
-    await message.answer(
-        welcome_text,
-        reply_markup=get_start_keyboard()
-    )
-
+# Теперь куратор ведёт естественный диалог без кнопок.
+# Воронка продаж работает через conversational_funnel.py
+# который анализирует текст и определяет этап воронки.
 
 # ============================================
 # ОБЩИЙ ОБРАБОТЧИК ТЕКСТОВЫХ СООБЩЕНИЙ

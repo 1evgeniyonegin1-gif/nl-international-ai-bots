@@ -53,7 +53,7 @@ class Settings(BaseSettings):
     yandex_private_key: str = Field(default="", env="YANDEX_PRIVATE_KEY")
     yandex_private_key_file: str = Field(default="", env="YANDEX_PRIVATE_KEY_FILE")
     yandex_folder_id: str = Field(default="", env="YANDEX_FOLDER_ID")
-    yandex_model: str = Field(default="yandexgpt-lite", env="YANDEX_MODEL")
+    yandex_model: str = Field(default="yandexgpt-32k", env="YANDEX_MODEL")
 
     @model_validator(mode='after')
     def load_private_key_from_file(self) -> 'Settings':
