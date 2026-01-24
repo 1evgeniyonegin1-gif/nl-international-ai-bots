@@ -1,7 +1,9 @@
 """
 Обработчики callback-кнопок
 """
+import asyncio
 from datetime import datetime, timedelta
+from typing import List
 from aiogram import Router, F, Bot
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
@@ -18,6 +20,51 @@ from content_manager_bot.handlers.admin import is_admin, generate_and_show_post
 from content_manager_bot.scheduler.content_scheduler import ContentScheduler
 
 router = Router()
+
+
+def split_post_to_messages(text: str, max_length: int = 1000) -> List[str]:
+    """
+    Разбивает длинный пост на несколько сообщений.
+    Разделяет по абзацам, не по символам.
+
+    Args:
+        text: Текст поста
+        max_length: Максимальная длина одного сообщения
+
+    Returns:
+        List[str]: Список частей сообщения
+    """
+    if len(text) <= max_length:
+        return [text]
+
+    messages = []
+    current = ""
+
+    for paragraph in text.split('\n\n'):
+        # Если параграф сам по себе слишком длинный — разбиваем по строкам
+        if len(paragraph) > max_length:
+            if current:
+                messages.append(current.strip())
+                current = ""
+            # Разбиваем по строкам
+            for line in paragraph.split('\n'):
+                if len(current) + len(line) + 1 <= max_length:
+                    current += ('\n' if current else '') + line
+                else:
+                    if current:
+                        messages.append(current.strip())
+                    current = line
+        elif len(current) + len(paragraph) + 2 <= max_length:
+            current += ('\n\n' if current else '') + paragraph
+        else:
+            if current:
+                messages.append(current.strip())
+            current = paragraph
+
+    if current:
+        messages.append(current.strip())
+
+    return messages
 
 # Инициализируем генератор контента
 content_generator = ContentGenerator()
@@ -79,9 +126,8 @@ async def callback_publish(callback: CallbackQuery, bot: Bot):
             topic_id = settings.get_topic_id(post.post_type)
 
             # Добавляем ссылку на куратора в конец поста
-            post_with_curator = (
-                f"{post.content}\n\n"
-                f"━━━━━━━━━━━━━━━\n"
+            curator_footer = (
+                f"\n\n━━━━━━━━━━━━━━━\n"
                 f"❓ Есть вопросы? Спроси AI-Куратора → {settings.curator_bot_username}"
             )
 
@@ -89,53 +135,93 @@ async def callback_publish(callback: CallbackQuery, bot: Bot):
             target_chat = settings.group_id if settings.group_id and topic_id else settings.channel_username
             publish_target = f"группа (тема #{topic_id})" if settings.group_id and topic_id else settings.channel_username
 
-            # Если есть изображение - публикуем с изображением
+            # Разбиваем длинный пост на части
+            post_parts = split_post_to_messages(post.content, max_length=900)
+
+            # Добавляем footer к последней части
+            if post_parts:
+                post_parts[-1] = post_parts[-1] + curator_footer
+
+            channel_message = None
+
+            # Если есть изображение - публикуем первую часть с изображением
             if post.image_url:
                 try:
                     # Конвертируем base64 в файл
                     image_bytes = base64.b64decode(post.image_url)
                     image_file = BufferedInputFile(image_bytes, filename=f"post_{post_id}.jpg")
 
+                    # Первая часть с фото (caption до 1024 символов)
+                    first_part = post_parts[0] if post_parts else ""
+                    if len(first_part) > 1024:
+                        first_part = first_part[:1020] + "..."
+
                     if settings.group_id and topic_id:
                         channel_message = await bot.send_photo(
                             chat_id=target_chat,
                             photo=image_file,
-                            caption=post_with_curator,
+                            caption=first_part,
                             message_thread_id=topic_id
                         )
                     else:
                         channel_message = await bot.send_photo(
                             chat_id=target_chat,
                             photo=image_file,
-                            caption=post_with_curator
+                            caption=first_part
                         )
+
+                    # Остальные части отправляем как текст
+                    for part in post_parts[1:]:
+                        await asyncio.sleep(0.5)  # Чтобы не было флуда
+                        if settings.group_id and topic_id:
+                            await bot.send_message(
+                                chat_id=target_chat,
+                                text=part,
+                                message_thread_id=topic_id
+                            )
+                        else:
+                            await bot.send_message(
+                                chat_id=target_chat,
+                                text=part
+                            )
+
                 except Exception as e:
                     logger.error(f"Error sending image for post #{post_id}: {e}")
                     # Фолбэк: публикуем без изображения
+                    for i, part in enumerate(post_parts):
+                        if i > 0:
+                            await asyncio.sleep(0.5)
+                        if settings.group_id and topic_id:
+                            msg = await bot.send_message(
+                                chat_id=target_chat,
+                                text=part,
+                                message_thread_id=topic_id
+                            )
+                        else:
+                            msg = await bot.send_message(
+                                chat_id=target_chat,
+                                text=part
+                            )
+                        if i == 0:
+                            channel_message = msg
+            else:
+                # Публикуем без изображения — все части
+                for i, part in enumerate(post_parts):
+                    if i > 0:
+                        await asyncio.sleep(0.5)  # Чтобы не было флуда
                     if settings.group_id and topic_id:
-                        channel_message = await bot.send_message(
+                        msg = await bot.send_message(
                             chat_id=target_chat,
-                            text=post_with_curator,
+                            text=part,
                             message_thread_id=topic_id
                         )
                     else:
-                        channel_message = await bot.send_message(
+                        msg = await bot.send_message(
                             chat_id=target_chat,
-                            text=post_with_curator
+                            text=part
                         )
-            else:
-                # Публикуем без изображения
-                if settings.group_id and topic_id:
-                    channel_message = await bot.send_message(
-                        chat_id=target_chat,
-                        text=post_with_curator,
-                        message_thread_id=topic_id
-                    )
-                else:
-                    channel_message = await bot.send_message(
-                        chat_id=target_chat,
-                        text=post_with_curator
-                    )
+                    if i == 0:
+                        channel_message = msg
 
             # Обновляем статус поста
             post.status = "published"

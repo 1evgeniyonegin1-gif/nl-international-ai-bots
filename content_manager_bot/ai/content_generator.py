@@ -711,43 +711,67 @@ class ContentGenerator:
         use_product_reference: bool = True
     ) -> Tuple[Optional[str], str]:
         """
-        Генерирует изображение для поста (с поддержкой референсных изображений продуктов)
+        Генерирует изображение для поста.
+
+        ПРИОРИТЕТ:
+        1. Готовое фото из unified_products/ (если это пост о продукте)
+        2. Случайное фото из категории
+        3. ТОЛЬКО если нет готового — генерировать через YandexART
 
         Args:
             post_type: Тип поста
             post_content: Текст поста
             custom_prompt: Пользовательский промпт (опционально)
             style: Визуальный стиль изображения (ImageStyle enum)
-            use_product_reference: Использовать reference image если найден продукт (image-to-image)
+            use_product_reference: Использовать готовые фото продуктов
 
         Returns:
-            Tuple[Optional[str], str]: (base64 изображения или None, использованный промпт)
+            Tuple[Optional[str], str]: (base64 изображения или путь к файлу, описание)
         """
-        if not self.yandexart_client:
-            logger.warning("YandexART client not available")
-            return None, ""
-
         try:
-            reference_image = None
-            reference_used = False
+            # === 1. СНАЧАЛА ВСЕГДА ИЩЕМ ГОТОВОЕ ФОТО ===
+            if use_product_reference and post_type == "product":
+                # Ищем упоминание конкретного продукта
+                product_info_tuple = self.product_reference.extract_product_from_content(post_content)
+                if product_info_tuple:
+                    category, product_key, product_info = product_info_tuple
+                    photo_path = self.product_reference._find_product_photo(product_key, category)
+                    if photo_path and photo_path.exists():
+                        # Читаем фото и конвертируем в base64
+                        import base64
+                        with open(photo_path, 'rb') as f:
+                            image_base64 = base64.b64encode(f.read()).decode('utf-8')
+                        logger.info(f"[ФОТО] Используем готовое фото продукта: {product_info['name']} ({photo_path})")
+                        return image_base64, f"готовое фото: {product_info['name']}"
 
-            # Пытаемся найти референсное изображение продукта (только для постов о продуктах)
+                # === 2. СЛУЧАЙНОЕ ФОТО ИЗ КАТЕГОРИИ ===
+                random_photo = self.product_reference.get_random_product_photo()
+                if random_photo:
+                    image_base64, photo_path = random_photo
+                    logger.info(f"[ФОТО] Случайное фото продукта: {photo_path}")
+                    return image_base64, f"случайное фото: {photo_path.name}"
+
+            # === 3. ТОЛЬКО ЕСЛИ НЕТ ГОТОВЫХ — ГЕНЕРИРУЕМ ===
+            if not self.yandexart_client:
+                logger.warning("YandexART client not available and no product photos found")
+                return None, ""
+
+            logger.info(f"[ФОТО] Нет готовых фото, генерируем через YandexART")
+
+            # Пробуем найти reference image для image-to-image
+            reference_image = None
+            product_info = None
+
             if use_product_reference and post_type == "product":
                 product_info_tuple = self.product_reference.extract_product_from_content(post_content)
                 if product_info_tuple:
                     category, product_key, product_info = product_info_tuple
                     reference_image = self.product_reference.get_product_image_base64(product_key, category)
                     if reference_image:
-                        logger.info(f"Using reference image for product: {product_info['name']}")
-                        reference_used = True
-                        # Модифицируем промпт для image-to-image режима
-                        if custom_prompt:
-                            custom_prompt = self.product_reference.generate_image_to_image_prompt(
-                                product_info, custom_prompt
-                            )
+                        logger.info(f"Using reference image for generation: {product_info['name']}")
 
             # Генерируем изображение
-            if reference_image:
+            if reference_image and product_info:
                 # Image-to-image режим
                 if not custom_prompt:
                     custom_prompt = self.yandexart_client._generate_image_prompt(post_type, post_content, style)
@@ -770,6 +794,7 @@ class ContentGenerator:
                 )
 
             return image_base64, prompt_info
+
         except Exception as e:
             logger.error(f"Error generating image: {e}")
             return None, ""

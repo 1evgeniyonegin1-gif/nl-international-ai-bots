@@ -245,43 +245,108 @@ class ProductReferenceManager:
         Returns:
             tuple: (category, product_key, product_info) или None
         """
-        # Список ключевых слов для поиска продуктов
+        # Расширенный список ключевых слов для поиска продуктов
         product_keywords = {
+            # === GREENFLASH ===
             "vision": ("greenflash", "vision_plus"),
+            "vision plus": ("greenflash", "vision_plus"),
             "зрение": ("greenflash", "vision_plus"),
             "лютеин": ("greenflash", "vision_plus"),
+            "глаза": ("greenflash", "vision_plus"),
+
             "мультивитамин": ("greenflash", "multivitamin"),
+            "multivitamin": ("greenflash", "multivitamin"),
             "витамины": ("greenflash", "multivitamin"),
+            "витаминный комплекс": ("greenflash", "multivitamin"),
+
             "омега": ("greenflash", "omega3"),
             "omega": ("greenflash", "omega3"),
+            "omega-3": ("greenflash", "omega3"),
+            "омега-3": ("greenflash", "omega3"),
             "рыбий жир": ("greenflash", "omega3"),
+            "для мозга": ("greenflash", "omega3"),
+
             "витамин d": ("greenflash", "vitamin_d3"),
             "витамин д": ("greenflash", "vitamin_d3"),
+            "vitamin d": ("greenflash", "vitamin_d3"),
             "d3": ("greenflash", "vitamin_d3"),
+            "д3": ("greenflash", "vitamin_d3"),
+            "солнечный витамин": ("greenflash", "vitamin_d3"),
+
             "коллаген": ("greenflash", "collagen"),
             "collagen": ("greenflash", "collagen"),
+            "морщины": ("greenflash", "collagen"),
+            "кожа": ("greenflash", "collagen"),
+            "суставы": ("greenflash", "collagen"),
+
+            "детокс": ("greenflash", "detox"),
+            "detox": ("greenflash", "detox"),
+            "очищение": ("greenflash", "detox"),
+            "клетчатка": ("greenflash", "detox"),
+
+            # === LOVELY (косметика) ===
+            "крем для лица": ("lovely", "face_cream"),
             "крем": ("lovely", "face_cream"),
+            "face cream": ("lovely", "face_cream"),
+
             "сыворотка": ("lovely", "serum"),
             "serum": ("lovely", "serum"),
+
             "мицеллярн": ("lovely", "micellar_water"),
             "micellar": ("lovely", "micellar_water"),
+            "мицеллярка": ("lovely", "micellar_water"),
+
             "лосьон": ("lovely", "body_lotion"),
             "lotion": ("lovely", "body_lotion"),
+            "для тела": ("lovely", "body_lotion"),
+
+            "lovely": ("lovely", "face_cream"),
+            "косметика nl": ("lovely", "face_cream"),
+
+            # === ENERGY DIET ===
             "energy diet": ("energy_diet", "smart"),
             "энерджи диет": ("energy_diet", "smart"),
+            "ed smart": ("energy_diet", "smart"),
+            "ed pro": ("energy_diet", "pro"),
+            "ed start": ("energy_diet", "start"),
+
             "коктейль": ("energy_diet", "shake_chocolate"),
             "shake": ("energy_diet", "shake_chocolate"),
+            "шоколад": ("energy_diet", "shake_chocolate"),
+            "шоколадный": ("energy_diet", "shake_chocolate"),
+            "капучино": ("energy_diet", "shake_cappuccino"),
+            "ваниль": ("energy_diet", "shake_vanilla"),
+            "клубника": ("energy_diet", "shake_strawberry"),
+            "банан": ("energy_diet", "shake_banana"),
+
+            "похудение": ("energy_diet", "smart"),
+            "похудеть": ("energy_diet", "smart"),
+            "сбросить вес": ("energy_diet", "smart"),
+            "снижение веса": ("energy_diet", "smart"),
+            "диета": ("energy_diet", "smart"),
+            "калории": ("energy_diet", "smart"),
+            "сытость": ("energy_diet", "smart"),
+
+            # === ДРУГОЕ ===
+            "детские витамины": ("other", "kids_vitamins"),
             "детские": ("other", "kids_vitamins"),
             "детям": ("other", "kids_vitamins"),
+            "для детей": ("other", "kids_vitamins"),
+
             "чай": ("other", "tea"),
-            "tea": ("other", "tea")
+            "tea": ("other", "tea"),
+            "травяной чай": ("other", "tea"),
         }
 
         content_lower = content.lower()
 
-        # Ищем ключевые слова в тексте
-        for keyword, (category, product_key) in product_keywords.items():
+        # Ищем ключевые слова в тексте (сначала более специфичные)
+        # Сортируем по длине ключа, чтобы сначала искать более длинные совпадения
+        sorted_keywords = sorted(product_keywords.keys(), key=len, reverse=True)
+
+        for keyword in sorted_keywords:
             if keyword in content_lower:
+                category, product_key = product_keywords[keyword]
                 product_info = self.get_product_info(product_key, category)
                 if product_info:
                     logger.info(f"Found product reference in content: {product_info['name']}")

@@ -3,8 +3,9 @@
 """
 import re
 from datetime import datetime
+from pathlib import Path
 from aiogram import Router, F
-from aiogram.types import Message
+from aiogram.types import Message, FSInputFile
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -22,6 +23,7 @@ from curator_bot.funnels.messages import CONTACT_THANKS
 #     get_start_keyboard,
 #     get_curious_keyboard,
 # )
+from content_manager_bot.utils.product_reference import ProductReferenceManager
 from loguru import logger
 
 
@@ -40,6 +42,9 @@ ai_client = GigaChatClient(
 
 # Инициализируем движок чата
 chat_engine = CuratorChatEngine(ai_client=ai_client)
+
+# Инициализируем менеджер фото продуктов
+product_manager = ProductReferenceManager()
 
 
 # ============================================
@@ -194,6 +199,21 @@ async def handle_message(message: Message):
 
             # Отправляем ответ пользователю
             await message.answer(ai_response)
+
+            # Проверяем упоминание продукта и отправляем фото если найден
+            try:
+                product_tuple = product_manager.extract_product_from_content(ai_response)
+                if product_tuple:
+                    category, product_key, product_info = product_tuple
+                    photo_path = product_manager._find_product_photo(product_key, category)
+                    if photo_path and photo_path.exists():
+                        await message.answer_photo(
+                            photo=FSInputFile(photo_path),
+                            caption=f"📦 {product_info['name']}"
+                        )
+                        logger.info(f"Sent product photo: {product_info['name']}")
+            except Exception as photo_error:
+                logger.debug(f"Could not send product photo: {photo_error}")
 
             logger.info(f"Response sent to user {user.telegram_id}")
 
