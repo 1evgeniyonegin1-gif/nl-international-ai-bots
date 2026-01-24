@@ -1,0 +1,3095 @@
+{
+  "total_products": 190,
+  "categories": {
+    "Уход за волосами": [
+      {
+        "name": "Набор для волос Silky Hair Travel Set",
+        "price": 990,
+        "pv": 4.5,
+        "category": "Уход за волосами",
+        "key": "набор_для_волос_silky_hair_travel_set",
+        "price_per_portion": null
+      },
+      {
+        "name": "Заботливый детский шампунь, 3+",
+        "price": 620,
+        "pv": 3.9,
+        "category": "Уход за волосами",
+        "key": "заботливый_детский_шампунь_3+",
+        "price_per_portion": null
+      },
+      {
+        "name": "Шампунь восстанавливающий Silky hair repair",
+        "price": 1490,
+        "pv": 8.5,
+        "category": "Уход за волосами",
+        "key": "шампунь_восстанавливающий_silky_hair_repair",
+        "price_per_portion": null
+      },
+      {
+        "name": "Шампунь объем и сила Volume & strength",
+        "price": 1490,
+        "pv": 8.5,
+        "category": "Уход за волосами",
+        "key": "шампунь_объем_и_сила_volume_&_strength",
+        "price_per_portion": null
+      },
+      {
+        "name": "Шампунь балансирующий Shine balance",
+        "price": 1490,
+        "pv": 8.5,
+        "category": "Уход за волосами",
+        "key": "шампунь_балансирующий_shine_balance",
+        "price_per_portion": null
+      },
+      {
+        "name": "Кондиционер восстанавливающий Silky hair repair",
+        "price": 1490,
+        "pv": 8.5,
+        "category": "Уход за волосами",
+        "key": "кондиционер_восстанавливающий_silky_hair_repair",
+        "price_per_portion": null
+      },
+      {
+        "name": "Кондиционер объем и сила Volume & strength",
+        "price": 1490,
+        "pv": 8.5,
+        "category": "Уход за волосами",
+        "key": "кондиционер_объем_и_сила_volume_&_strength",
+        "price_per_portion": null
+      },
+      {
+        "name": "Кондиционер балансирующий Shine balance",
+        "price": 1490,
+        "pv": 8.5,
+        "category": "Уход за волосами",
+        "key": "кондиционер_балансирующий_shine_balance",
+        "price_per_portion": null
+      },
+      {
+        "name": "Спрей-кондиционер 3-in-1",
+        "price": 1490,
+        "pv": 8.5,
+        "category": "Уход за волосами",
+        "key": "спрейкондиционер_3in1",
+        "price_per_portion": null
+      },
+      {
+        "name": "Бережный шампунь для собак и кошек",
+        "price": 690,
+        "pv": 4.6,
+        "category": "Уход за волосами",
+        "key": "бережный_шампунь_для_собак_и_кошек",
+        "price_per_portion": null
+      },
+      {
+        "name": "Спрей для легкого расчесывания",
+        "price": 630,
+        "pv": 4.2,
+        "category": "Уход за волосами",
+        "key": "спрей_для_легкого_расчесывания",
+        "price_per_portion": null
+      }
+    ],
+    "Уход за телом": [
+      {
+        "name": "Масло для душа",
+        "price": 890,
+        "pv": 5.9,
+        "category": "Уход за телом",
+        "key": "масло_для_душа",
+        "price_per_portion": null
+      },
+      {
+        "name": "Трюфели",
+        "price": 590,
+        "pv": 2.0,
+        "category": "Уход за телом",
+        "key": "трюфели",
+        "price_per_portion": null
+      },
+      {
+        "name": "Молочный шоколад",
+        "price": 590,
+        "pv": 2.7,
+        "category": "Уход за телом",
+        "key": "молочный_шоколад",
+        "price_per_portion": null
+      },
+      {
+        "name": "Ароматическая свеча",
+        "price": 1390,
+        "pv": 9.0,
+        "category": "Уход за телом",
+        "key": "ароматическая_свеча",
+        "price_per_portion": null
+      },
+      {
+        "name": "Тревел-набор «Сила в путешествиях»",
+        "price": 1350,
+        "pv": 6.5,
+        "category": "Уход за телом",
+        "key": "тревелнабор_сила_в_путешествиях",
+        "price_per_portion": null
+      },
+      {
+        "name": "Гель для душа и шампунь 2 в 1 The LAB",
+        "price": 650,
+        "pv": 4.5,
+        "category": "Уход за телом",
+        "key": "гель_для_душа_и_шампунь_2_в_1_the_lab",
+        "price_per_portion": null
+      },
+      {
+        "name": "Увлажняющий гель для душа Moisturizing",
+        "price": 750,
+        "pv": 5.0,
+        "category": "Уход за телом",
+        "key": "увлажняющий_гель_для_душа_moisturizing",
+        "price_per_portion": null
+      },
+      {
+        "name": "Питательное молочко для тела Nourishing",
+        "price": 850,
+        "pv": 5.8,
+        "category": "Уход за телом",
+        "key": "питательное_молочко_для_тела_nourishing",
+        "price_per_portion": null
+      },
+      {
+        "name": "Обновляющий скраб для тела Renewal",
+        "price": 1090,
+        "pv": 7.3,
+        "category": "Уход за телом",
+        "key": "обновляющий_скраб_для_тела_renewal",
+        "price_per_portion": null
+      },
+      {
+        "name": "Нежное детское молочко для тела, 0+",
+        "price": 620,
+        "pv": 3.9,
+        "category": "Уход за телом",
+        "key": "нежное_детское_молочко_для_тела_0+",
+        "price_per_portion": null
+      },
+      {
+        "name": "Мягкий детский гель для душа, 3+",
+        "price": 620,
+        "pv": 3.9,
+        "category": "Уход за телом",
+        "key": "мягкий_детский_гель_для_душа_3+",
+        "price_per_portion": null
+      },
+      {
+        "name": "Разогревающий антицеллюлитный гель Hot",
+        "price": 990,
+        "pv": 6.7,
+        "category": "Уход за телом",
+        "key": "разогревающий_антицеллюлитный_гель_hot",
+        "price_per_portion": null
+      },
+      {
+        "name": "Скраб моделирующий Shaping",
+        "price": 1090,
+        "pv": 7.3,
+        "category": "Уход за телом",
+        "key": "скраб_моделирующий_shaping",
+        "price_per_portion": null
+      },
+      {
+        "name": "Дезодорант-кристалл для тела Silver",
+        "price": 800,
+        "pv": 3.2,
+        "category": "Уход за телом",
+        "key": "дезодоранткристалл_для_тела_silver",
+        "price_per_portion": null
+      },
+      {
+        "name": "Салфетка-скраб multi-effect, серый",
+        "price": 390,
+        "pv": 2.0,
+        "category": "Уход за телом",
+        "key": "салфеткаскраб_multieffect_серый",
+        "price_per_portion": null
+      },
+      {
+        "name": "Салфетка-скраб Multi-effect, бирюзовый",
+        "price": 390,
+        "pv": 2.0,
+        "category": "Уход за телом",
+        "key": "салфеткаскраб_multieffect_бирюзовый",
+        "price_per_portion": null
+      }
+    ],
+    "Energy Diet": [
+      {
+        "name": "ED Smart Classic «Ягодная панна-котта», 15 порций",
+        "price": 2790,
+        "pv": 19.5,
+        "category": "Energy Diet",
+        "key": "ed_smart_classic_ягодная_паннакотта_15_порций",
+        "price_per_portion": 186.0,
+        "portions": 15
+      },
+      {
+        "name": "ED Smart Milky «Фисташковое мороженое», 15 порций",
+        "price": 2790,
+        "pv": 19.5,
+        "category": "Energy Diet",
+        "key": "ed_smart_milky_фисташковое_мороженое_15_порций",
+        "price_per_portion": 186.0,
+        "portions": 15
+      },
+      {
+        "name": "ED Smart Classic «Кофе», 15 порций",
+        "price": 2790,
+        "pv": 19.5,
+        "category": "Energy Diet",
+        "key": "ed_smart_classic_кофе_15_порций",
+        "price_per_portion": 186.0,
+        "portions": 15
+      },
+      {
+        "name": "ED Smart Classic «Шоколадный брауни», 15 порций",
+        "price": 2790,
+        "pv": 19.5,
+        "category": "Energy Diet",
+        "key": "ed_smart_classic_шоколадный_брауни_15_порций",
+        "price_per_portion": 186.0,
+        "portions": 15
+      },
+      {
+        "name": "ED Smart Classic «Ванильный пломбир», 15 порций",
+        "price": 2790,
+        "pv": 19.5,
+        "category": "Energy Diet",
+        "key": "ed_smart_classic_ванильный_пломбир_15_порций",
+        "price_per_portion": 186.0,
+        "portions": 15
+      },
+      {
+        "name": "ED Smart Classic «Вишневый брауни», 15 порций",
+        "price": 2790,
+        "pv": 19.5,
+        "category": "Energy Diet",
+        "key": "ed_smart_classic_вишневый_брауни_15_порций",
+        "price_per_portion": 186.0,
+        "portions": 15
+      },
+      {
+        "name": "ED Smart Classic «Банановый сплит», 15 порций",
+        "price": 2790,
+        "pv": 19.5,
+        "category": "Energy Diet",
+        "key": "ed_smart_classic_банановый_сплит_15_порций",
+        "price_per_portion": 186.0,
+        "portions": 15
+      },
+      {
+        "name": "ED Smart Classic «Лимонное печенье», 15 порций",
+        "price": 2790,
+        "pv": 19.5,
+        "category": "Energy Diet",
+        "key": "ed_smart_classic_лимонное_печенье_15_порций",
+        "price_per_portion": 186.0,
+        "portions": 15
+      },
+      {
+        "name": "ED Smart Classic «Ваниль», 15 порций",
+        "price": 2790,
+        "pv": 19.5,
+        "category": "Energy Diet",
+        "key": "ed_smart_classic_ваниль_15_порций",
+        "price_per_portion": 186.0,
+        "portions": 15
+      },
+      {
+        "name": "ED Smart Milky «Арахис в карамели», 15 порций",
+        "price": 2790,
+        "pv": 19.5,
+        "category": "Energy Diet",
+        "key": "ed_smart_milky_арахис_в_карамели_15_порций",
+        "price_per_portion": 186.0,
+        "portions": 15
+      },
+      {
+        "name": "ED Smart Classic «Черничный йогурт», 15 порций",
+        "price": 2790,
+        "pv": 19.5,
+        "category": "Energy Diet",
+        "key": "ed_smart_classic_черничный_йогурт_15_порций",
+        "price_per_portion": 186.0,
+        "portions": 15
+      },
+      {
+        "name": "ED Smart Classic «Бельгийский шоколад», 15 порций",
+        "price": 2790,
+        "pv": 19.5,
+        "category": "Energy Diet",
+        "key": "ed_smart_classic_бельгийский_шоколад_15_порций",
+        "price_per_portion": 186.0,
+        "portions": 15
+      },
+      {
+        "name": "ED Smart Classic «Грушевый тарт», 15 порций",
+        "price": 2790,
+        "pv": 19.5,
+        "category": "Energy Diet",
+        "key": "ed_smart_classic_грушевый_тарт_15_порций",
+        "price_per_portion": 186.0,
+        "portions": 15
+      },
+      {
+        "name": "ED Smart Soup «Курица», 15 порций",
+        "price": 2790,
+        "pv": 19.5,
+        "category": "Energy Diet",
+        "key": "ed_smart_soup_курица_15_порций",
+        "price_per_portion": 186.0,
+        "portions": 15
+      },
+      {
+        "name": "Коктейль «Фисташка»",
+        "price": 2700,
+        "pv": 16.3,
+        "category": "Energy Diet",
+        "key": "коктейль_фисташка",
+        "price_per_portion": null
+      },
+      {
+        "name": "Коктейль «Соленая карамель»",
+        "price": 2700,
+        "pv": 16.3,
+        "category": "Energy Diet",
+        "key": "коктейль_соленая_карамель",
+        "price_per_portion": null
+      },
+      {
+        "name": "Коктейль «Кофе»",
+        "price": 2700,
+        "pv": 16.3,
+        "category": "Energy Diet",
+        "key": "коктейль_кофе",
+        "price_per_portion": null
+      },
+      {
+        "name": "Коктейль «Банан»",
+        "price": 2700,
+        "pv": 16.3,
+        "category": "Energy Diet",
+        "key": "коктейль_банан",
+        "price_per_portion": null
+      },
+      {
+        "name": "Коктейль «Ваниль»",
+        "price": 2700,
+        "pv": 16.3,
+        "category": "Energy Diet",
+        "key": "коктейль_ваниль",
+        "price_per_portion": null
+      },
+      {
+        "name": "Коктейль «Капучино»",
+        "price": 2700,
+        "pv": 16.3,
+        "category": "Energy Diet",
+        "key": "коктейль_капучино",
+        "price_per_portion": null
+      },
+      {
+        "name": "Коктейль «Клубника»",
+        "price": 2700,
+        "pv": 16.3,
+        "category": "Energy Diet",
+        "key": "коктейль_клубника",
+        "price_per_portion": null
+      },
+      {
+        "name": "Коктейль «Шоколад»",
+        "price": 2700,
+        "pv": 16.3,
+        "category": "Energy Diet",
+        "key": "коктейль_шоколад",
+        "price_per_portion": null
+      },
+      {
+        "name": "Суп «Грибы»",
+        "price": 2700,
+        "pv": 16.3,
+        "category": "Energy Diet",
+        "key": "суп_грибы",
+        "price_per_portion": null
+      },
+      {
+        "name": "Суп «Курица»",
+        "price": 2700,
+        "pv": 16.3,
+        "category": "Energy Diet",
+        "key": "суп_курица",
+        "price_per_portion": null
+      },
+      {
+        "name": "Микс протеинового печенья NL с суфле",
+        "price": 550,
+        "pv": 1.9,
+        "category": "Energy Diet",
+        "key": "микс_протеинового_печенья_nl_с_суфле",
+        "price_per_portion": null
+      },
+      {
+        "name": "Горячий напиток «Малина»",
+        "price": 590,
+        "pv": 3.9,
+        "category": "Energy Diet",
+        "key": "горячий_напиток_малина",
+        "price_per_portion": null
+      },
+      {
+        "name": "Фруктовые батончики «Финиковый MIX»",
+        "price": 190,
+        "pv": 0.2,
+        "category": "Energy Diet",
+        "key": "фруктовые_батончики_финиковый_mix",
+        "price_per_portion": null
+      },
+      {
+        "name": "Фруктовые батончики «Шоколадный MIX»",
+        "price": 250,
+        "pv": 0.3,
+        "category": "Energy Diet",
+        "key": "фруктовые_батончики_шоколадный_mix",
+        "price_per_portion": null
+      },
+      {
+        "name": "Beauty blend — Бьюти бленд",
+        "price": 1890,
+        "pv": 12.6,
+        "category": "Energy Diet",
+        "key": "beauty_blend_бьюти_бленд",
+        "price_per_portion": null
+      }
+    ],
+    "Greenflash БАД": [
+      {
+        "name": "Иммуноактиватор BioDrone – Биодрон",
+        "price": 2590,
+        "pv": 17.9,
+        "category": "Greenflash БАД",
+        "key": "иммуноактиватор_biodrone_биодрон",
+        "price_per_portion": null
+      },
+      {
+        "name": "Collagentrinity — «Коллагентринити» со вкусом вишни",
+        "price": 2190,
+        "pv": 14.0,
+        "category": "Greenflash БАД",
+        "key": "collagentrinity_коллагентринити_со_вкусом_вишни",
+        "price_per_portion": null
+      },
+      {
+        "name": "Be Best Male - Би бест мужской",
+        "price": 1090,
+        "pv": 7.3,
+        "category": "Greenflash БАД",
+        "key": "be_best_male_би_бест_мужской",
+        "price_per_portion": null
+      },
+      {
+        "name": "Collagen Peptides — Коллаген Пептидс со вкусом вишни",
+        "price": 1890,
+        "pv": 12.3,
+        "category": "Greenflash БАД",
+        "key": "collagen_peptides_коллаген_пептидс_со_вкусом_вишни",
+        "price_per_portion": null
+      },
+      {
+        "name": "Marine Magnesium — Морской магний",
+        "price": 990,
+        "pv": 6.5,
+        "category": "Greenflash БАД",
+        "key": "marine_magnesium_морской_магний",
+        "price_per_portion": null
+      },
+      {
+        "name": "Pro-indole — Про-индол",
+        "price": 1290,
+        "pv": 8.6,
+        "category": "Greenflash БАД",
+        "key": "proindole_проиндол",
+        "price_per_portion": null
+      },
+      {
+        "name": "Кейс Detox Step 1–3 PLUS — формулы мягкого очищения",
+        "price": 2800,
+        "pv": 18.5,
+        "category": "Greenflash БАД",
+        "key": "кейс_detox_step_13_plus_формулы_мягкого_очищения",
+        "price_per_portion": null
+      },
+      {
+        "name": "Be Best Female - Би бест женский",
+        "price": 1090,
+        "pv": 7.3,
+        "category": "Greenflash БАД",
+        "key": "be_best_female_би_бест_женский",
+        "price_per_portion": null
+      },
+      {
+        "name": "Vitamin D3 2000 ME - Витамин D3",
+        "price": 990,
+        "pv": 6.5,
+        "category": "Greenflash БАД",
+        "key": "vitamin_d3_2000_me_витамин_d3",
+        "price_per_portion": null
+      },
+      {
+        "name": "Omega-3 1300 мг - Омега-3 1300 мг",
+        "price": 1590,
+        "pv": 10.0,
+        "category": "Greenflash БАД",
+        "key": "omega3_1300_мг_омега3_1300_мг",
+        "price_per_portion": null
+      },
+      {
+        "name": "Metabiotic - Метабиотик",
+        "price": 2190,
+        "pv": 14.6,
+        "category": "Greenflash БАД",
+        "key": "metabiotic_метабиотик",
+        "price_per_portion": null
+      },
+      {
+        "name": "Neuromedium liposomal — Нейромедиум липосомальный",
+        "price": 990,
+        "pv": 6.5,
+        "category": "Greenflash БАД",
+        "key": "neuromedium_liposomal_нейромедиум_липосомальный",
+        "price_per_portion": null
+      },
+      {
+        "name": "Lactoferra - Лактоферра",
+        "price": 2090,
+        "pv": 14.0,
+        "category": "Greenflash БАД",
+        "key": "lactoferra_лактоферра",
+        "price_per_portion": null
+      },
+      {
+        "name": "5-HTP liposomal — 5-гидрокситриптофан липосомальный",
+        "price": 1390,
+        "pv": 9.2,
+        "category": "Greenflash БАД",
+        "key": "5htp_liposomal_5гидрокситриптофан_липосомальный",
+        "price_per_portion": null
+      },
+      {
+        "name": "Природный сорбент Soft Sorb — Софт Сорб",
+        "price": 1390,
+        "pv": 9.2,
+        "category": "Greenflash БАД",
+        "key": "природный_сорбент_soft_sorb_софт_сорб",
+        "price_per_portion": null
+      },
+      {
+        "name": "Vitamin K2+D3 - Витамин K2+D3",
+        "price": 1290,
+        "pv": 8.5,
+        "category": "Greenflash БАД",
+        "key": "vitamin_k2+d3_витамин_k2+d3",
+        "price_per_portion": null
+      },
+      {
+        "name": "Фитокомплекс Gelm Cleanse — Гельм Клинз",
+        "price": 990,
+        "pv": 6.8,
+        "category": "Greenflash БАД",
+        "key": "фитокомплекс_gelm_cleanse_гельм_клинз",
+        "price_per_portion": null
+      },
+      {
+        "name": "Iron (Fe) – Железо",
+        "price": 990,
+        "pv": 6.5,
+        "category": "Greenflash БАД",
+        "key": "iron_(fe)_железо",
+        "price_per_portion": null
+      },
+      {
+        "name": "Detox Step 1 Plus — формула очищения кишечника",
+        "price": 990,
+        "pv": 6.5,
+        "category": "Greenflash БАД",
+        "key": "detox_step_1_plus_формула_очищения_кишечника",
+        "price_per_portion": null
+      },
+      {
+        "name": "Marine Collagen — Морской коллаген",
+        "price": 1390,
+        "pv": 8.3,
+        "category": "Greenflash БАД",
+        "key": "marine_collagen_морской_коллаген",
+        "price_per_portion": null
+      },
+      {
+        "name": "Vitamin В9+В12 - Витамин В9+В12",
+        "price": 990,
+        "pv": 6.5,
+        "category": "Greenflash БАД",
+        "key": "vitamin_в9+в12_витамин_в9+в12",
+        "price_per_portion": null
+      },
+      {
+        "name": "Vitamin C liposomal — Витамин С липосомальный",
+        "price": 650,
+        "pv": 4.3,
+        "category": "Greenflash БАД",
+        "key": "vitamin_c_liposomal_витамин_с_липосомальный",
+        "price_per_portion": null
+      },
+      {
+        "name": "Metabrain liposomal — Метабрейн липосомальный",
+        "price": 1290,
+        "pv": 8.5,
+        "category": "Greenflash БАД",
+        "key": "metabrain_liposomal_метабрейн_липосомальный",
+        "price_per_portion": null
+      },
+      {
+        "name": "Zinc (Zn) — Цинк",
+        "price": 990,
+        "pv": 6.5,
+        "category": "Greenflash БАД",
+        "key": "zinc_(zn)_цинк",
+        "price_per_portion": null
+      },
+      {
+        "name": "Calcium Marine — Морской кальций",
+        "price": 990,
+        "pv": 6.5,
+        "category": "Greenflash БАД",
+        "key": "calcium_marine_морской_кальций",
+        "price_per_portion": null
+      },
+      {
+        "name": "Collagen Peptides — Коллаген Пептидс со вкусом зелёного чая",
+        "price": 1890,
+        "pv": 12.3,
+        "category": "Greenflash БАД",
+        "key": "collagen_peptides_коллаген_пептидс_со_вкусом_зелён",
+        "price_per_portion": null
+      },
+      {
+        "name": "Detox Step 3 Plus — формула очищения почек",
+        "price": 950,
+        "pv": 6.3,
+        "category": "Greenflash БАД",
+        "key": "detox_step_3_plus_формула_очищения_почек",
+        "price_per_portion": null
+      },
+      {
+        "name": "Крем для ухода за кожей вокруг глаз Biome Eye cream",
+        "price": 1590,
+        "pv": 10.3,
+        "category": "Greenflash БАД",
+        "key": "крем_для_ухода_за_кожей_вокруг_глаз_biome_eye_crea",
+        "price_per_portion": null
+      },
+      {
+        "name": "Cыворотка для лица Biome Serum",
+        "price": 1890,
+        "pv": 12.7,
+        "category": "Greenflash БАД",
+        "key": "cыворотка_для_лица_biome_serum",
+        "price_per_portion": null
+      },
+      {
+        "name": "Двухфазный крем для лица Biome 2 in 1 Face Cream",
+        "price": 2290,
+        "pv": 14.0,
+        "category": "Greenflash БАД",
+        "key": "двухфазный_крем_для_лица_biome_2_in_1_face_cream",
+        "price_per_portion": null
+      },
+      {
+        "name": "Гидрогелевая маска Detox hydrogel mask",
+        "price": 470,
+        "pv": 3.0,
+        "category": "Greenflash БАД",
+        "key": "гидрогелевая_маска_detox_hydrogel_mask",
+        "price_per_portion": null
+      },
+      {
+        "name": "Жиросжигатель Metaboost — «Метабуст»",
+        "price": 1690,
+        "pv": 11.3,
+        "category": "Greenflash БАД",
+        "key": "жиросжигатель_metaboost_метабуст",
+        "price_per_portion": null
+      },
+      {
+        "name": "Omega-3 DHA — Омега-3 ДГК",
+        "price": 2290,
+        "pv": 15.7,
+        "category": "Greenflash БАД",
+        "key": "omega3_dha_омега3_дгк",
+        "price_per_portion": null
+      },
+      {
+        "name": "BioTuning - БиоТюнинг",
+        "price": 3190,
+        "pv": 21.5,
+        "category": "Greenflash БАД",
+        "key": "biotuning_биотюнинг",
+        "price_per_portion": null
+      },
+      {
+        "name": "Толстовка NL, синяя S/M",
+        "price": 5900,
+        "pv": 12.0,
+        "category": "Greenflash БАД",
+        "key": "толстовка_nl_синяя_s/m",
+        "price_per_portion": null
+      },
+      {
+        "name": "Комплект «Шапка и шарф NL», серый",
+        "price": 3490,
+        "pv": 8.0,
+        "category": "Greenflash БАД",
+        "key": "комплект_шапка_и_шарф_nl_серый",
+        "price_per_portion": null
+      },
+      {
+        "name": "Комплект «Шапка и шарф NL», мокко",
+        "price": 3490,
+        "pv": 8.0,
+        "category": "Greenflash БАД",
+        "key": "комплект_шапка_и_шарф_nl_мокко",
+        "price_per_portion": null
+      },
+      {
+        "name": "Футболка NL, сливочная M/L",
+        "price": 3900,
+        "pv": 8.5,
+        "category": "Greenflash БАД",
+        "key": "футболка_nl_сливочная_m/l",
+        "price_per_portion": null
+      },
+      {
+        "name": "Удлиненная футболка NL, какао M/L",
+        "price": 3900,
+        "pv": 8.5,
+        "category": "Greenflash БАД",
+        "key": "удлиненная_футболка_nl_какао_m/l",
+        "price_per_portion": null
+      },
+      {
+        "name": "Свитшот NL, какао M/L",
+        "price": 5900,
+        "pv": 12.0,
+        "category": "Greenflash БАД",
+        "key": "свитшот_nl_какао_m/l",
+        "price_per_portion": null
+      },
+      {
+        "name": "Свитшот NL, какао XL/XXL",
+        "price": 5900,
+        "pv": 12.0,
+        "category": "Greenflash БАД",
+        "key": "свитшот_nl_какао_xl/xxl",
+        "price_per_portion": null
+      },
+      {
+        "name": "Свитшот NL, сливочный XL/XXL",
+        "price": 5900,
+        "pv": 12.0,
+        "category": "Greenflash БАД",
+        "key": "свитшот_nl_сливочный_xl/xxl",
+        "price_per_portion": null
+      },
+      {
+        "name": "Свитшот NL, сливочный M/L",
+        "price": 5900,
+        "pv": 12.0,
+        "category": "Greenflash БАД",
+        "key": "свитшот_nl_сливочный_m/l",
+        "price_per_portion": null
+      },
+      {
+        "name": "Толстовка NL, синяя M/L",
+        "price": 5900,
+        "pv": 12.0,
+        "category": "Greenflash БАД",
+        "key": "толстовка_nl_синяя_m/l",
+        "price_per_portion": null
+      },
+      {
+        "name": "Толстовка NL, синяя XL",
+        "price": 5900,
+        "pv": 12.0,
+        "category": "Greenflash БАД",
+        "key": "толстовка_nl_синяя_xl",
+        "price_per_portion": null
+      },
+      {
+        "name": "Протектор BioSetting — «Биосеттинг»",
+        "price": 2690,
+        "pv": 18.0,
+        "category": "Greenflash БАД",
+        "key": "протектор_biosetting_биосеттинг",
+        "price_per_portion": null
+      },
+      {
+        "name": "Общеукрепляющий комплекс для собак",
+        "price": 790,
+        "pv": 5.2,
+        "category": "Greenflash БАД",
+        "key": "общеукрепляющий_комплекс_для_собак",
+        "price_per_portion": null
+      },
+      {
+        "name": "Общеукрепляющий комплекс для кошек",
+        "price": 790,
+        "pv": 5.2,
+        "category": "Greenflash БАД",
+        "key": "общеукрепляющий_комплекс_для_кошек",
+        "price_per_portion": null
+      },
+      {
+        "name": "Комплекс для кастрированных котов и стерилизованных кошек",
+        "price": 790,
+        "pv": 5.2,
+        "category": "Greenflash БАД",
+        "key": "комплекс_для_кастрированных_котов_и_стерилизованны",
+        "price_per_portion": null
+      }
+    ],
+    "Imperial Herb": [
+      {
+        "name": "GUT VIGYAN — «ГАТ ВИГЯН Восстановление кишечника»",
+        "price": 2290,
+        "pv": 15.5,
+        "category": "Imperial Herb",
+        "key": "gut_vigyan_гат_вигян_восстановление_кишечника",
+        "price_per_portion": null
+      },
+      {
+        "name": "LYMPH GYAN — «ЛИМФ ГЯН Лимфодренаж»",
+        "price": 2290,
+        "pv": 15.5,
+        "category": "Imperial Herb",
+        "key": "lymph_gyan_лимф_гян_лимфодренаж",
+        "price_per_portion": null
+      },
+      {
+        "name": "LIVO GYAN — «ЛИВО ГЯН Поддержка печени»",
+        "price": 2290,
+        "pv": 15.5,
+        "category": "Imperial Herb",
+        "key": "livo_gyan_ливо_гян_поддержка_печени",
+        "price_per_portion": null
+      },
+      {
+        "name": "URI GYAN — «УРИ ГЯН Поддержка почек»",
+        "price": 2290,
+        "pv": 15.5,
+        "category": "Imperial Herb",
+        "key": "uri_gyan_ури_гян_поддержка_почек",
+        "price_per_portion": null
+      },
+      {
+        "name": "LUX GYAN — «ЛЮКС ГЯН Очищение кишечника»",
+        "price": 2290,
+        "pv": 15.5,
+        "category": "Imperial Herb",
+        "key": "lux_gyan_люкс_гян_очищение_кишечника",
+        "price_per_portion": null
+      }
+    ],
+    "Для детей NLka": [
+      {
+        "name": "Пастилки Happy Smile витаминизированные, 60 шт.",
+        "price": 790,
+        "pv": 5.4,
+        "category": "Для детей NLka",
+        "key": "пастилки_happy_smile_витаминизированные_60_шт",
+        "price_per_portion": null
+      },
+      {
+        "name": "Бабл-пудра для очищения кожи Creamy Bubble сleanser",
+        "price": 1850,
+        "pv": 11.0,
+        "category": "Для детей NLka",
+        "key": "баблпудра_для_очищения_кожи_creamy_bubble_сleanser",
+        "price_per_portion": null
+      },
+      {
+        "name": "Диски для лица обновляющие Black Exfoliating pads",
+        "price": 1790,
+        "pv": 11.7,
+        "category": "Для детей NLka",
+        "key": "диски_для_лица_обновляющие_black_exfoliating_pads",
+        "price_per_portion": null
+      },
+      {
+        "name": "Детская зубная паста, 2+",
+        "price": 420,
+        "pv": 3.0,
+        "category": "Для детей NLka",
+        "key": "детская_зубная_паста_2+",
+        "price_per_portion": null
+      },
+      {
+        "name": "Mg+B6 Kids — Магний + B6 для детей",
+        "price": 990,
+        "pv": 7.0,
+        "category": "Для детей NLka",
+        "key": "mg+b6_kids_магний_+_b6_для_детей",
+        "price_per_portion": null
+      },
+      {
+        "name": "PROHELPER — ПРОХЕЛПЕР, мультивитаминный комплекс",
+        "price": 990,
+        "pv": 7.0,
+        "category": "Для детей NLka",
+        "key": "prohelper_прохелпер_мультивитаминный_комплекс",
+        "price_per_portion": null
+      },
+      {
+        "name": "Liquid Ca+ for kids — Кальций для детей",
+        "price": 1190,
+        "pv": 8.0,
+        "category": "Для детей NLka",
+        "key": "liquid_ca+_for_kids_кальций_для_детей",
+        "price_per_portion": null
+      },
+      {
+        "name": "Vision Lecithin — детское зрение",
+        "price": 990,
+        "pv": 7.0,
+        "category": "Для детей NLka",
+        "key": "vision_lecithin_детское_зрение",
+        "price_per_portion": null
+      }
+    ],
+    "Косметика Be Loved": [
+      {
+        "name": "Восстанавливающий крем для контура глаз Revitalizing Contour Eye Cream",
+        "price": 1390,
+        "pv": 9.3,
+        "category": "Косметика Be Loved",
+        "key": "восстанавливающий_крем_для_контура_глаз_revitalizi",
+        "price_per_portion": null
+      },
+      {
+        "name": "Бальзам для губ Mint Lip Balm",
+        "price": 590,
+        "pv": 4.0,
+        "category": "Косметика Be Loved",
+        "key": "бальзам_для_губ_mint_lip_balm",
+        "price_per_portion": null
+      },
+      {
+        "name": "Легкий увлажняющий крем-гель Light hydrating day gel cream",
+        "price": 1690,
+        "pv": 11.5,
+        "category": "Косметика Be Loved",
+        "key": "легкий_увлажняющий_кремгель_light_hydrating_day_ge",
+        "price_per_portion": null
+      },
+      {
+        "name": "Корректирующий крем для лица CC dull cream",
+        "price": 1690,
+        "pv": 10.8,
+        "category": "Косметика Be Loved",
+        "key": "корректирующий_крем_для_лица_cc_dull_cream",
+        "price_per_portion": null
+      },
+      {
+        "name": "Увлажняющая сыворотка Vitalize moisturizing serum",
+        "price": 1890,
+        "pv": 12.7,
+        "category": "Косметика Be Loved",
+        "key": "увлажняющая_сыворотка_vitalize_moisturizing_serum",
+        "price_per_portion": null
+      },
+      {
+        "name": "Восстанавливающая ночная сыворотка для лица Renewal Night Serum",
+        "price": 1890,
+        "pv": 12.7,
+        "category": "Косметика Be Loved",
+        "key": "восстанавливающая_ночная_сыворотка_для_лица_renewa",
+        "price_per_portion": null
+      },
+      {
+        "name": "Ночная маска для лица Deep Moisturizing Sleeping Mask",
+        "price": 1690,
+        "pv": 11.5,
+        "category": "Косметика Be Loved",
+        "key": "ночная_маска_для_лица_deep_moisturizing_sleeping_m",
+        "price_per_portion": null
+      },
+      {
+        "name": "Очищающая маска для сияния кожи Cleansing Glow Mask",
+        "price": 890,
+        "pv": 6.0,
+        "category": "Косметика Be Loved",
+        "key": "очищающая_маска_для_сияния_кожи_cleansing_glow_mas",
+        "price_per_portion": null
+      },
+      {
+        "name": "Гидрофильное масло для умывания Hyaluronic cleansing oil",
+        "price": 1990,
+        "pv": 13.0,
+        "category": "Косметика Be Loved",
+        "key": "гидрофильное_масло_для_умывания_hyaluronic_cleansi",
+        "price_per_portion": null
+      },
+      {
+        "name": "Гидрофильный бальзам для снятия макияжа Cleansing balm",
+        "price": 1690,
+        "pv": 10.5,
+        "category": "Косметика Be Loved",
+        "key": "гидрофильный_бальзам_для_снятия_макияжа_cleansing_",
+        "price_per_portion": null
+      },
+      {
+        "name": "Увлажняющий мист для лица Hyaluronic mist",
+        "price": 1390,
+        "pv": 8.9,
+        "category": "Косметика Be Loved",
+        "key": "увлажняющий_мист_для_лица_hyaluronic_mist",
+        "price_per_portion": null
+      },
+      {
+        "name": "Увлажняющая пенка для умывания Hyaluronic cleansing foam",
+        "price": 1590,
+        "pv": 10.7,
+        "category": "Косметика Be Loved",
+        "key": "увлажняющая_пенка_для_умывания_hyaluronic_cleansin",
+        "price_per_portion": null
+      },
+      {
+        "name": "Гидрогелевые патчи Hydrogel Eye Patches Magic Glitter",
+        "price": 1620,
+        "pv": 8.6,
+        "category": "Косметика Be Loved",
+        "key": "гидрогелевые_патчи_hydrogel_eye_patches_magic_glit",
+        "price_per_portion": null
+      },
+      {
+        "name": "Гидрогелевые патчи Hydrogel Eye patches Pink Glow",
+        "price": 1620,
+        "pv": 8.6,
+        "category": "Косметика Be Loved",
+        "key": "гидрогелевые_патчи_hydrogel_eye_patches_pink_glow",
+        "price_per_portion": null
+      },
+      {
+        "name": "Крем солнцезащитный для лица 50 SPF",
+        "price": 890,
+        "pv": 6.0,
+        "category": "Косметика Be Loved",
+        "key": "крем_солнцезащитный_для_лица_50_spf",
+        "price_per_portion": null
+      },
+      {
+        "name": "Крем солнцезащитный для тела 50 SPF",
+        "price": 1090,
+        "pv": 7.3,
+        "category": "Косметика Be Loved",
+        "key": "крем_солнцезащитный_для_тела_50_spf",
+        "price_per_portion": null
+      },
+      {
+        "name": "Универсальный бальзам The LAB",
+        "price": 750,
+        "pv": 5.1,
+        "category": "Косметика Be Loved",
+        "key": "универсальный_бальзам_the_lab",
+        "price_per_portion": null
+      },
+      {
+        "name": "Гель для умывания The LAB",
+        "price": 650,
+        "pv": 4.5,
+        "category": "Косметика Be Loved",
+        "key": "гель_для_умывания_the_lab",
+        "price_per_portion": null
+      },
+      {
+        "name": "Гель для бритья The LAB",
+        "price": 650,
+        "pv": 4.5,
+        "category": "Косметика Be Loved",
+        "key": "гель_для_бритья_the_lab",
+        "price_per_portion": null
+      },
+      {
+        "name": "Расслабляющий крем-гель для душа Relaxing",
+        "price": 750,
+        "pv": 5.0,
+        "category": "Косметика Be Loved",
+        "key": "расслабляющий_кремгель_для_душа_relaxing",
+        "price_per_portion": null
+      },
+      {
+        "name": "Насыщенный крем-баттер для тела Rich",
+        "price": 1090,
+        "pv": 7.3,
+        "category": "Косметика Be Loved",
+        "key": "насыщенный_крембаттер_для_тела_rich",
+        "price_per_portion": null
+      },
+      {
+        "name": "Ухаживающий крем для ног Сare",
+        "price": 550,
+        "pv": 3.7,
+        "category": "Косметика Be Loved",
+        "key": "ухаживающий_крем_для_ног_сare",
+        "price_per_portion": null
+      },
+      {
+        "name": "Смягчающий крем для рук Softening, 100 мл",
+        "price": 550,
+        "pv": 3.7,
+        "category": "Косметика Be Loved",
+        "key": "смягчающий_крем_для_рук_softening_100_мл",
+        "price_per_portion": null
+      },
+      {
+        "name": "Смягчающий крем для рук Softening, 30 мл",
+        "price": 330,
+        "pv": 2.3,
+        "category": "Косметика Be Loved",
+        "key": "смягчающий_крем_для_рук_softening_30_мл",
+        "price_per_portion": null
+      },
+      {
+        "name": "Детский крем с пантенолом, 0+",
+        "price": 620,
+        "pv": 3.9,
+        "category": "Косметика Be Loved",
+        "key": "детский_крем_с_пантенолом_0+",
+        "price_per_portion": null
+      },
+      {
+        "name": "Маска восстанавливающая Silky hair repair",
+        "price": 1490,
+        "pv": 8.5,
+        "category": "Косметика Be Loved",
+        "key": "маска_восстанавливающая_silky_hair_repair",
+        "price_per_portion": null
+      },
+      {
+        "name": "Маска мгновенного действия WOW-EFFECT",
+        "price": 1490,
+        "pv": 8.5,
+        "category": "Косметика Be Loved",
+        "key": "маска_мгновенного_действия_woweffect",
+        "price_per_portion": null
+      },
+      {
+        "name": "Occuba Сыворотка против выпадения волос Active Serum",
+        "price": 3290,
+        "pv": 13.7,
+        "category": "Косметика Be Loved",
+        "key": "occuba_сыворотка_против_выпадения_волос_active_ser",
+        "price_per_portion": null
+      },
+      {
+        "name": "Филлер-термозащита Master Hair",
+        "price": 1090,
+        "pv": 7.5,
+        "category": "Косметика Be Loved",
+        "key": "филлертермозащита_master_hair",
+        "price_per_portion": null
+      },
+      {
+        "name": "Крем-блеск Leave-In Moisturizing",
+        "price": 1090,
+        "pv": 7.5,
+        "category": "Косметика Be Loved",
+        "key": "кремблеск_leavein_moisturizing",
+        "price_per_portion": null
+      },
+      {
+        "name": "Охлаждающий антицеллюлитный крем-гель Cold",
+        "price": 990,
+        "pv": 6.7,
+        "category": "Косметика Be Loved",
+        "key": "охлаждающий_антицеллюлитный_кремгель_cold",
+        "price_per_portion": null
+      },
+      {
+        "name": "Сыворотка Lifting для профилактики растяжек",
+        "price": 750,
+        "pv": 5.0,
+        "category": "Косметика Be Loved",
+        "key": "сыворотка_lifting_для_профилактики_растяжек",
+        "price_per_portion": null
+      }
+    ],
+    "Чай и напитки": [
+      {
+        "name": "Черный индийский чай с душистыми травами",
+        "price": 470,
+        "pv": 2.7,
+        "category": "Чай и напитки",
+        "key": "черный_индийский_чай_с_душистыми_травами",
+        "price_per_portion": null
+      },
+      {
+        "name": "Чайное ассорти",
+        "price": 490,
+        "pv": 2.7,
+        "category": "Чай и напитки",
+        "key": "чайное_ассорти",
+        "price_per_portion": null
+      },
+      {
+        "name": "Зеленый китайский чай с мятой и лимоном",
+        "price": 470,
+        "pv": 2.7,
+        "category": "Чай и напитки",
+        "key": "зеленый_китайский_чай_с_мятой_и_лимоном",
+        "price_per_portion": null
+      },
+      {
+        "name": "Красный чай с малиной и шиповником",
+        "price": 470,
+        "pv": 2.7,
+        "category": "Чай и напитки",
+        "key": "красный_чай_с_малиной_и_шиповником",
+        "price_per_portion": null
+      },
+      {
+        "name": "Черный цейлонский чай",
+        "price": 470,
+        "pv": 2.7,
+        "category": "Чай и напитки",
+        "key": "черный_цейлонский_чай",
+        "price_per_portion": null
+      },
+      {
+        "name": "Картридж для регуляции pН воды PH Balance Stones",
+        "price": 1050,
+        "pv": 7.0,
+        "category": "Чай и напитки",
+        "key": "картридж_для_регуляции_pн_воды_ph_balance_stones",
+        "price_per_portion": null
+      },
+      {
+        "name": "NL Lux Фиточай – «Люкс» Фиточай",
+        "price": 450,
+        "pv": 3.1,
+        "category": "Чай и напитки",
+        "key": "nl_lux_фиточай_люкс_фиточай",
+        "price_per_portion": null
+      },
+      {
+        "name": "NL Vodoley Фиточай – «Водолей» Фиточай",
+        "price": 450,
+        "pv": 3.1,
+        "category": "Чай и напитки",
+        "key": "nl_vodoley_фиточай_водолей_фиточай",
+        "price_per_portion": null
+      },
+      {
+        "name": "NL Liverpool Фиточай – «Ливерпуль» Фиточай",
+        "price": 450,
+        "pv": 3.1,
+        "category": "Чай и напитки",
+        "key": "nl_liverpool_фиточай_ливерпуль_фиточай",
+        "price_per_portion": null
+      },
+      {
+        "name": "NL Prana Фиточай – «Прана» Фиточай",
+        "price": 450,
+        "pv": 3.1,
+        "category": "Чай и напитки",
+        "key": "nl_prana_фиточай_прана_фиточай",
+        "price_per_portion": null
+      },
+      {
+        "name": "NL Valery Фиточай – «Валери» Фиточай",
+        "price": 450,
+        "pv": 3.1,
+        "category": "Чай и напитки",
+        "key": "nl_valery_фиточай_валери_фиточай",
+        "price_per_portion": null
+      },
+      {
+        "name": "NL Gentleman Фиточай – «Джентльмен» Фиточай",
+        "price": 450,
+        "pv": 3.1,
+        "category": "Чай и напитки",
+        "key": "nl_gentleman_фиточай_джентльмен_фиточай",
+        "price_per_portion": null
+      },
+      {
+        "name": "NL Donna Bella Фиточай – «Донна Белла» Фиточай",
+        "price": 450,
+        "pv": 3.1,
+        "category": "Чай и напитки",
+        "key": "nl_donna_bella_фиточай_донна_белла_фиточай",
+        "price_per_portion": null
+      },
+      {
+        "name": "Зубная паста отбеливающая White",
+        "price": 420,
+        "pv": 2.6,
+        "category": "Чай и напитки",
+        "key": "зубная_паста_отбеливающая_white",
+        "price_per_portion": null
+      },
+      {
+        "name": "Зубная паста для чувствительных зубов и десен Sensitive",
+        "price": 390,
+        "pv": 2.5,
+        "category": "Чай и напитки",
+        "key": "зубная_паста_для_чувствительных_зубов_и_десен_sens",
+        "price_per_portion": null
+      },
+      {
+        "name": "Зубная паста реминерализующая Protect",
+        "price": 390,
+        "pv": 2.5,
+        "category": "Чай и напитки",
+        "key": "зубная_паста_реминерализующая_protect",
+        "price_per_portion": null
+      },
+      {
+        "name": "Восстанавливающий гель Smartum Max",
+        "price": 650,
+        "pv": 4.0,
+        "category": "Чай и напитки",
+        "key": "восстанавливающий_гель_smartum_max",
+        "price_per_portion": null
+      },
+      {
+        "name": "Курс «Основы нутрициологии». Тариф «Самостоятельный»",
+        "price": 35990,
+        "pv": 255.0,
+        "category": "Чай и напитки",
+        "key": "курс_основы_нутрициологии_тариф_самостоятельный",
+        "price_per_portion": null
+      },
+      {
+        "name": "Курс «Основы нутрициологии». Тариф «Любознательный»",
+        "price": 6240,
+        "pv": 27.0,
+        "category": "Чай и напитки",
+        "key": "курс_основы_нутрициологии_тариф_любознательный",
+        "price_per_portion": null
+      },
+      {
+        "name": "Курс «Видео на коленке»",
+        "price": 2540,
+        "pv": 20.0,
+        "category": "Чай и напитки",
+        "key": "курс_видео_на_коленке",
+        "price_per_portion": null
+      },
+      {
+        "name": "Курс «ЦелеНавигатор»",
+        "price": 2900,
+        "pv": 29.0,
+        "category": "Чай и напитки",
+        "key": "курс_целенавигатор",
+        "price_per_portion": null
+      },
+      {
+        "name": "Курс «Конструктор твоей уверенности»",
+        "price": 3900,
+        "pv": 39.0,
+        "category": "Чай и напитки",
+        "key": "курс_конструктор_твоей_уверенности",
+        "price_per_portion": null
+      },
+      {
+        "name": "Курс «TIMEHACK: как всё успевать»",
+        "price": 2900,
+        "pv": 29.0,
+        "category": "Чай и напитки",
+        "key": "курс_timehack:_как_всё_успевать",
+        "price_per_portion": null
+      },
+      {
+        "name": "Курс «Быстрокурс: пойми меня»",
+        "price": 990,
+        "pv": 7.0,
+        "category": "Чай и напитки",
+        "key": "курс_быстрокурс:_пойми_меня",
+        "price_per_portion": null
+      },
+      {
+        "name": "Курс «Сторителлинг»",
+        "price": 2540,
+        "pv": 20.0,
+        "category": "Чай и напитки",
+        "key": "курс_сторителлинг",
+        "price_per_portion": null
+      },
+      {
+        "name": "Курс «Антиэйдж». Тариф «Любознательный»",
+        "price": 5900,
+        "pv": 25.0,
+        "category": "Чай и напитки",
+        "key": "курс_антиэйдж_тариф_любознательный",
+        "price_per_portion": null
+      },
+      {
+        "name": "Курс «Антиэйдж». Тариф «Самостоятельный»",
+        "price": 17900,
+        "pv": 120.0,
+        "category": "Чай и напитки",
+        "key": "курс_антиэйдж_тариф_самостоятельный",
+        "price_per_portion": null
+      }
+    ],
+    "3D Slim": [
+      {
+        "name": "DrainEffect Green Low Carb — «Дрейнэффект Грин низкоуглеводный»",
+        "price": 1490,
+        "pv": 9.8,
+        "category": "3D Slim",
+        "key": "draineffect_green_low_carb_дрейнэффект_грин_низкоу",
+        "price_per_portion": null
+      },
+      {
+        "name": "DrainEffect Red Low Carb — «Дрейнэффект Рэд низкоуглеводный»",
+        "price": 1490,
+        "pv": 9.8,
+        "category": "3D Slim",
+        "key": "draineffect_red_low_carb_дрейнэффект_рэд_низкоугле",
+        "price_per_portion": null
+      },
+      {
+        "name": "White Tea SlimDose — «Белый чай»",
+        "price": 1890,
+        "pv": 12.6,
+        "category": "3D Slim",
+        "key": "white_tea_slimdose_белый_чай",
+        "price_per_portion": null
+      },
+      {
+        "name": "Средство для купания 3 в 1, 0+",
+        "price": 620,
+        "pv": 3.9,
+        "category": "3D Slim",
+        "key": "средство_для_купания_3_в_1_0+",
+        "price_per_portion": null
+      }
+    ],
+    "Для дома": [
+      {
+        "name": "Салфетка floor для пола",
+        "price": 650,
+        "pv": 2.7,
+        "category": "Для дома",
+        "key": "салфетка_floor_для_пола",
+        "price_per_portion": null
+      },
+      {
+        "name": "Салфетка auto для автомобиля",
+        "price": 650,
+        "pv": 2.7,
+        "category": "Для дома",
+        "key": "салфетка_auto_для_автомобиля",
+        "price_per_portion": null
+      },
+      {
+        "name": "Салфетка polish для полировки",
+        "price": 390,
+        "pv": 2.0,
+        "category": "Для дома",
+        "key": "салфетка_polish_для_полировки",
+        "price_per_portion": null
+      },
+      {
+        "name": "Салфетка Shine для стекла",
+        "price": 390,
+        "pv": 2.0,
+        "category": "Для дома",
+        "key": "салфетка_shine_для_стекла",
+        "price_per_portion": null
+      },
+      {
+        "name": "Салфетка Soft деликатная",
+        "price": 390,
+        "pv": 2.0,
+        "category": "Для дома",
+        "key": "салфетка_soft_деликатная",
+        "price_per_portion": null
+      },
+      {
+        "name": "Салфетка Superfiber для влажной уборки",
+        "price": 390,
+        "pv": 2.0,
+        "category": "Для дома",
+        "key": "салфетка_superfiber_для_влажной_уборки",
+        "price_per_portion": null
+      },
+      {
+        "name": "Салфетка Universal Plus универсальная",
+        "price": 390,
+        "pv": 2.0,
+        "category": "Для дома",
+        "key": "салфетка_universal_plus_универсальная",
+        "price_per_portion": null
+      },
+      {
+        "name": "Салфетка Universal универсальная",
+        "price": 390,
+        "pv": 2.0,
+        "category": "Для дома",
+        "key": "салфетка_universal_универсальная",
+        "price_per_portion": null
+      },
+      {
+        "name": "Губка sponge для мытья посуды",
+        "price": 390,
+        "pv": 2.0,
+        "category": "Для дома",
+        "key": "губка_sponge_для_мытья_посуды",
+        "price_per_portion": null
+      }
+    ]
+  },
+  "products_list": [
+    {
+      "name": "Набор для волос Silky Hair Travel Set",
+      "price": 990,
+      "pv": 4.5,
+      "category": "Уход за волосами",
+      "key": "набор_для_волос_silky_hair_travel_set",
+      "price_per_portion": null
+    },
+    {
+      "name": "Масло для душа",
+      "price": 890,
+      "pv": 5.9,
+      "category": "Уход за телом",
+      "key": "масло_для_душа",
+      "price_per_portion": null
+    },
+    {
+      "name": "Трюфели",
+      "price": 590,
+      "pv": 2.0,
+      "category": "Уход за телом",
+      "key": "трюфели",
+      "price_per_portion": null
+    },
+    {
+      "name": "Молочный шоколад",
+      "price": 590,
+      "pv": 2.7,
+      "category": "Уход за телом",
+      "key": "молочный_шоколад",
+      "price_per_portion": null
+    },
+    {
+      "name": "Ароматическая свеча",
+      "price": 1390,
+      "pv": 9.0,
+      "category": "Уход за телом",
+      "key": "ароматическая_свеча",
+      "price_per_portion": null
+    },
+    {
+      "name": "Тревел-набор «Сила в путешествиях»",
+      "price": 1350,
+      "pv": 6.5,
+      "category": "Уход за телом",
+      "key": "тревелнабор_сила_в_путешествиях",
+      "price_per_portion": null
+    },
+    {
+      "name": "ED Smart Classic «Ягодная панна-котта», 15 порций",
+      "price": 2790,
+      "pv": 19.5,
+      "category": "Energy Diet",
+      "key": "ed_smart_classic_ягодная_паннакотта_15_порций",
+      "price_per_portion": 186.0,
+      "portions": 15
+    },
+    {
+      "name": "ED Smart Milky «Фисташковое мороженое», 15 порций",
+      "price": 2790,
+      "pv": 19.5,
+      "category": "Energy Diet",
+      "key": "ed_smart_milky_фисташковое_мороженое_15_порций",
+      "price_per_portion": 186.0,
+      "portions": 15
+    },
+    {
+      "name": "ED Smart Classic «Кофе», 15 порций",
+      "price": 2790,
+      "pv": 19.5,
+      "category": "Energy Diet",
+      "key": "ed_smart_classic_кофе_15_порций",
+      "price_per_portion": 186.0,
+      "portions": 15
+    },
+    {
+      "name": "ED Smart Classic «Шоколадный брауни», 15 порций",
+      "price": 2790,
+      "pv": 19.5,
+      "category": "Energy Diet",
+      "key": "ed_smart_classic_шоколадный_брауни_15_порций",
+      "price_per_portion": 186.0,
+      "portions": 15
+    },
+    {
+      "name": "ED Smart Classic «Ванильный пломбир», 15 порций",
+      "price": 2790,
+      "pv": 19.5,
+      "category": "Energy Diet",
+      "key": "ed_smart_classic_ванильный_пломбир_15_порций",
+      "price_per_portion": 186.0,
+      "portions": 15
+    },
+    {
+      "name": "ED Smart Classic «Вишневый брауни», 15 порций",
+      "price": 2790,
+      "pv": 19.5,
+      "category": "Energy Diet",
+      "key": "ed_smart_classic_вишневый_брауни_15_порций",
+      "price_per_portion": 186.0,
+      "portions": 15
+    },
+    {
+      "name": "ED Smart Classic «Банановый сплит», 15 порций",
+      "price": 2790,
+      "pv": 19.5,
+      "category": "Energy Diet",
+      "key": "ed_smart_classic_банановый_сплит_15_порций",
+      "price_per_portion": 186.0,
+      "portions": 15
+    },
+    {
+      "name": "ED Smart Classic «Лимонное печенье», 15 порций",
+      "price": 2790,
+      "pv": 19.5,
+      "category": "Energy Diet",
+      "key": "ed_smart_classic_лимонное_печенье_15_порций",
+      "price_per_portion": 186.0,
+      "portions": 15
+    },
+    {
+      "name": "ED Smart Classic «Ваниль», 15 порций",
+      "price": 2790,
+      "pv": 19.5,
+      "category": "Energy Diet",
+      "key": "ed_smart_classic_ваниль_15_порций",
+      "price_per_portion": 186.0,
+      "portions": 15
+    },
+    {
+      "name": "ED Smart Milky «Арахис в карамели», 15 порций",
+      "price": 2790,
+      "pv": 19.5,
+      "category": "Energy Diet",
+      "key": "ed_smart_milky_арахис_в_карамели_15_порций",
+      "price_per_portion": 186.0,
+      "portions": 15
+    },
+    {
+      "name": "ED Smart Classic «Черничный йогурт», 15 порций",
+      "price": 2790,
+      "pv": 19.5,
+      "category": "Energy Diet",
+      "key": "ed_smart_classic_черничный_йогурт_15_порций",
+      "price_per_portion": 186.0,
+      "portions": 15
+    },
+    {
+      "name": "ED Smart Classic «Бельгийский шоколад», 15 порций",
+      "price": 2790,
+      "pv": 19.5,
+      "category": "Energy Diet",
+      "key": "ed_smart_classic_бельгийский_шоколад_15_порций",
+      "price_per_portion": 186.0,
+      "portions": 15
+    },
+    {
+      "name": "ED Smart Classic «Грушевый тарт», 15 порций",
+      "price": 2790,
+      "pv": 19.5,
+      "category": "Energy Diet",
+      "key": "ed_smart_classic_грушевый_тарт_15_порций",
+      "price_per_portion": 186.0,
+      "portions": 15
+    },
+    {
+      "name": "ED Smart Soup «Курица», 15 порций",
+      "price": 2790,
+      "pv": 19.5,
+      "category": "Energy Diet",
+      "key": "ed_smart_soup_курица_15_порций",
+      "price_per_portion": 186.0,
+      "portions": 15
+    },
+    {
+      "name": "Коктейль «Фисташка»",
+      "price": 2700,
+      "pv": 16.3,
+      "category": "Energy Diet",
+      "key": "коктейль_фисташка",
+      "price_per_portion": null
+    },
+    {
+      "name": "Коктейль «Соленая карамель»",
+      "price": 2700,
+      "pv": 16.3,
+      "category": "Energy Diet",
+      "key": "коктейль_соленая_карамель",
+      "price_per_portion": null
+    },
+    {
+      "name": "Коктейль «Кофе»",
+      "price": 2700,
+      "pv": 16.3,
+      "category": "Energy Diet",
+      "key": "коктейль_кофе",
+      "price_per_portion": null
+    },
+    {
+      "name": "Коктейль «Банан»",
+      "price": 2700,
+      "pv": 16.3,
+      "category": "Energy Diet",
+      "key": "коктейль_банан",
+      "price_per_portion": null
+    },
+    {
+      "name": "Коктейль «Ваниль»",
+      "price": 2700,
+      "pv": 16.3,
+      "category": "Energy Diet",
+      "key": "коктейль_ваниль",
+      "price_per_portion": null
+    },
+    {
+      "name": "Коктейль «Капучино»",
+      "price": 2700,
+      "pv": 16.3,
+      "category": "Energy Diet",
+      "key": "коктейль_капучино",
+      "price_per_portion": null
+    },
+    {
+      "name": "Коктейль «Клубника»",
+      "price": 2700,
+      "pv": 16.3,
+      "category": "Energy Diet",
+      "key": "коктейль_клубника",
+      "price_per_portion": null
+    },
+    {
+      "name": "Коктейль «Шоколад»",
+      "price": 2700,
+      "pv": 16.3,
+      "category": "Energy Diet",
+      "key": "коктейль_шоколад",
+      "price_per_portion": null
+    },
+    {
+      "name": "Суп «Грибы»",
+      "price": 2700,
+      "pv": 16.3,
+      "category": "Energy Diet",
+      "key": "суп_грибы",
+      "price_per_portion": null
+    },
+    {
+      "name": "Суп «Курица»",
+      "price": 2700,
+      "pv": 16.3,
+      "category": "Energy Diet",
+      "key": "суп_курица",
+      "price_per_portion": null
+    },
+    {
+      "name": "Микс протеинового печенья NL с суфле",
+      "price": 550,
+      "pv": 1.9,
+      "category": "Energy Diet",
+      "key": "микс_протеинового_печенья_nl_с_суфле",
+      "price_per_portion": null
+    },
+    {
+      "name": "Горячий напиток «Малина»",
+      "price": 590,
+      "pv": 3.9,
+      "category": "Energy Diet",
+      "key": "горячий_напиток_малина",
+      "price_per_portion": null
+    },
+    {
+      "name": "Фруктовые батончики «Финиковый MIX»",
+      "price": 190,
+      "pv": 0.2,
+      "category": "Energy Diet",
+      "key": "фруктовые_батончики_финиковый_mix",
+      "price_per_portion": null
+    },
+    {
+      "name": "Фруктовые батончики «Шоколадный MIX»",
+      "price": 250,
+      "pv": 0.3,
+      "category": "Energy Diet",
+      "key": "фруктовые_батончики_шоколадный_mix",
+      "price_per_portion": null
+    },
+    {
+      "name": "Beauty blend — Бьюти бленд",
+      "price": 1890,
+      "pv": 12.6,
+      "category": "Energy Diet",
+      "key": "beauty_blend_бьюти_бленд",
+      "price_per_portion": null
+    },
+    {
+      "name": "Иммуноактиватор BioDrone – Биодрон",
+      "price": 2590,
+      "pv": 17.9,
+      "category": "Greenflash БАД",
+      "key": "иммуноактиватор_biodrone_биодрон",
+      "price_per_portion": null
+    },
+    {
+      "name": "Collagentrinity — «Коллагентринити» со вкусом вишни",
+      "price": 2190,
+      "pv": 14.0,
+      "category": "Greenflash БАД",
+      "key": "collagentrinity_коллагентринити_со_вкусом_вишни",
+      "price_per_portion": null
+    },
+    {
+      "name": "Be Best Male - Би бест мужской",
+      "price": 1090,
+      "pv": 7.3,
+      "category": "Greenflash БАД",
+      "key": "be_best_male_би_бест_мужской",
+      "price_per_portion": null
+    },
+    {
+      "name": "Collagen Peptides — Коллаген Пептидс со вкусом вишни",
+      "price": 1890,
+      "pv": 12.3,
+      "category": "Greenflash БАД",
+      "key": "collagen_peptides_коллаген_пептидс_со_вкусом_вишни",
+      "price_per_portion": null
+    },
+    {
+      "name": "Marine Magnesium — Морской магний",
+      "price": 990,
+      "pv": 6.5,
+      "category": "Greenflash БАД",
+      "key": "marine_magnesium_морской_магний",
+      "price_per_portion": null
+    },
+    {
+      "name": "Pro-indole — Про-индол",
+      "price": 1290,
+      "pv": 8.6,
+      "category": "Greenflash БАД",
+      "key": "proindole_проиндол",
+      "price_per_portion": null
+    },
+    {
+      "name": "Кейс Detox Step 1–3 PLUS — формулы мягкого очищения",
+      "price": 2800,
+      "pv": 18.5,
+      "category": "Greenflash БАД",
+      "key": "кейс_detox_step_13_plus_формулы_мягкого_очищения",
+      "price_per_portion": null
+    },
+    {
+      "name": "Be Best Female - Би бест женский",
+      "price": 1090,
+      "pv": 7.3,
+      "category": "Greenflash БАД",
+      "key": "be_best_female_би_бест_женский",
+      "price_per_portion": null
+    },
+    {
+      "name": "Vitamin D3 2000 ME - Витамин D3",
+      "price": 990,
+      "pv": 6.5,
+      "category": "Greenflash БАД",
+      "key": "vitamin_d3_2000_me_витамин_d3",
+      "price_per_portion": null
+    },
+    {
+      "name": "Omega-3 1300 мг - Омега-3 1300 мг",
+      "price": 1590,
+      "pv": 10.0,
+      "category": "Greenflash БАД",
+      "key": "omega3_1300_мг_омега3_1300_мг",
+      "price_per_portion": null
+    },
+    {
+      "name": "Metabiotic - Метабиотик",
+      "price": 2190,
+      "pv": 14.6,
+      "category": "Greenflash БАД",
+      "key": "metabiotic_метабиотик",
+      "price_per_portion": null
+    },
+    {
+      "name": "Neuromedium liposomal — Нейромедиум липосомальный",
+      "price": 990,
+      "pv": 6.5,
+      "category": "Greenflash БАД",
+      "key": "neuromedium_liposomal_нейромедиум_липосомальный",
+      "price_per_portion": null
+    },
+    {
+      "name": "Lactoferra - Лактоферра",
+      "price": 2090,
+      "pv": 14.0,
+      "category": "Greenflash БАД",
+      "key": "lactoferra_лактоферра",
+      "price_per_portion": null
+    },
+    {
+      "name": "5-HTP liposomal — 5-гидрокситриптофан липосомальный",
+      "price": 1390,
+      "pv": 9.2,
+      "category": "Greenflash БАД",
+      "key": "5htp_liposomal_5гидрокситриптофан_липосомальный",
+      "price_per_portion": null
+    },
+    {
+      "name": "Природный сорбент Soft Sorb — Софт Сорб",
+      "price": 1390,
+      "pv": 9.2,
+      "category": "Greenflash БАД",
+      "key": "природный_сорбент_soft_sorb_софт_сорб",
+      "price_per_portion": null
+    },
+    {
+      "name": "Vitamin K2+D3 - Витамин K2+D3",
+      "price": 1290,
+      "pv": 8.5,
+      "category": "Greenflash БАД",
+      "key": "vitamin_k2+d3_витамин_k2+d3",
+      "price_per_portion": null
+    },
+    {
+      "name": "Фитокомплекс Gelm Cleanse — Гельм Клинз",
+      "price": 990,
+      "pv": 6.8,
+      "category": "Greenflash БАД",
+      "key": "фитокомплекс_gelm_cleanse_гельм_клинз",
+      "price_per_portion": null
+    },
+    {
+      "name": "Iron (Fe) – Железо",
+      "price": 990,
+      "pv": 6.5,
+      "category": "Greenflash БАД",
+      "key": "iron_(fe)_железо",
+      "price_per_portion": null
+    },
+    {
+      "name": "Detox Step 1 Plus — формула очищения кишечника",
+      "price": 990,
+      "pv": 6.5,
+      "category": "Greenflash БАД",
+      "key": "detox_step_1_plus_формула_очищения_кишечника",
+      "price_per_portion": null
+    },
+    {
+      "name": "Marine Collagen — Морской коллаген",
+      "price": 1390,
+      "pv": 8.3,
+      "category": "Greenflash БАД",
+      "key": "marine_collagen_морской_коллаген",
+      "price_per_portion": null
+    },
+    {
+      "name": "Vitamin В9+В12 - Витамин В9+В12",
+      "price": 990,
+      "pv": 6.5,
+      "category": "Greenflash БАД",
+      "key": "vitamin_в9+в12_витамин_в9+в12",
+      "price_per_portion": null
+    },
+    {
+      "name": "Vitamin C liposomal — Витамин С липосомальный",
+      "price": 650,
+      "pv": 4.3,
+      "category": "Greenflash БАД",
+      "key": "vitamin_c_liposomal_витамин_с_липосомальный",
+      "price_per_portion": null
+    },
+    {
+      "name": "Metabrain liposomal — Метабрейн липосомальный",
+      "price": 1290,
+      "pv": 8.5,
+      "category": "Greenflash БАД",
+      "key": "metabrain_liposomal_метабрейн_липосомальный",
+      "price_per_portion": null
+    },
+    {
+      "name": "Zinc (Zn) — Цинк",
+      "price": 990,
+      "pv": 6.5,
+      "category": "Greenflash БАД",
+      "key": "zinc_(zn)_цинк",
+      "price_per_portion": null
+    },
+    {
+      "name": "Calcium Marine — Морской кальций",
+      "price": 990,
+      "pv": 6.5,
+      "category": "Greenflash БАД",
+      "key": "calcium_marine_морской_кальций",
+      "price_per_portion": null
+    },
+    {
+      "name": "Collagen Peptides — Коллаген Пептидс со вкусом зелёного чая",
+      "price": 1890,
+      "pv": 12.3,
+      "category": "Greenflash БАД",
+      "key": "collagen_peptides_коллаген_пептидс_со_вкусом_зелён",
+      "price_per_portion": null
+    },
+    {
+      "name": "Detox Step 3 Plus — формула очищения почек",
+      "price": 950,
+      "pv": 6.3,
+      "category": "Greenflash БАД",
+      "key": "detox_step_3_plus_формула_очищения_почек",
+      "price_per_portion": null
+    },
+    {
+      "name": "GUT VIGYAN — «ГАТ ВИГЯН Восстановление кишечника»",
+      "price": 2290,
+      "pv": 15.5,
+      "category": "Imperial Herb",
+      "key": "gut_vigyan_гат_вигян_восстановление_кишечника",
+      "price_per_portion": null
+    },
+    {
+      "name": "LYMPH GYAN — «ЛИМФ ГЯН Лимфодренаж»",
+      "price": 2290,
+      "pv": 15.5,
+      "category": "Imperial Herb",
+      "key": "lymph_gyan_лимф_гян_лимфодренаж",
+      "price_per_portion": null
+    },
+    {
+      "name": "LIVO GYAN — «ЛИВО ГЯН Поддержка печени»",
+      "price": 2290,
+      "pv": 15.5,
+      "category": "Imperial Herb",
+      "key": "livo_gyan_ливо_гян_поддержка_печени",
+      "price_per_portion": null
+    },
+    {
+      "name": "URI GYAN — «УРИ ГЯН Поддержка почек»",
+      "price": 2290,
+      "pv": 15.5,
+      "category": "Imperial Herb",
+      "key": "uri_gyan_ури_гян_поддержка_почек",
+      "price_per_portion": null
+    },
+    {
+      "name": "LUX GYAN — «ЛЮКС ГЯН Очищение кишечника»",
+      "price": 2290,
+      "pv": 15.5,
+      "category": "Imperial Herb",
+      "key": "lux_gyan_люкс_гян_очищение_кишечника",
+      "price_per_portion": null
+    },
+    {
+      "name": "Пастилки Happy Smile витаминизированные, 60 шт.",
+      "price": 790,
+      "pv": 5.4,
+      "category": "Для детей NLka",
+      "key": "пастилки_happy_smile_витаминизированные_60_шт",
+      "price_per_portion": null
+    },
+    {
+      "name": "Бабл-пудра для очищения кожи Creamy Bubble сleanser",
+      "price": 1850,
+      "pv": 11.0,
+      "category": "Для детей NLka",
+      "key": "баблпудра_для_очищения_кожи_creamy_bubble_сleanser",
+      "price_per_portion": null
+    },
+    {
+      "name": "Диски для лица обновляющие Black Exfoliating pads",
+      "price": 1790,
+      "pv": 11.7,
+      "category": "Для детей NLka",
+      "key": "диски_для_лица_обновляющие_black_exfoliating_pads",
+      "price_per_portion": null
+    },
+    {
+      "name": "Крем для ухода за кожей вокруг глаз Biome Eye cream",
+      "price": 1590,
+      "pv": 10.3,
+      "category": "Greenflash БАД",
+      "key": "крем_для_ухода_за_кожей_вокруг_глаз_biome_eye_crea",
+      "price_per_portion": null
+    },
+    {
+      "name": "Cыворотка для лица Biome Serum",
+      "price": 1890,
+      "pv": 12.7,
+      "category": "Greenflash БАД",
+      "key": "cыворотка_для_лица_biome_serum",
+      "price_per_portion": null
+    },
+    {
+      "name": "Двухфазный крем для лица Biome 2 in 1 Face Cream",
+      "price": 2290,
+      "pv": 14.0,
+      "category": "Greenflash БАД",
+      "key": "двухфазный_крем_для_лица_biome_2_in_1_face_cream",
+      "price_per_portion": null
+    },
+    {
+      "name": "Восстанавливающий крем для контура глаз Revitalizing Contour Eye Cream",
+      "price": 1390,
+      "pv": 9.3,
+      "category": "Косметика Be Loved",
+      "key": "восстанавливающий_крем_для_контура_глаз_revitalizi",
+      "price_per_portion": null
+    },
+    {
+      "name": "Бальзам для губ Mint Lip Balm",
+      "price": 590,
+      "pv": 4.0,
+      "category": "Косметика Be Loved",
+      "key": "бальзам_для_губ_mint_lip_balm",
+      "price_per_portion": null
+    },
+    {
+      "name": "Легкий увлажняющий крем-гель Light hydrating day gel cream",
+      "price": 1690,
+      "pv": 11.5,
+      "category": "Косметика Be Loved",
+      "key": "легкий_увлажняющий_кремгель_light_hydrating_day_ge",
+      "price_per_portion": null
+    },
+    {
+      "name": "Корректирующий крем для лица CC dull cream",
+      "price": 1690,
+      "pv": 10.8,
+      "category": "Косметика Be Loved",
+      "key": "корректирующий_крем_для_лица_cc_dull_cream",
+      "price_per_portion": null
+    },
+    {
+      "name": "Увлажняющая сыворотка Vitalize moisturizing serum",
+      "price": 1890,
+      "pv": 12.7,
+      "category": "Косметика Be Loved",
+      "key": "увлажняющая_сыворотка_vitalize_moisturizing_serum",
+      "price_per_portion": null
+    },
+    {
+      "name": "Гидрогелевая маска Detox hydrogel mask",
+      "price": 470,
+      "pv": 3.0,
+      "category": "Greenflash БАД",
+      "key": "гидрогелевая_маска_detox_hydrogel_mask",
+      "price_per_portion": null
+    },
+    {
+      "name": "Восстанавливающая ночная сыворотка для лица Renewal Night Serum",
+      "price": 1890,
+      "pv": 12.7,
+      "category": "Косметика Be Loved",
+      "key": "восстанавливающая_ночная_сыворотка_для_лица_renewa",
+      "price_per_portion": null
+    },
+    {
+      "name": "Ночная маска для лица Deep Moisturizing Sleeping Mask",
+      "price": 1690,
+      "pv": 11.5,
+      "category": "Косметика Be Loved",
+      "key": "ночная_маска_для_лица_deep_moisturizing_sleeping_m",
+      "price_per_portion": null
+    },
+    {
+      "name": "Очищающая маска для сияния кожи Cleansing Glow Mask",
+      "price": 890,
+      "pv": 6.0,
+      "category": "Косметика Be Loved",
+      "key": "очищающая_маска_для_сияния_кожи_cleansing_glow_mas",
+      "price_per_portion": null
+    },
+    {
+      "name": "Гидрофильное масло для умывания Hyaluronic cleansing oil",
+      "price": 1990,
+      "pv": 13.0,
+      "category": "Косметика Be Loved",
+      "key": "гидрофильное_масло_для_умывания_hyaluronic_cleansi",
+      "price_per_portion": null
+    },
+    {
+      "name": "Гидрофильный бальзам для снятия макияжа Cleansing balm",
+      "price": 1690,
+      "pv": 10.5,
+      "category": "Косметика Be Loved",
+      "key": "гидрофильный_бальзам_для_снятия_макияжа_cleansing_",
+      "price_per_portion": null
+    },
+    {
+      "name": "Увлажняющий мист для лица Hyaluronic mist",
+      "price": 1390,
+      "pv": 8.9,
+      "category": "Косметика Be Loved",
+      "key": "увлажняющий_мист_для_лица_hyaluronic_mist",
+      "price_per_portion": null
+    },
+    {
+      "name": "Увлажняющая пенка для умывания Hyaluronic cleansing foam",
+      "price": 1590,
+      "pv": 10.7,
+      "category": "Косметика Be Loved",
+      "key": "увлажняющая_пенка_для_умывания_hyaluronic_cleansin",
+      "price_per_portion": null
+    },
+    {
+      "name": "Гидрогелевые патчи Hydrogel Eye Patches Magic Glitter",
+      "price": 1620,
+      "pv": 8.6,
+      "category": "Косметика Be Loved",
+      "key": "гидрогелевые_патчи_hydrogel_eye_patches_magic_glit",
+      "price_per_portion": null
+    },
+    {
+      "name": "Гидрогелевые патчи Hydrogel Eye patches Pink Glow",
+      "price": 1620,
+      "pv": 8.6,
+      "category": "Косметика Be Loved",
+      "key": "гидрогелевые_патчи_hydrogel_eye_patches_pink_glow",
+      "price_per_portion": null
+    },
+    {
+      "name": "Крем солнцезащитный для лица 50 SPF",
+      "price": 890,
+      "pv": 6.0,
+      "category": "Косметика Be Loved",
+      "key": "крем_солнцезащитный_для_лица_50_spf",
+      "price_per_portion": null
+    },
+    {
+      "name": "Крем солнцезащитный для тела 50 SPF",
+      "price": 1090,
+      "pv": 7.3,
+      "category": "Косметика Be Loved",
+      "key": "крем_солнцезащитный_для_тела_50_spf",
+      "price_per_portion": null
+    },
+    {
+      "name": "Универсальный бальзам The LAB",
+      "price": 750,
+      "pv": 5.1,
+      "category": "Косметика Be Loved",
+      "key": "универсальный_бальзам_the_lab",
+      "price_per_portion": null
+    },
+    {
+      "name": "Гель для умывания The LAB",
+      "price": 650,
+      "pv": 4.5,
+      "category": "Косметика Be Loved",
+      "key": "гель_для_умывания_the_lab",
+      "price_per_portion": null
+    },
+    {
+      "name": "Гель для бритья The LAB",
+      "price": 650,
+      "pv": 4.5,
+      "category": "Косметика Be Loved",
+      "key": "гель_для_бритья_the_lab",
+      "price_per_portion": null
+    },
+    {
+      "name": "Гель для душа и шампунь 2 в 1 The LAB",
+      "price": 650,
+      "pv": 4.5,
+      "category": "Уход за телом",
+      "key": "гель_для_душа_и_шампунь_2_в_1_the_lab",
+      "price_per_portion": null
+    },
+    {
+      "name": "Черный индийский чай с душистыми травами",
+      "price": 470,
+      "pv": 2.7,
+      "category": "Чай и напитки",
+      "key": "черный_индийский_чай_с_душистыми_травами",
+      "price_per_portion": null
+    },
+    {
+      "name": "Чайное ассорти",
+      "price": 490,
+      "pv": 2.7,
+      "category": "Чай и напитки",
+      "key": "чайное_ассорти",
+      "price_per_portion": null
+    },
+    {
+      "name": "Зеленый китайский чай с мятой и лимоном",
+      "price": 470,
+      "pv": 2.7,
+      "category": "Чай и напитки",
+      "key": "зеленый_китайский_чай_с_мятой_и_лимоном",
+      "price_per_portion": null
+    },
+    {
+      "name": "Красный чай с малиной и шиповником",
+      "price": 470,
+      "pv": 2.7,
+      "category": "Чай и напитки",
+      "key": "красный_чай_с_малиной_и_шиповником",
+      "price_per_portion": null
+    },
+    {
+      "name": "Черный цейлонский чай",
+      "price": 470,
+      "pv": 2.7,
+      "category": "Чай и напитки",
+      "key": "черный_цейлонский_чай",
+      "price_per_portion": null
+    },
+    {
+      "name": "Картридж для регуляции pН воды PH Balance Stones",
+      "price": 1050,
+      "pv": 7.0,
+      "category": "Чай и напитки",
+      "key": "картридж_для_регуляции_pн_воды_ph_balance_stones",
+      "price_per_portion": null
+    },
+    {
+      "name": "Увлажняющий гель для душа Moisturizing",
+      "price": 750,
+      "pv": 5.0,
+      "category": "Уход за телом",
+      "key": "увлажняющий_гель_для_душа_moisturizing",
+      "price_per_portion": null
+    },
+    {
+      "name": "Расслабляющий крем-гель для душа Relaxing",
+      "price": 750,
+      "pv": 5.0,
+      "category": "Косметика Be Loved",
+      "key": "расслабляющий_кремгель_для_душа_relaxing",
+      "price_per_portion": null
+    },
+    {
+      "name": "Питательное молочко для тела Nourishing",
+      "price": 850,
+      "pv": 5.8,
+      "category": "Уход за телом",
+      "key": "питательное_молочко_для_тела_nourishing",
+      "price_per_portion": null
+    },
+    {
+      "name": "Насыщенный крем-баттер для тела Rich",
+      "price": 1090,
+      "pv": 7.3,
+      "category": "Косметика Be Loved",
+      "key": "насыщенный_крембаттер_для_тела_rich",
+      "price_per_portion": null
+    },
+    {
+      "name": "Ухаживающий крем для ног Сare",
+      "price": 550,
+      "pv": 3.7,
+      "category": "Косметика Be Loved",
+      "key": "ухаживающий_крем_для_ног_сare",
+      "price_per_portion": null
+    },
+    {
+      "name": "Смягчающий крем для рук Softening, 100 мл",
+      "price": 550,
+      "pv": 3.7,
+      "category": "Косметика Be Loved",
+      "key": "смягчающий_крем_для_рук_softening_100_мл",
+      "price_per_portion": null
+    },
+    {
+      "name": "Смягчающий крем для рук Softening, 30 мл",
+      "price": 330,
+      "pv": 2.3,
+      "category": "Косметика Be Loved",
+      "key": "смягчающий_крем_для_рук_softening_30_мл",
+      "price_per_portion": null
+    },
+    {
+      "name": "Обновляющий скраб для тела Renewal",
+      "price": 1090,
+      "pv": 7.3,
+      "category": "Уход за телом",
+      "key": "обновляющий_скраб_для_тела_renewal",
+      "price_per_portion": null
+    },
+    {
+      "name": "DrainEffect Green Low Carb — «Дрейнэффект Грин низкоуглеводный»",
+      "price": 1490,
+      "pv": 9.8,
+      "category": "3D Slim",
+      "key": "draineffect_green_low_carb_дрейнэффект_грин_низкоу",
+      "price_per_portion": null
+    },
+    {
+      "name": "DrainEffect Red Low Carb — «Дрейнэффект Рэд низкоуглеводный»",
+      "price": 1490,
+      "pv": 9.8,
+      "category": "3D Slim",
+      "key": "draineffect_red_low_carb_дрейнэффект_рэд_низкоугле",
+      "price_per_portion": null
+    },
+    {
+      "name": "Жиросжигатель Metaboost — «Метабуст»",
+      "price": 1690,
+      "pv": 11.3,
+      "category": "Greenflash БАД",
+      "key": "жиросжигатель_metaboost_метабуст",
+      "price_per_portion": null
+    },
+    {
+      "name": "White Tea SlimDose — «Белый чай»",
+      "price": 1890,
+      "pv": 12.6,
+      "category": "3D Slim",
+      "key": "white_tea_slimdose_белый_чай",
+      "price_per_portion": null
+    },
+    {
+      "name": "Средство для купания 3 в 1, 0+",
+      "price": 620,
+      "pv": 3.9,
+      "category": "3D Slim",
+      "key": "средство_для_купания_3_в_1_0+",
+      "price_per_portion": null
+    },
+    {
+      "name": "Нежное детское молочко для тела, 0+",
+      "price": 620,
+      "pv": 3.9,
+      "category": "Уход за телом",
+      "key": "нежное_детское_молочко_для_тела_0+",
+      "price_per_portion": null
+    },
+    {
+      "name": "Детский крем с пантенолом, 0+",
+      "price": 620,
+      "pv": 3.9,
+      "category": "Косметика Be Loved",
+      "key": "детский_крем_с_пантенолом_0+",
+      "price_per_portion": null
+    },
+    {
+      "name": "Мягкий детский гель для душа, 3+",
+      "price": 620,
+      "pv": 3.9,
+      "category": "Уход за телом",
+      "key": "мягкий_детский_гель_для_душа_3+",
+      "price_per_portion": null
+    },
+    {
+      "name": "Заботливый детский шампунь, 3+",
+      "price": 620,
+      "pv": 3.9,
+      "category": "Уход за волосами",
+      "key": "заботливый_детский_шампунь_3+",
+      "price_per_portion": null
+    },
+    {
+      "name": "Детская зубная паста, 2+",
+      "price": 420,
+      "pv": 3.0,
+      "category": "Для детей NLka",
+      "key": "детская_зубная_паста_2+",
+      "price_per_portion": null
+    },
+    {
+      "name": "Mg+B6 Kids — Магний + B6 для детей",
+      "price": 990,
+      "pv": 7.0,
+      "category": "Для детей NLka",
+      "key": "mg+b6_kids_магний_+_b6_для_детей",
+      "price_per_portion": null
+    },
+    {
+      "name": "PROHELPER — ПРОХЕЛПЕР, мультивитаминный комплекс",
+      "price": 990,
+      "pv": 7.0,
+      "category": "Для детей NLka",
+      "key": "prohelper_прохелпер_мультивитаминный_комплекс",
+      "price_per_portion": null
+    },
+    {
+      "name": "Omega-3 DHA — Омега-3 ДГК",
+      "price": 2290,
+      "pv": 15.7,
+      "category": "Greenflash БАД",
+      "key": "omega3_dha_омега3_дгк",
+      "price_per_portion": null
+    },
+    {
+      "name": "Liquid Ca+ for kids — Кальций для детей",
+      "price": 1190,
+      "pv": 8.0,
+      "category": "Для детей NLka",
+      "key": "liquid_ca+_for_kids_кальций_для_детей",
+      "price_per_portion": null
+    },
+    {
+      "name": "Vision Lecithin — детское зрение",
+      "price": 990,
+      "pv": 7.0,
+      "category": "Для детей NLka",
+      "key": "vision_lecithin_детское_зрение",
+      "price_per_portion": null
+    },
+    {
+      "name": "Шампунь восстанавливающий Silky hair repair",
+      "price": 1490,
+      "pv": 8.5,
+      "category": "Уход за волосами",
+      "key": "шампунь_восстанавливающий_silky_hair_repair",
+      "price_per_portion": null
+    },
+    {
+      "name": "Шампунь объем и сила Volume & strength",
+      "price": 1490,
+      "pv": 8.5,
+      "category": "Уход за волосами",
+      "key": "шампунь_объем_и_сила_volume_&_strength",
+      "price_per_portion": null
+    },
+    {
+      "name": "Шампунь балансирующий Shine balance",
+      "price": 1490,
+      "pv": 8.5,
+      "category": "Уход за волосами",
+      "key": "шампунь_балансирующий_shine_balance",
+      "price_per_portion": null
+    },
+    {
+      "name": "Маска восстанавливающая Silky hair repair",
+      "price": 1490,
+      "pv": 8.5,
+      "category": "Косметика Be Loved",
+      "key": "маска_восстанавливающая_silky_hair_repair",
+      "price_per_portion": null
+    },
+    {
+      "name": "Маска мгновенного действия WOW-EFFECT",
+      "price": 1490,
+      "pv": 8.5,
+      "category": "Косметика Be Loved",
+      "key": "маска_мгновенного_действия_woweffect",
+      "price_per_portion": null
+    },
+    {
+      "name": "Кондиционер восстанавливающий Silky hair repair",
+      "price": 1490,
+      "pv": 8.5,
+      "category": "Уход за волосами",
+      "key": "кондиционер_восстанавливающий_silky_hair_repair",
+      "price_per_portion": null
+    },
+    {
+      "name": "Кондиционер объем и сила Volume & strength",
+      "price": 1490,
+      "pv": 8.5,
+      "category": "Уход за волосами",
+      "key": "кондиционер_объем_и_сила_volume_&_strength",
+      "price_per_portion": null
+    },
+    {
+      "name": "Кондиционер балансирующий Shine balance",
+      "price": 1490,
+      "pv": 8.5,
+      "category": "Уход за волосами",
+      "key": "кондиционер_балансирующий_shine_balance",
+      "price_per_portion": null
+    },
+    {
+      "name": "Спрей-кондиционер 3-in-1",
+      "price": 1490,
+      "pv": 8.5,
+      "category": "Уход за волосами",
+      "key": "спрейкондиционер_3in1",
+      "price_per_portion": null
+    },
+    {
+      "name": "Occuba Сыворотка против выпадения волос Active Serum",
+      "price": 3290,
+      "pv": 13.7,
+      "category": "Косметика Be Loved",
+      "key": "occuba_сыворотка_против_выпадения_волос_active_ser",
+      "price_per_portion": null
+    },
+    {
+      "name": "Филлер-термозащита Master Hair",
+      "price": 1090,
+      "pv": 7.5,
+      "category": "Косметика Be Loved",
+      "key": "филлертермозащита_master_hair",
+      "price_per_portion": null
+    },
+    {
+      "name": "Крем-блеск Leave-In Moisturizing",
+      "price": 1090,
+      "pv": 7.5,
+      "category": "Косметика Be Loved",
+      "key": "кремблеск_leavein_moisturizing",
+      "price_per_portion": null
+    },
+    {
+      "name": "Разогревающий антицеллюлитный гель Hot",
+      "price": 990,
+      "pv": 6.7,
+      "category": "Уход за телом",
+      "key": "разогревающий_антицеллюлитный_гель_hot",
+      "price_per_portion": null
+    },
+    {
+      "name": "Охлаждающий антицеллюлитный крем-гель Cold",
+      "price": 990,
+      "pv": 6.7,
+      "category": "Косметика Be Loved",
+      "key": "охлаждающий_антицеллюлитный_кремгель_cold",
+      "price_per_portion": null
+    },
+    {
+      "name": "Скраб моделирующий Shaping",
+      "price": 1090,
+      "pv": 7.3,
+      "category": "Уход за телом",
+      "key": "скраб_моделирующий_shaping",
+      "price_per_portion": null
+    },
+    {
+      "name": "Сыворотка Lifting для профилактики растяжек",
+      "price": 750,
+      "pv": 5.0,
+      "category": "Косметика Be Loved",
+      "key": "сыворотка_lifting_для_профилактики_растяжек",
+      "price_per_portion": null
+    },
+    {
+      "name": "Дезодорант-кристалл для тела Silver",
+      "price": 800,
+      "pv": 3.2,
+      "category": "Уход за телом",
+      "key": "дезодоранткристалл_для_тела_silver",
+      "price_per_portion": null
+    },
+    {
+      "name": "Салфетка floor для пола",
+      "price": 650,
+      "pv": 2.7,
+      "category": "Для дома",
+      "key": "салфетка_floor_для_пола",
+      "price_per_portion": null
+    },
+    {
+      "name": "Салфетка-скраб multi-effect, серый",
+      "price": 390,
+      "pv": 2.0,
+      "category": "Уход за телом",
+      "key": "салфеткаскраб_multieffect_серый",
+      "price_per_portion": null
+    },
+    {
+      "name": "Салфетка auto для автомобиля",
+      "price": 650,
+      "pv": 2.7,
+      "category": "Для дома",
+      "key": "салфетка_auto_для_автомобиля",
+      "price_per_portion": null
+    },
+    {
+      "name": "Салфетка polish для полировки",
+      "price": 390,
+      "pv": 2.0,
+      "category": "Для дома",
+      "key": "салфетка_polish_для_полировки",
+      "price_per_portion": null
+    },
+    {
+      "name": "Салфетка Shine для стекла",
+      "price": 390,
+      "pv": 2.0,
+      "category": "Для дома",
+      "key": "салфетка_shine_для_стекла",
+      "price_per_portion": null
+    },
+    {
+      "name": "Салфетка Soft деликатная",
+      "price": 390,
+      "pv": 2.0,
+      "category": "Для дома",
+      "key": "салфетка_soft_деликатная",
+      "price_per_portion": null
+    },
+    {
+      "name": "Салфетка Superfiber для влажной уборки",
+      "price": 390,
+      "pv": 2.0,
+      "category": "Для дома",
+      "key": "салфетка_superfiber_для_влажной_уборки",
+      "price_per_portion": null
+    },
+    {
+      "name": "Салфетка Universal Plus универсальная",
+      "price": 390,
+      "pv": 2.0,
+      "category": "Для дома",
+      "key": "салфетка_universal_plus_универсальная",
+      "price_per_portion": null
+    },
+    {
+      "name": "Салфетка-скраб Multi-effect, бирюзовый",
+      "price": 390,
+      "pv": 2.0,
+      "category": "Уход за телом",
+      "key": "салфеткаскраб_multieffect_бирюзовый",
+      "price_per_portion": null
+    },
+    {
+      "name": "Салфетка Universal универсальная",
+      "price": 390,
+      "pv": 2.0,
+      "category": "Для дома",
+      "key": "салфетка_universal_универсальная",
+      "price_per_portion": null
+    },
+    {
+      "name": "Губка sponge для мытья посуды",
+      "price": 390,
+      "pv": 2.0,
+      "category": "Для дома",
+      "key": "губка_sponge_для_мытья_посуды",
+      "price_per_portion": null
+    },
+    {
+      "name": "NL Lux Фиточай – «Люкс» Фиточай",
+      "price": 450,
+      "pv": 3.1,
+      "category": "Чай и напитки",
+      "key": "nl_lux_фиточай_люкс_фиточай",
+      "price_per_portion": null
+    },
+    {
+      "name": "NL Vodoley Фиточай – «Водолей» Фиточай",
+      "price": 450,
+      "pv": 3.1,
+      "category": "Чай и напитки",
+      "key": "nl_vodoley_фиточай_водолей_фиточай",
+      "price_per_portion": null
+    },
+    {
+      "name": "NL Liverpool Фиточай – «Ливерпуль» Фиточай",
+      "price": 450,
+      "pv": 3.1,
+      "category": "Чай и напитки",
+      "key": "nl_liverpool_фиточай_ливерпуль_фиточай",
+      "price_per_portion": null
+    },
+    {
+      "name": "NL Prana Фиточай – «Прана» Фиточай",
+      "price": 450,
+      "pv": 3.1,
+      "category": "Чай и напитки",
+      "key": "nl_prana_фиточай_прана_фиточай",
+      "price_per_portion": null
+    },
+    {
+      "name": "NL Valery Фиточай – «Валери» Фиточай",
+      "price": 450,
+      "pv": 3.1,
+      "category": "Чай и напитки",
+      "key": "nl_valery_фиточай_валери_фиточай",
+      "price_per_portion": null
+    },
+    {
+      "name": "NL Gentleman Фиточай – «Джентльмен» Фиточай",
+      "price": 450,
+      "pv": 3.1,
+      "category": "Чай и напитки",
+      "key": "nl_gentleman_фиточай_джентльмен_фиточай",
+      "price_per_portion": null
+    },
+    {
+      "name": "NL Donna Bella Фиточай – «Донна Белла» Фиточай",
+      "price": 450,
+      "pv": 3.1,
+      "category": "Чай и напитки",
+      "key": "nl_donna_bella_фиточай_донна_белла_фиточай",
+      "price_per_portion": null
+    },
+    {
+      "name": "Зубная паста отбеливающая White",
+      "price": 420,
+      "pv": 2.6,
+      "category": "Чай и напитки",
+      "key": "зубная_паста_отбеливающая_white",
+      "price_per_portion": null
+    },
+    {
+      "name": "Зубная паста для чувствительных зубов и десен Sensitive",
+      "price": 390,
+      "pv": 2.5,
+      "category": "Чай и напитки",
+      "key": "зубная_паста_для_чувствительных_зубов_и_десен_sens",
+      "price_per_portion": null
+    },
+    {
+      "name": "Зубная паста реминерализующая Protect",
+      "price": 390,
+      "pv": 2.5,
+      "category": "Чай и напитки",
+      "key": "зубная_паста_реминерализующая_protect",
+      "price_per_portion": null
+    },
+    {
+      "name": "Восстанавливающий гель Smartum Max",
+      "price": 650,
+      "pv": 4.0,
+      "category": "Чай и напитки",
+      "key": "восстанавливающий_гель_smartum_max",
+      "price_per_portion": null
+    },
+    {
+      "name": "Курс «Основы нутрициологии». Тариф «Самостоятельный»",
+      "price": 35990,
+      "pv": 255.0,
+      "category": "Чай и напитки",
+      "key": "курс_основы_нутрициологии_тариф_самостоятельный",
+      "price_per_portion": null
+    },
+    {
+      "name": "Курс «Основы нутрициологии». Тариф «Любознательный»",
+      "price": 6240,
+      "pv": 27.0,
+      "category": "Чай и напитки",
+      "key": "курс_основы_нутрициологии_тариф_любознательный",
+      "price_per_portion": null
+    },
+    {
+      "name": "Курс «Видео на коленке»",
+      "price": 2540,
+      "pv": 20.0,
+      "category": "Чай и напитки",
+      "key": "курс_видео_на_коленке",
+      "price_per_portion": null
+    },
+    {
+      "name": "Курс «ЦелеНавигатор»",
+      "price": 2900,
+      "pv": 29.0,
+      "category": "Чай и напитки",
+      "key": "курс_целенавигатор",
+      "price_per_portion": null
+    },
+    {
+      "name": "Курс «Конструктор твоей уверенности»",
+      "price": 3900,
+      "pv": 39.0,
+      "category": "Чай и напитки",
+      "key": "курс_конструктор_твоей_уверенности",
+      "price_per_portion": null
+    },
+    {
+      "name": "Курс «TIMEHACK: как всё успевать»",
+      "price": 2900,
+      "pv": 29.0,
+      "category": "Чай и напитки",
+      "key": "курс_timehack:_как_всё_успевать",
+      "price_per_portion": null
+    },
+    {
+      "name": "Курс «Быстрокурс: пойми меня»",
+      "price": 990,
+      "pv": 7.0,
+      "category": "Чай и напитки",
+      "key": "курс_быстрокурс:_пойми_меня",
+      "price_per_portion": null
+    },
+    {
+      "name": "Курс «Сторителлинг»",
+      "price": 2540,
+      "pv": 20.0,
+      "category": "Чай и напитки",
+      "key": "курс_сторителлинг",
+      "price_per_portion": null
+    },
+    {
+      "name": "Курс «Антиэйдж». Тариф «Любознательный»",
+      "price": 5900,
+      "pv": 25.0,
+      "category": "Чай и напитки",
+      "key": "курс_антиэйдж_тариф_любознательный",
+      "price_per_portion": null
+    },
+    {
+      "name": "Курс «Антиэйдж». Тариф «Самостоятельный»",
+      "price": 17900,
+      "pv": 120.0,
+      "category": "Чай и напитки",
+      "key": "курс_антиэйдж_тариф_самостоятельный",
+      "price_per_portion": null
+    },
+    {
+      "name": "BioTuning - БиоТюнинг",
+      "price": 3190,
+      "pv": 21.5,
+      "category": "Greenflash БАД",
+      "key": "biotuning_биотюнинг",
+      "price_per_portion": null
+    },
+    {
+      "name": "Толстовка NL, синяя S/M",
+      "price": 5900,
+      "pv": 12.0,
+      "category": "Greenflash БАД",
+      "key": "толстовка_nl_синяя_s/m",
+      "price_per_portion": null
+    },
+    {
+      "name": "Комплект «Шапка и шарф NL», серый",
+      "price": 3490,
+      "pv": 8.0,
+      "category": "Greenflash БАД",
+      "key": "комплект_шапка_и_шарф_nl_серый",
+      "price_per_portion": null
+    },
+    {
+      "name": "Комплект «Шапка и шарф NL», мокко",
+      "price": 3490,
+      "pv": 8.0,
+      "category": "Greenflash БАД",
+      "key": "комплект_шапка_и_шарф_nl_мокко",
+      "price_per_portion": null
+    },
+    {
+      "name": "Футболка NL, сливочная M/L",
+      "price": 3900,
+      "pv": 8.5,
+      "category": "Greenflash БАД",
+      "key": "футболка_nl_сливочная_m/l",
+      "price_per_portion": null
+    },
+    {
+      "name": "Удлиненная футболка NL, какао M/L",
+      "price": 3900,
+      "pv": 8.5,
+      "category": "Greenflash БАД",
+      "key": "удлиненная_футболка_nl_какао_m/l",
+      "price_per_portion": null
+    },
+    {
+      "name": "Свитшот NL, какао M/L",
+      "price": 5900,
+      "pv": 12.0,
+      "category": "Greenflash БАД",
+      "key": "свитшот_nl_какао_m/l",
+      "price_per_portion": null
+    },
+    {
+      "name": "Свитшот NL, какао XL/XXL",
+      "price": 5900,
+      "pv": 12.0,
+      "category": "Greenflash БАД",
+      "key": "свитшот_nl_какао_xl/xxl",
+      "price_per_portion": null
+    },
+    {
+      "name": "Свитшот NL, сливочный XL/XXL",
+      "price": 5900,
+      "pv": 12.0,
+      "category": "Greenflash БАД",
+      "key": "свитшот_nl_сливочный_xl/xxl",
+      "price_per_portion": null
+    },
+    {
+      "name": "Свитшот NL, сливочный M/L",
+      "price": 5900,
+      "pv": 12.0,
+      "category": "Greenflash БАД",
+      "key": "свитшот_nl_сливочный_m/l",
+      "price_per_portion": null
+    },
+    {
+      "name": "Толстовка NL, синяя M/L",
+      "price": 5900,
+      "pv": 12.0,
+      "category": "Greenflash БАД",
+      "key": "толстовка_nl_синяя_m/l",
+      "price_per_portion": null
+    },
+    {
+      "name": "Толстовка NL, синяя XL",
+      "price": 5900,
+      "pv": 12.0,
+      "category": "Greenflash БАД",
+      "key": "толстовка_nl_синяя_xl",
+      "price_per_portion": null
+    },
+    {
+      "name": "Протектор BioSetting — «Биосеттинг»",
+      "price": 2690,
+      "pv": 18.0,
+      "category": "Greenflash БАД",
+      "key": "протектор_biosetting_биосеттинг",
+      "price_per_portion": null
+    },
+    {
+      "name": "Общеукрепляющий комплекс для собак",
+      "price": 790,
+      "pv": 5.2,
+      "category": "Greenflash БАД",
+      "key": "общеукрепляющий_комплекс_для_собак",
+      "price_per_portion": null
+    },
+    {
+      "name": "Общеукрепляющий комплекс для кошек",
+      "price": 790,
+      "pv": 5.2,
+      "category": "Greenflash БАД",
+      "key": "общеукрепляющий_комплекс_для_кошек",
+      "price_per_portion": null
+    },
+    {
+      "name": "Комплекс для кастрированных котов и стерилизованных кошек",
+      "price": 790,
+      "pv": 5.2,
+      "category": "Greenflash БАД",
+      "key": "комплекс_для_кастрированных_котов_и_стерилизованны",
+      "price_per_portion": null
+    },
+    {
+      "name": "Бережный шампунь для собак и кошек",
+      "price": 690,
+      "pv": 4.6,
+      "category": "Уход за волосами",
+      "key": "бережный_шампунь_для_собак_и_кошек",
+      "price_per_portion": null
+    },
+    {
+      "name": "Спрей для легкого расчесывания",
+      "price": 630,
+      "pv": 4.2,
+      "category": "Уход за волосами",
+      "key": "спрей_для_легкого_расчесывания",
+      "price_per_portion": null
+    }
+  ]
+}
