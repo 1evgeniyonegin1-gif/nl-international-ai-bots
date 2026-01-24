@@ -169,3 +169,103 @@ class AdminAction(Base, TimestampMixin):
 
     def __repr__(self) -> str:
         return f"<AdminAction(id={self.id}, admin={self.admin_id}, action={self.action})>"
+
+
+class MoodState(Base, TimestampMixin):
+    """Текущее настроение бота (меняется раз в день или по триггеру)"""
+    __tablename__ = "content_mood_states"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    # Дата настроения
+    date: Mapped[datetime] = mapped_column(index=True, default=datetime.utcnow)
+
+    # Категория настроения (joy, sadness, anger, fear, etc.)
+    category: Mapped[str] = mapped_column(String(50))
+
+    # Конкретная эмоция (e.g., "ecstatic", "melancholy")
+    emotion: Mapped[str] = mapped_column(String(50))
+
+    # Интенсивность (light, medium, strong, extreme)
+    intensity: Mapped[str] = mapped_column(String(20))
+
+    # Версия персоны Данила (expert, friend, rebel, philosopher, crazy, tired)
+    persona_version: Mapped[str] = mapped_column(String(50))
+
+    # Событие-триггер (если есть)
+    trigger: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+
+    # Текущее или историческое
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
+
+    def __repr__(self) -> str:
+        return f"<MoodState(date={self.date.date()}, emotion={self.emotion}, persona={self.persona_version})>"
+
+
+class MediaAsset(Base, TimestampMixin):
+    """Медиа-ресурс (мем, гифка, стикер)"""
+    __tablename__ = "content_media_assets"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    # Telegram file_id
+    file_id: Mapped[str] = mapped_column(String(200), unique=True, index=True)
+
+    # Тип файла (gif, image, sticker, video)
+    file_type: Mapped[str] = mapped_column(String(20))
+
+    # Категория (morning, work, products, relationships, achievements, emotions, meta, seasonal, industry, random)
+    category: Mapped[str] = mapped_column(String(50), index=True)
+
+    # Конкретная ситуация
+    situation: Mapped[str] = mapped_column(String(200))
+
+    # Теги эмоций [happy, tired, excited] (JSONB)
+    emotion_tags: Mapped[list] = mapped_column(JSONB, default=list)
+
+    # Теги персон [expert, friend, rebel] (JSONB)
+    persona_tags: Mapped[list] = mapped_column(JSONB, default=list)
+
+    # Статистика использования
+    usage_count: Mapped[int] = mapped_column(Integer, default=0)
+    last_used_at: Mapped[Optional[datetime]] = mapped_column(nullable=True)
+
+    # Локальный путь (если есть)
+    file_path: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    # Промпт для генерации (для регенерации)
+    generation_prompt: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    def __repr__(self) -> str:
+        return f"<MediaAsset(id={self.id}, category={self.category}, situation={self.situation})>"
+
+
+class HookTemplate(Base, TimestampMixin):
+    """Шаблон hook'а (цепляющей фразы)"""
+    __tablename__ = "content_hook_templates"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    # Версия персоны (expert, friend, rebel, philosopher, crazy, tired)
+    persona_version: Mapped[str] = mapped_column(String(50), index=True)
+
+    # Шаблон фразы (e.g., "Давай разберёмся: {topic}")
+    template: Mapped[str] = mapped_column(Text)
+
+    # Переменные в шаблоне ["topic", "fact"] (JSONB)
+    variables: Mapped[list] = mapped_column(JSONB, default=list)
+
+    # Категории настроений [joy, excitement] (JSONB)
+    mood_categories: Mapped[list] = mapped_column(JSONB, default=list)
+
+    # Типы постов [product, motivation] (JSONB)
+    post_types: Mapped[list] = mapped_column(JSONB, default=list)
+
+    # Статистика использования
+    usage_count: Mapped[int] = mapped_column(Integer, default=0)
+
+    # Оценка эффективности (для A/B тестирования)
+    effectiveness_score: Mapped[Optional[float]] = mapped_column(nullable=True)
+
+    def __repr__(self) -> str:
+        return f"<HookTemplate(id={self.id}, persona={self.persona_version}, template={self.template[:50]}...)>"

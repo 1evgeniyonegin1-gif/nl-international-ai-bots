@@ -1,18 +1,20 @@
 """
-Основной AI движок для Куратора
+Основной AI движок для Куратора с интегрированной системой персон
 """
 from typing import List, Dict, Optional
 from datetime import datetime
 from loguru import logger
 
 from shared.ai_clients.openai_client import OpenAIClient
+from shared.persona import PersonaManager, PERSONA_CHARACTERISTICS
 from curator_bot.ai.prompts import get_curator_system_prompt, get_rag_instruction
 from curator_bot.database.models import User, ConversationMessage
 
 
 class CuratorChatEngine:
     """
-    Движок для генерации ответов куратора с использованием AI и RAG
+    Движок для генерации ответов куратора с использованием AI и RAG.
+    Интегрирована система персон для адаптации стиля общения.
     """
 
     def __init__(self, ai_client):
@@ -23,7 +25,12 @@ class CuratorChatEngine:
             ai_client: Клиент для работы с AI (Gemini или OpenAI)
         """
         self.ai_client = ai_client
-        logger.info("Curator chat engine initialized")
+
+        # Система персон для адаптации стиля
+        self.persona_manager = PersonaManager()
+        self.use_persona_system = True
+
+        logger.info("Curator chat engine initialized with PersonaManager")
 
     async def generate_response(
         self,
@@ -31,7 +38,8 @@ class CuratorChatEngine:
         user_message: str,
         conversation_history: List[ConversationMessage],
         knowledge_fragments: Optional[List[str]] = None,
-        max_history: int = 10
+        max_history: int = 10,
+        use_persona: bool = True
     ) -> str:
         """
         Генерирует ответ куратора
@@ -42,6 +50,7 @@ class CuratorChatEngine:
             conversation_history: История диалога
             knowledge_fragments: Релевантные фрагменты из базы знаний
             max_history: Максимальное количество сообщений из истории
+            use_persona: Использовать систему персон для адаптации стиля
 
         Returns:
             str: Ответ куратора
@@ -55,6 +64,26 @@ class CuratorChatEngine:
                 current_goal=user.current_goal
             )
 
+            # Определяем температуру по умолчанию
+            temperature = 0.7
+
+            # Добавляем контекст персоны если включена система
+            if use_persona and self.use_persona_system:
+                # Анализируем настроение сообщения пользователя и адаптируем персону
+                persona_context = self._get_adaptive_persona(user_message)
+
+                if persona_context:
+                    # Добавляем информацию о персоне в промпт
+                    persona_enhancement = self.persona_manager.get_prompt_enhancement(persona_context)
+                    system_prompt = system_prompt + "\n\n" + persona_enhancement
+
+                    # Используем температуру персоны
+                    temperature = persona_context.temperature
+
+                    logger.info(
+                        f"Using persona {persona_context.persona_name} for user {user.telegram_id}"
+                    )
+
             # Формируем контекст из истории диалога
             context = self._prepare_context(conversation_history, max_history)
 
@@ -67,7 +96,7 @@ class CuratorChatEngine:
                     user_message=user_message,
                     knowledge_fragments=knowledge_fragments,
                     context=context,
-                    temperature=0.7
+                    temperature=temperature
                 )
             else:
                 # Обычный ответ без базы знаний
@@ -76,7 +105,7 @@ class CuratorChatEngine:
                     system_prompt=system_prompt,
                     user_message=user_message,
                     context=context,
-                    temperature=0.7
+                    temperature=temperature
                 )
 
             logger.info(f"Response generated successfully for user {user.telegram_id}")
@@ -85,6 +114,58 @@ class CuratorChatEngine:
         except Exception as e:
             logger.error(f"Error generating response: {e}")
             return self._get_fallback_response()
+
+    def _get_adaptive_persona(self, user_message: str):
+        """
+        Выбирает персону на основе контекста сообщения пользователя.
+
+        Адаптирует стиль ответа под:
+        - Эмоциональное состояние пользователя
+        - Тип вопроса
+        - Контекст разговора
+
+        Args:
+            user_message: Сообщение пользователя
+
+        Returns:
+            PersonaContext или None
+        """
+        message_lower = user_message.lower()
+
+        # Определяем контекст по ключевым словам
+        # Пользователь расстроен/устал -> tired или friend
+        sad_keywords = ["устал", "не получается", "сложно", "трудно", "бросить", "не могу", "тяжело", "плохо"]
+        if any(word in message_lower for word in sad_keywords):
+            self.persona_manager.generate_mood(force_category="sadness", force_intensity="medium")
+            return self.persona_manager.get_persona_context(post_type="personal")
+
+        # Пользователь задаёт вопросы о продуктах -> expert
+        product_keywords = ["продукт", "состав", "как принимать", "дозировка", "витамин", "коллаген", "energy diet"]
+        if any(word in message_lower for word in product_keywords):
+            self.persona_manager.generate_mood(force_category="interest", force_intensity="medium")
+            return self.persona_manager.get_persona_context(post_type="product")
+
+        # Пользователь скептик или сомневается -> expert или rebel
+        skeptic_keywords = ["развод", "пирамида", "не верю", "зачем", "смысл", "почему так дорого", "обман"]
+        if any(word in message_lower for word in skeptic_keywords):
+            self.persona_manager.generate_mood(force_category="anger", force_intensity="light")
+            return self.persona_manager.get_persona_context(post_type="myth_busting")
+
+        # Пользователь радуется/делится успехом -> friend или crazy
+        happy_keywords = ["получилось", "ура", "круто", "супер", "спасибо", "вау", "класс", "результат"]
+        if any(word in message_lower for word in happy_keywords):
+            self.persona_manager.generate_mood(force_category="joy", force_intensity="strong")
+            return self.persona_manager.get_persona_context(post_type="celebration")
+
+        # Пользователь спрашивает о бизнесе -> expert или friend
+        business_keywords = ["заработать", "бизнес", "команда", "партнёр", "квалификация", "бонус", "доход"]
+        if any(word in message_lower for word in business_keywords):
+            self.persona_manager.generate_mood(force_category="trust", force_intensity="medium")
+            return self.persona_manager.get_persona_context(post_type="business")
+
+        # По умолчанию - дружелюбный стиль
+        self.persona_manager.generate_mood(force_category="trust", force_intensity="light")
+        return self.persona_manager.get_persona_context(post_type="tips")
 
     def _prepare_context(
         self,

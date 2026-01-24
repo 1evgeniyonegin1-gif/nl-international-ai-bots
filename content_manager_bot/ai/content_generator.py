@@ -2,6 +2,7 @@
 Генератор контента с использованием GigaChat, YandexGPT и GPT-4 (гибридный подход)
 Поддерживает генерацию изображений через YandexART
 Поддерживает обучение на образцах стиля из каналов
+Интегрирована система персон и настроений
 """
 from typing import Optional, Tuple, List
 from datetime import datetime
@@ -13,6 +14,7 @@ from shared.ai_clients.yandexart_client import YandexARTClient, ImageStyle
 from shared.ai_clients.openai_client import OpenAIClient
 from shared.config.settings import settings
 from shared.style_monitor import get_style_service
+from shared.persona import PersonaManager, PersonaContext
 from content_manager_bot.ai.prompts import ContentPrompts
 from content_manager_bot.utils.product_reference import ProductReferenceManager
 
@@ -86,6 +88,11 @@ class ContentGenerator:
 
         # Флаг использования образцов стиля
         self.use_style_samples = True
+
+        # Система персон и настроений
+        self.persona_manager = PersonaManager()
+        self.use_persona_system = True  # Можно отключить для тестирования
+        logger.info("PersonaManager initialized for content generation")
 
     async def _get_style_samples(
         self,
@@ -200,7 +207,9 @@ class ContentGenerator:
         post_type: str,
         custom_topic: Optional[str] = None,
         temperature: Optional[float] = None,
-        use_style_samples: bool = True
+        use_style_samples: bool = True,
+        use_persona: bool = True,
+        force_persona: Optional[str] = None
     ) -> Tuple[str, str]:
         """
         Генерирует пост для Telegram канала
@@ -208,8 +217,10 @@ class ContentGenerator:
         Args:
             post_type: Тип поста (product, motivation, news, tips, success_story, promo)
             custom_topic: Дополнительная тема для уточнения
-            temperature: Креативность (0.0-1.0), если None - используется дефолт для модели
+            temperature: Креативность (0.0-1.0), если None - используется дефолт для модели/персоны
             use_style_samples: Использовать образцы стиля из каналов-образцов
+            use_persona: Использовать систему персон и настроений
+            force_persona: Принудительно выбрать версию персоны (expert, friend, rebel, etc.)
 
         Returns:
             Tuple[str, str]: (текст поста, использованный промпт)
@@ -217,6 +228,39 @@ class ContentGenerator:
         try:
             # Получаем промпт для типа поста
             user_prompt = self.prompts.get_prompt_for_type(post_type, custom_topic)
+
+            # Получаем контекст персоны (если включена система)
+            persona_context: Optional[PersonaContext] = None
+            if use_persona and self.use_persona_system:
+                # Генерируем настроение если нужно выбрать персону
+                if force_persona:
+                    # Принудительная персона
+                    mood = self.persona_manager.generate_mood()
+                    mood = mood._replace(persona_version=force_persona) if hasattr(mood, '_replace') else mood
+                    from shared.persona.persona_manager import MoodState
+                    mood = MoodState(
+                        category=mood.category,
+                        emotion=mood.emotion,
+                        intensity=mood.intensity,
+                        persona_version=force_persona,
+                        trigger=mood.trigger
+                    )
+                    self.persona_manager.set_mood(mood)
+
+                # Получаем контекст персоны с hook'ом
+                persona_context = self.persona_manager.get_persona_context(
+                    post_type=post_type,
+                    include_hook=True
+                )
+
+                # Добавляем дополнение к промпту с информацией о персоне
+                persona_enhancement = self.persona_manager.get_prompt_enhancement(persona_context)
+                user_prompt = persona_enhancement + "\n\n" + user_prompt
+
+                logger.info(
+                    f"Using persona: {persona_context.persona_name} "
+                    f"(mood: {persona_context.mood.emotion if persona_context.mood else 'none'})"
+                )
 
             # Добавляем образцы стиля если доступны
             if use_style_samples and self.use_style_samples:
@@ -229,13 +273,17 @@ class ContentGenerator:
             # Выбираем клиент в зависимости от типа поста
             ai_client, model_name = self._get_client_for_post_type(post_type)
 
-            # Устанавливаем температуру в зависимости от модели
+            # Устанавливаем температуру: персона > параметр > дефолт модели
             if temperature is None:
-                temperature = 0.85 if model_name == "gigachat" else 0.8
+                if persona_context:
+                    temperature = persona_context.temperature
+                else:
+                    temperature = 0.85 if model_name == "gigachat" else 0.8
 
             logger.info(f"Generating {post_type} post with {model_name}" +
                        (f" about '{custom_topic}'" if custom_topic else "") +
-                       f" (temp={temperature})")
+                       f" (temp={temperature})" +
+                       (f" [persona: {persona_context.persona_version}]" if persona_context else ""))
 
             # Генерируем контент
             content = await ai_client.generate_response(
@@ -405,6 +453,32 @@ class ContentGenerator:
             list: список типов premium постов
         """
         return PREMIUM_POST_TYPES
+
+    # === Методы для работы с персонами ===
+
+    def get_available_personas(self) -> list[str]:
+        """Возвращает список доступных версий персоны"""
+        return self.persona_manager.get_all_personas()
+
+    def get_persona_info(self, persona_version: str) -> dict:
+        """Возвращает информацию о версии персоны"""
+        return self.persona_manager.get_persona_info(persona_version)
+
+    def get_current_mood(self):
+        """Возвращает текущее настроение"""
+        return self.persona_manager.current_mood
+
+    def trigger_mood_change(self, event: str):
+        """
+        Изменяет настроение по событию.
+
+        Events: big_achievement, small_win, failure, controversy, etc.
+        """
+        return self.persona_manager.trigger_mood_change(event)
+
+    def generate_new_mood(self):
+        """Генерирует новое случайное настроение"""
+        return self.persona_manager.generate_mood()
 
     # === Методы для работы с изображениями ===
 
