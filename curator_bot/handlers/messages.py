@@ -201,8 +201,10 @@ async def handle_message(message: Message):
             await message.answer(ai_response)
 
             # Проверяем упоминание продукта и отправляем фото если найден
+            # Ищем в ОБОИХ текстах: сообщении пользователя И ответе AI
             try:
-                product_tuple = product_manager.extract_product_from_content(ai_response)
+                combined_text = f"{message.text} {ai_response}"
+                product_tuple = product_manager.extract_product_from_content(combined_text)
                 if product_tuple:
                     category, product_key, product_info = product_tuple
                     photo_path = product_manager._find_product_photo(product_key, category)
@@ -211,7 +213,7 @@ async def handle_message(message: Message):
                             photo=FSInputFile(photo_path),
                             caption=f"📦 {product_info['name']}"
                         )
-                        logger.info(f"Sent product photo: {product_info['name']}")
+                        logger.info(f"Sent product photo: {product_info['name']} (found in combined text)")
             except Exception as photo_error:
                 logger.debug(f"Could not send product photo: {photo_error}")
 

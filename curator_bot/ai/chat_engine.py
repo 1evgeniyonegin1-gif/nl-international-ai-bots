@@ -31,7 +31,7 @@ class CuratorChatEngine:
 
         # Система персон для адаптации стиля
         self.persona_manager = PersonaManager()
-        self.use_persona_system = True
+        self.use_persona_system = False  # ОТКЛЮЧЕНО - используем только prompts.py
 
         # Диалоговая воронка для естественного ведения разговора
         self.conversational_funnel = get_conversational_funnel()
