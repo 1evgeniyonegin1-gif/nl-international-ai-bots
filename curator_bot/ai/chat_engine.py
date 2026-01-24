@@ -124,12 +124,50 @@ class CuratorChatEngine:
                     temperature=temperature
                 )
 
+            # POST-PROCESSING: убираем markdown и форматируем
+            response = self._clean_curator_response(response)
+
             logger.info(f"Response generated successfully for user {user.telegram_id}")
             return response
 
         except Exception as e:
             logger.error(f"Error generating response: {e}")
             return self._get_fallback_response()
+
+    def _clean_curator_response(self, response: str) -> str:
+        """
+        Очищает ответ куратора от markdown и лишнего форматирования.
+
+        YandexGPT игнорирует инструкции "не используй markdown",
+        поэтому чистим принудительно.
+        """
+        import re
+
+        # 1. Убираем **жирный** → жирный
+        response = re.sub(r'\*\*([^*]+)\*\*', r'\1', response)
+
+        # 2. Убираем *курсив* → курсив
+        response = re.sub(r'\*([^*]+)\*', r'\1', response)
+
+        # 3. Убираем эмодзи-заголовки в начале строк (📊, 💡, 🧠, 📌, ✅, ❌ и т.д.)
+        response = re.sub(r'^[📊💡🧠📌✅❌🔥💪🎯📃🍽️🍯💰👍☕]\s*', '', response, flags=re.MULTILINE)
+
+        # 4. Убираем списки с тире/буллетами в начале строк
+        response = re.sub(r'^[-•]\s+', '', response, flags=re.MULTILINE)
+
+        # 5. Убираем нумерованные списки (1. 2. 3.)
+        response = re.sub(r'^\d+\.\s+', '', response, flags=re.MULTILINE)
+
+        # 6. Убираем эмодзи с цифрами (1️⃣, 2️⃣, 3️⃣)
+        response = re.sub(r'[1-9]️⃣\s*', '', response)
+
+        # 7. Убираем лишние пустые строки (больше 2 подряд)
+        response = re.sub(r'\n{3,}', '\n\n', response)
+
+        # 8. Убираем заголовки типа "Что важно:", "Как действовать:" и т.д.
+        response = re.sub(r'^[А-Яа-яA-Za-z\s]+:\s*$', '', response, flags=re.MULTILINE)
+
+        return response.strip()
 
     def _get_adaptive_persona(self, user_message: str):
         """

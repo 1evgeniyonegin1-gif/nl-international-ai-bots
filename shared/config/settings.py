@@ -31,14 +31,33 @@ class Settings(BaseSettings):
     def get_topic_id(self, post_type: str) -> int:
         """Возвращает ID темы для типа поста"""
         mapping = {
+            # Продукты
             "product": self.topic_products,
-            "motivation": self.topic_success,  # Мотивация -> Истории успеха
-            "news": self.topic_news,
-            "tips": self.topic_training,  # Советы -> Обучение
+            "product_deep_dive": self.topic_products,
+            "product_comparison": self.topic_products,
+
+            # Бизнес
+            "business": self.topic_business,
+            "business_lifestyle": self.topic_business,
+            "business_myths": self.topic_business,
+
+            # Истории успеха
+            "motivation": self.topic_success,
             "success_story": self.topic_success,
-            "promo": self.topic_news,  # Промо -> Новости
+            "transformation": self.topic_success,
+
+            # Обучение
+            "tips": self.topic_training,
+
+            # Новости
+            "news": self.topic_news,
+            "promo": self.topic_news,
+
+            # FAQ
+            "faq": self.topic_faq,
+            "myth_busting": self.topic_faq,
         }
-        return mapping.get(post_type, 0)
+        return mapping.get(post_type, self.topic_products)  # По умолчанию в продукты
 
     # AI API Keys
     gemini_api_key: str = Field(default="", env="GEMINI_API_KEY")
