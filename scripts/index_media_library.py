@@ -33,8 +33,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from content_manager_bot.database.models import MediaAsset, MediaKeywordIndex
-from shared.database.session import AsyncSessionLocal, engine
-from shared.database.base import Base
+from shared.database.base import AsyncSessionLocal, engine, Base
 
 logging.basicConfig(
     level=logging.INFO,

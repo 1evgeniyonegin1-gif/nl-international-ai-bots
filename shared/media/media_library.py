@@ -20,7 +20,7 @@ from sqlalchemy import select, func, and_, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from content_manager_bot.database.models import MediaAsset, MediaKeywordIndex
-from shared.database.session import AsyncSessionLocal
+from shared.database.base import AsyncSessionLocal
 
 logger = logging.getLogger(__name__)
 
