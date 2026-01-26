@@ -235,30 +235,26 @@ async def handle_message(message: Message):
             except Exception as photo_error:
                 logger.error(f"[PRODUCT] ❌ Error sending photo: {photo_error}", exc_info=True)
 
-            # Проверяем, нужно ли отправить бизнес-медиа (истории успеха, чеки)
+            # Проверяем, нужно ли отправить бизнес-контент (истории успеха, примеры)
+            # Отправляем только если ответ AI был коротким (меньше 300 символов)
             try:
-                media_type = business_presenter.should_send_business_media(message.text, ai_response)
-                if media_type:
-                    media_result = None
-                    if media_type == "success_story":
-                        media_result = business_presenter.get_success_story()
-                    elif media_type == "income_proof":
-                        media_result = business_presenter.get_income_proof()
-                    elif media_type == "business_proof":
-                        media_result = business_presenter.get_business_presentation()
+                if len(ai_response) < 300:
+                    media_type = business_presenter.should_send_business_media(message.text, ai_response)
+                    if media_type:
+                        extra_text = None
+                        if media_type == "success_story":
+                            extra_text = business_presenter.get_success_story()
+                        elif media_type == "income_proof":
+                            extra_text = business_presenter.get_income_proof()
+                        elif media_type == "business_proof":
+                            extra_text = business_presenter.get_business_presentation()
 
-                    if media_result:
-                        photo_path, caption = media_result
-                        if photo_path.exists():
-                            await message.answer_photo(
-                                photo=FSInputFile(photo_path),
-                                caption=caption[:1024]  # Telegram limit
-                            )
-                            logger.info(f"[BUSINESS] ✅ Sent {media_type} media")
-                        else:
-                            logger.warning(f"[BUSINESS] Photo not found: {photo_path}")
+                        if extra_text:
+                            # Отправляем как дополнительное сообщение
+                            await message.answer(f"Вот пример:\n\n{extra_text[:1500]}")
+                            logger.info(f"[BUSINESS] ✅ Sent {media_type} example text")
             except Exception as business_error:
-                logger.error(f"[BUSINESS] ❌ Error sending business media: {business_error}", exc_info=True)
+                logger.error(f"[BUSINESS] ❌ Error sending business content: {business_error}", exc_info=True)
 
             logger.info(f"Response sent to user {user.telegram_id}")
 

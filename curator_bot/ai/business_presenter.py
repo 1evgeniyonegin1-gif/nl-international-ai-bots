@@ -7,13 +7,12 @@
 import json
 import random
 from pathlib import Path
-from typing import Optional, Tuple, List, Dict
+from typing import Optional, List, Dict
 from loguru import logger
 
 
 # Путь к данным
 BASE_PATH = Path(__file__).parent.parent.parent / "content" / "telegram_knowledge"
-PHOTOS_PATH = Path(__file__).parent.parent.parent / "content" / "telegram_knowledge" / "photos"
 
 
 class BusinessPresenter:
@@ -34,17 +33,17 @@ class BusinessPresenter:
     def _load_content(self):
         """Загружает контент из JSON-файлов"""
         try:
-            # Загружаем истории успеха
+            # Загружаем истории успеха (все, не только с фото)
             success_path = BASE_PATH / "success_stories.json"
             if success_path.exists():
                 with open(success_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                    # Берём только записи с фото
+                    # Берём все записи с высоким quality_score
                     self.success_stories = [
                         entry for entry in data.get("entries", [])
-                        if entry.get("has_photo") and entry.get("photo_path")
+                        if entry.get("quality_score", 0) >= 60
                     ]
-                    logger.info(f"Loaded {len(self.success_stories)} success stories with photos")
+                    logger.info(f"Loaded {len(self.success_stories)} success stories")
 
             # Загружаем бизнес-посты
             business_path = BASE_PATH / "business.json"
@@ -53,9 +52,9 @@ class BusinessPresenter:
                     data = json.load(f)
                     self.business_posts = [
                         entry for entry in data.get("entries", [])
-                        if entry.get("has_photo") and entry.get("photo_path")
+                        if entry.get("quality_score", 0) >= 60
                     ]
-                    logger.info(f"Loaded {len(self.business_posts)} business posts with photos")
+                    logger.info(f"Loaded {len(self.business_posts)} business posts")
 
         except Exception as e:
             logger.error(f"Error loading business content: {e}")
@@ -103,89 +102,57 @@ class BusinessPresenter:
 
         return None
 
-    def get_success_story(self) -> Optional[Tuple[Path, str]]:
+    def get_success_story(self) -> Optional[str]:
         """
-        Возвращает случайную историю успеха с фото.
+        Возвращает случайную историю успеха (только текст).
 
         Returns:
-            (путь_к_фото, краткий_текст) или None
+            Краткий текст истории или None
         """
         if not self.success_stories:
             return None
 
         story = random.choice(self.success_stories)
-        photo_path = PHOTOS_PATH / Path(story["photo_path"]).name
-
-        if not photo_path.exists():
-            # Пробуем полный путь
-            photo_path = BASE_PATH / story["photo_path"]
-
-        if not photo_path.exists():
-            logger.warning(f"Photo not found: {photo_path}")
-            return None
-
-        # Формируем короткий текст
         text = self._shorten_text(story.get("text_cleaned", story.get("text", "")))
+        return text
 
-        return (photo_path, text)
-
-    def get_income_proof(self) -> Optional[Tuple[Path, str]]:
+    def get_income_proof(self) -> Optional[str]:
         """
-        Возвращает фото с доказательством дохода.
+        Возвращает текст о доходе/заработке.
 
         Returns:
-            (путь_к_фото, краткий_текст) или None
+            Текст о заработке или None
         """
         # Ищем посты с упоминанием чеков/дохода
         income_posts = [
             post for post in self.business_posts
             if any(kw in post.get("text", "").lower()
-                   for kw in ["чек", "выплат", "доход", "заработ", "бонус"])
+                   for kw in ["чек", "выплат", "доход", "заработ", "бонус", "квалификац"])
         ]
 
         if not income_posts:
-            # Если нет специфических — берём любой бизнес-пост
             income_posts = self.business_posts
 
         if not income_posts:
             return None
 
         post = random.choice(income_posts)
-        photo_path = PHOTOS_PATH / Path(post["photo_path"]).name
-
-        if not photo_path.exists():
-            photo_path = BASE_PATH / post["photo_path"]
-
-        if not photo_path.exists():
-            logger.warning(f"Photo not found: {photo_path}")
-            return None
-
         text = self._shorten_text(post.get("text_cleaned", post.get("text", "")))
+        return text
 
-        return (photo_path, text)
-
-    def get_business_presentation(self) -> Optional[Tuple[Path, str]]:
+    def get_business_presentation(self) -> Optional[str]:
         """
-        Возвращает общую бизнес-презентацию с фото.
+        Возвращает общую бизнес-презентацию (текст).
 
         Returns:
-            (путь_к_фото, краткий_текст) или None
+            Текст презентации или None
         """
         if not self.business_posts:
             return None
 
         post = random.choice(self.business_posts)
-        photo_path = PHOTOS_PATH / Path(post["photo_path"]).name
-
-        if not photo_path.exists():
-            photo_path = BASE_PATH / post["photo_path"]
-
-        if not photo_path.exists():
-            return None
-
         text = self._shorten_text(post.get("text_cleaned", post.get("text", "")))
-
-        return (photo_path, text)
+        return text
 
     def _shorten_text(self, text: str, max_length: int = 500) -> str:
         """Сокращает текст до разумной длины для подписи к фото"""
