@@ -117,8 +117,9 @@ class OnboardingScheduler:
             hours_inactive: Часов без активности (для логирования)
         """
         from .proactive_tasks import OnboardingTasks, get_user_progress
+        from .onboarding_service import OnboardingService
 
-        progress = get_user_progress(user_id)
+        progress = await get_user_progress(user_id)
         current_day = progress.get("current_day", 1)
 
         # Формируем полное сообщение
@@ -138,28 +139,49 @@ class OnboardingScheduler:
             parse_mode="HTML"
         )
 
+        # Обновляем время последнего напоминания
+        await OnboardingService.update_last_reminder(user_id, hours_inactive)
+
     async def _get_inactive_users(self) -> List[dict]:
         """
-        Получить список неактивных пользователей
-
-        TODO: Реализовать через БД
+        Получить список неактивных пользователей из БД
 
         Returns:
             Список пользователей с их данными
         """
-        # Заглушка — потом привязать к БД
-        return []
+        from .onboarding_service import OnboardingService
+
+        # Проверяем по минимальному порогу (4 часа)
+        inactive_users = await OnboardingService.get_inactive_users(hours=4)
+
+        # Фильтруем только тех, кому ещё не отправляли напоминание на этом пороге
+        result = []
+        for user in inactive_users:
+            hours_inactive = user["hours_inactive"]
+            last_reminder = user["last_reminder_hours"]
+
+            # Определяем нужный порог
+            reminder_thresholds = [4, 12, 24, 48, 168]
+            current_threshold = None
+            for threshold in reminder_thresholds:
+                if hours_inactive >= threshold:
+                    current_threshold = threshold
+
+            # Если ещё не отправляли на этом пороге
+            if current_threshold and current_threshold > last_reminder:
+                result.append(user)
+
+        return result
 
     async def _get_users_for_daily_tasks(self) -> List[dict]:
         """
         Получить пользователей, которым пора отправить дневные задачи
 
-        TODO: Реализовать через БД
-
         Returns:
             Список пользователей
         """
-        # Заглушка — потом привязать к БД
+        # Пока не реализовано автоматическое продвижение по дням
+        # Пользователи сами проходят чеклисты
         return []
 
 
@@ -206,8 +228,9 @@ async def check_and_send_progress(bot: Bot, user_id: int):
         user_id: Telegram ID пользователя
     """
     from .proactive_tasks import OnboardingTasks, get_user_progress
+    from .onboarding_service import OnboardingService
 
-    progress = get_user_progress(user_id)
+    progress = await get_user_progress(user_id)
     current_day = progress.get("current_day", 1)
     completed_tasks = progress.get("completed_tasks", [])
 
@@ -219,7 +242,7 @@ async def check_and_send_progress(bot: Bot, user_id: int):
 
         if all_completed and current_day < 7:
             # Переходим на следующий день
-            next_day = current_day + 1
+            next_day = await OnboardingService.advance_to_next_day(user_id)
             message = OnboardingTasks.format_tasks_message(next_day, completed_tasks)
 
             congrats_text = (

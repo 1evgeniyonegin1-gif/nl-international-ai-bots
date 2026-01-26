@@ -174,39 +174,33 @@ def get_task_for_day(day: int) -> Optional[Dict]:
     return OnboardingTasks.get_day_tasks(day)
 
 
-def get_user_progress(user_id: int) -> Dict:
+async def get_user_progress(telegram_id: int) -> Dict:
     """
     Получить прогресс пользователя по онбордингу
 
-    TODO: Реализовать через БД
-
     Args:
-        user_id: Telegram ID пользователя
+        telegram_id: Telegram ID пользователя
 
     Returns:
         Dict с прогрессом
     """
-    # Заглушка — потом привязать к БД
-    return {
-        "current_day": 1,
-        "completed_tasks": [],
-        "started_at": datetime.utcnow(),
-        "last_activity": datetime.utcnow()
-    }
+    from curator_bot.onboarding.onboarding_service import OnboardingService
+    return await OnboardingService.get_user_progress_dict(telegram_id)
 
 
-def mark_task_completed(user_id: int, task_id: str) -> bool:
+async def mark_task_completed(telegram_id: int, task_id: str) -> bool:
     """
     Отметить задачу как выполненную
 
-    TODO: Реализовать через БД
-
     Args:
-        user_id: Telegram ID пользователя
+        telegram_id: Telegram ID пользователя
         task_id: ID задачи
 
     Returns:
         True если успешно
     """
-    logger.info(f"Task {task_id} marked as completed for user {user_id}")
-    return True
+    from curator_bot.onboarding.onboarding_service import OnboardingService
+    result = await OnboardingService.mark_task_completed(telegram_id, task_id)
+    if result:
+        logger.info(f"Task {task_id} marked as completed for user {telegram_id}")
+    return result

@@ -159,3 +159,32 @@ class UserFeedback(Base, TimestampMixin):
 
     def __repr__(self) -> str:
         return f"<UserFeedback(id={self.id}, user_id={self.user_id}, rating={self.rating})>"
+
+
+class UserOnboardingProgress(Base, TimestampMixin):
+    """Прогресс онбординга пользователя (7-дневный чеклист)"""
+    __tablename__ = "user_onboarding_progress"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True, index=True)
+
+    # Текущий день онбординга (1-7)
+    current_day: Mapped[int] = mapped_column(Integer, default=1)
+
+    # Выполненные задачи (список task_id)
+    completed_tasks: Mapped[Optional[List[str]]] = mapped_column(ARRAY(Text), default=[])
+
+    # Когда начал онбординг
+    started_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+
+    # Последняя активность в онбординге
+    last_activity: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+
+    # Последнее отправленное напоминание (часы неактивности)
+    last_reminder_hours: Mapped[int] = mapped_column(Integer, default=0)
+
+    # Завершён ли онбординг
+    is_completed: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    def __repr__(self) -> str:
+        return f"<UserOnboardingProgress(user_id={self.user_id}, day={self.current_day})>"
