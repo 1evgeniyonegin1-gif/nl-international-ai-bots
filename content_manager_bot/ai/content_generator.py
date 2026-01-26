@@ -14,6 +14,7 @@ from shared.ai_clients.gigachat_client import GigaChatClient
 from shared.ai_clients.yandexgpt_client import YandexGPTClient
 from shared.ai_clients.yandexart_client import YandexARTClient, ImageStyle
 from shared.ai_clients.openai_client import OpenAIClient
+from shared.ai_clients.anthropic_client import AnthropicClient
 from shared.config.settings import settings
 from shared.style_monitor import get_style_service
 from shared.persona import PersonaManager, PersonaContext
@@ -46,12 +47,23 @@ class ContentGenerator:
         self.gigachat_client = None
         self.yandexgpt_client = None
         self.openai_client = None
+        self.anthropic_client = None
         self.yandexart_client = None
         self.main_client = None
         self.main_model_name = "unknown"
 
+        # Claude (приоритет если настроен)
+        if "claude" in main_model and settings.anthropic_api_key:
+            try:
+                self.anthropic_client = AnthropicClient()
+                self.main_client = self.anthropic_client
+                self.main_model_name = "claude"
+                logger.info(f"ContentGenerator initialized with Claude as main model: {settings.content_manager_ai_model}")
+            except Exception as e:
+                logger.warning(f"Claude init failed: {e}, falling back to other models")
+
         # YandexGPT (если настроен)
-        if main_model.startswith("yandex") or "yandex" in main_model:
+        if not self.main_client and (main_model.startswith("yandex") or "yandex" in main_model):
             if settings.yandex_folder_id and settings.yandex_private_key:
                 self.yandexgpt_client = YandexGPTClient()
                 self.main_client = self.yandexgpt_client

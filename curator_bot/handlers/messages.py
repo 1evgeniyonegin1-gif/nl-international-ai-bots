@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.database.base import AsyncSessionLocal
 from shared.ai_clients.yandexgpt_client import YandexGPTClient
+from shared.ai_clients.anthropic_client import AnthropicClient
 from shared.config.settings import settings
 from shared.rag import get_rag_engine
 from curator_bot.database.models import User, ConversationMessage
@@ -34,8 +35,20 @@ PHONE_PATTERN = re.compile(r'^\+?[78]?\d{10}$|^\+7\s?\(?\d{3}\)?\s?\d{3}[-\s]?\d
 EMAIL_PATTERN = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
 
 # Инициализируем AI клиент глобально
-# Используем YandexGPT-32k (грант 4000 руб)
-ai_client = YandexGPTClient()  # Берёт настройки из .env автоматически
+def get_ai_client():
+    """Выбирает AI клиент: Claude если настроен, иначе YandexGPT"""
+    model = settings.curator_ai_model.lower()
+    if settings.anthropic_api_key and "claude" in model:
+        try:
+            client = AnthropicClient()
+            logger.info(f"Curator using Claude: {settings.curator_ai_model}")
+            return client
+        except Exception as e:
+            logger.warning(f"Claude init failed: {e}, falling back to YandexGPT")
+    logger.info("Curator using YandexGPT")
+    return YandexGPTClient()
+
+ai_client = get_ai_client()
 
 # Инициализируем движок чата
 chat_engine = CuratorChatEngine(ai_client=ai_client)
