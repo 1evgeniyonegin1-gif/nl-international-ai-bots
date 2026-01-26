@@ -108,7 +108,11 @@ async def callback_publish(callback: CallbackQuery, bot: Bot):
     import base64
     from aiogram.types import BufferedInputFile
 
+    # === ЛОГИРОВАНИЕ ===
+    logger.info(f"[CALLBACK] publish: user={callback.from_user.id}, data={callback.data}")
+
     if not is_admin(callback.from_user.id):
+        logger.warning(f"[CALLBACK] publish: ACCESS DENIED for user={callback.from_user.id}")
         await callback.answer("⛔ Доступ запрещён", show_alert=True)
         return
 
@@ -362,7 +366,10 @@ async def callback_schedule_time(callback: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data.startswith("edit:"))
 async def callback_edit(callback: CallbackQuery, state: FSMContext):
     """Начало редактирования поста"""
+    logger.info(f"[CALLBACK] edit: user={callback.from_user.id}, data={callback.data}")
+
     if not is_admin(callback.from_user.id):
+        logger.warning(f"[CALLBACK] edit: ACCESS DENIED for user={callback.from_user.id}")
         await callback.answer("⛔ Доступ запрещён", show_alert=True)
         return
 
@@ -384,7 +391,10 @@ async def callback_edit(callback: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data.startswith("regenerate:"))
 async def callback_regenerate(callback: CallbackQuery, state: FSMContext):
     """Перегенерация поста с обратной связью"""
+    logger.info(f"[CALLBACK] regenerate: user={callback.from_user.id}, data={callback.data}")
+
     if not is_admin(callback.from_user.id):
+        logger.warning(f"[CALLBACK] regenerate: ACCESS DENIED for user={callback.from_user.id}")
         await callback.answer("⛔ Доступ запрещён", show_alert=True)
         return
 
@@ -407,7 +417,10 @@ async def callback_regenerate(callback: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data.startswith("manual_edit:"))
 async def callback_manual_edit(callback: CallbackQuery, state: FSMContext):
     """Начало ручного редактирования поста"""
+    logger.info(f"[CALLBACK] manual_edit: user={callback.from_user.id}, data={callback.data}")
+
     if not is_admin(callback.from_user.id):
+        logger.warning(f"[CALLBACK] manual_edit: ACCESS DENIED for user={callback.from_user.id}")
         await callback.answer("⛔ Доступ запрещён", show_alert=True)
         return
 
@@ -444,7 +457,10 @@ async def callback_manual_edit(callback: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data.startswith("reject:"))
 async def callback_reject(callback: CallbackQuery):
     """Отклонение поста"""
+    logger.info(f"[CALLBACK] reject: user={callback.from_user.id}, data={callback.data}")
+
     if not is_admin(callback.from_user.id):
+        logger.warning(f"[CALLBACK] reject: ACCESS DENIED for user={callback.from_user.id}")
         await callback.answer("⛔ Доступ запрещён", show_alert=True)
         return
 
@@ -1598,3 +1614,15 @@ async def process_custom_time(message: Message, state: FSMContext):
             "Например: <code>25.01.2026 14:30</code>\n\n"
             "Или отправьте /cancel для отмены."
         )
+
+
+# === Catch-all для необработанных callback'ов ===
+
+@router.callback_query()
+async def callback_unhandled(callback: CallbackQuery):
+    """
+    Catch-all handler для необработанных callback'ов.
+    Помогает отлаживать проблемы с кнопками.
+    """
+    logger.warning(f"[CALLBACK] UNHANDLED: user={callback.from_user.id}, data={callback.data}")
+    await callback.answer(f"⚠️ Неизвестная команда: {callback.data}", show_alert=True)

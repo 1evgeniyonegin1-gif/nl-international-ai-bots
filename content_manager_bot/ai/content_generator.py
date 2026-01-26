@@ -6,6 +6,7 @@
 Интегрирована RAG система для использования базы знаний
 """
 import random
+import re
 from typing import Optional, Tuple, List
 from datetime import datetime
 from loguru import logger
@@ -20,6 +21,7 @@ from shared.style_monitor import get_style_service
 from shared.persona import PersonaManager, PersonaContext
 from shared.rag import get_rag_engine, RAGEngine
 from content_manager_bot.ai.prompts import ContentPrompts
+from content_manager_bot.database.models import ImportedPost
 from content_manager_bot.utils.product_reference import ProductReferenceManager
 from shared.media import media_library  # НОВОЕ: индексированная медиа-библиотека
 
@@ -218,6 +220,110 @@ class ContentGenerator:
             logger.warning(f"Could not get knowledge context: {e}")
             return ""
 
+    async def _get_inspiration_topic(
+        self,
+        post_type: str
+    ) -> Optional[Tuple[str, int]]:
+        """
+        Получает неиспользованный импортированный пост как тему/вдохновение.
+
+        Args:
+            post_type: Тип поста для маппинга на категорию
+
+        Returns:
+            Tuple[str, int]: (текст темы, id импортированного поста) или None
+        """
+        # Маппинг типов постов на категории импорта
+        category_map = {
+            "product": "product",
+            "motivation": "motivation",
+            "success_story": "success",
+            "transformation": "success",
+            "business_lifestyle": "lifestyle",
+            "business": "business",
+            "business_myths": "business",
+            "tips": "tips",
+            "news": "news",
+            "promo": "news",
+            "myth_busting": "motivation",
+            "faq": "tips"
+        }
+        category = category_map.get(post_type, "motivation")
+
+        try:
+            from sqlalchemy import select
+            from shared.database.base import AsyncSessionLocal
+
+            async with AsyncSessionLocal() as session:
+                # Получаем неиспользованный пост с наибольшим quality_score
+                result = await session.execute(
+                    select(ImportedPost)
+                    .where(ImportedPost.category == category)
+                    .where(ImportedPost.is_used == False)
+                    .order_by(ImportedPost.quality_score.desc())
+                    .limit(1)
+                )
+                post = result.scalar_one_or_none()
+
+                if post:
+                    # Берём первые 500 символов как тему
+                    topic_text = post.text[:500]
+                    if len(post.text) > 500:
+                        topic_text += "..."
+                    logger.info(f"Found inspiration topic from '{post.source_channel}' (id={post.id}, category={category})")
+                    return (topic_text, post.id)
+
+                # Fallback: пробуем любую категорию
+                result = await session.execute(
+                    select(ImportedPost)
+                    .where(ImportedPost.is_used == False)
+                    .order_by(ImportedPost.quality_score.desc())
+                    .limit(1)
+                )
+                post = result.scalar_one_or_none()
+
+                if post:
+                    topic_text = post.text[:500]
+                    if len(post.text) > 500:
+                        topic_text += "..."
+                    logger.info(f"Found fallback inspiration topic (id={post.id}, category={post.category})")
+                    return (topic_text, post.id)
+
+            logger.info(f"No unused inspiration topics found for {post_type}")
+            return None
+
+        except Exception as e:
+            logger.warning(f"Could not get inspiration topic: {e}")
+            return None
+
+    async def _mark_inspiration_used(self, imported_post_id: int, generated_post_id: Optional[int] = None):
+        """
+        Отмечает импортированный пост как использованный.
+
+        Args:
+            imported_post_id: ID импортированного поста
+            generated_post_id: ID сгенерированного поста (опционально)
+        """
+        try:
+            from sqlalchemy import update
+            from shared.database.base import AsyncSessionLocal
+
+            async with AsyncSessionLocal() as session:
+                await session.execute(
+                    update(ImportedPost)
+                    .where(ImportedPost.id == imported_post_id)
+                    .values(
+                        is_used=True,
+                        used_at=datetime.utcnow(),
+                        used_for_post_id=generated_post_id
+                    )
+                )
+                await session.commit()
+                logger.info(f"Marked inspiration topic {imported_post_id} as used")
+
+        except Exception as e:
+            logger.error(f"Could not mark inspiration as used: {e}")
+
     def _get_content_style_guide(self) -> str:
         """
         Читает примеры из CONTENT_STYLE_GUIDE.md для обучения стилю.
@@ -405,9 +511,38 @@ class ContentGenerator:
         Returns:
             Tuple[str, str]: (текст поста, использованный промпт)
         """
+        # Переменная для отслеживания использованной темы из базы
+        inspiration_post_id: Optional[int] = None
+
         try:
             # Получаем промпт для типа поста
             user_prompt = self.prompts.get_prompt_for_type(post_type, custom_topic)
+
+            # === ИНТЕГРАЦИЯ ТЕМ ИЗ БАЗЫ ИМПОРТИРОВАННЫХ ПОСТОВ ===
+            # Если не задана custom_topic, пробуем взять тему из базы
+            if not custom_topic:
+                inspiration = await self._get_inspiration_topic(post_type)
+                if inspiration:
+                    topic_text, inspiration_post_id = inspiration
+                    # Добавляем тему в промпт с инструкцией адаптировать
+                    inspiration_block = f"""
+
+═══════════════════════════════════════════
+📌 ТЕМА ДЛЯ ВДОХНОВЕНИЯ (адаптируй под NL):
+═══════════════════════════════════════════
+
+{topic_text}
+
+═══════════════════════════════════════════
+⚠️ ВАЖНО:
+• Возьми ИДЕЮ/ТЕМУ из этого поста
+• Адаптируй под продукты NL International
+• Напиши СВОИМ голосом (от лица Данила)
+• НЕ копируй текст дословно!
+═══════════════════════════════════════════
+"""
+                    user_prompt = inspiration_block + "\n\n" + user_prompt
+                    logger.info(f"Added inspiration topic (id={inspiration_post_id}) to prompt")
 
             # Получаем контекст персоны (если включена система)
             persona_context: Optional[PersonaContext] = None
@@ -574,6 +709,10 @@ class ContentGenerator:
 
             logger.info(f"Post generated successfully with {model_name}: {len(content)} chars")
 
+            # Отмечаем тему как использованную (если была взята из базы)
+            if inspiration_post_id:
+                await self._mark_inspiration_used(inspiration_post_id)
+
             return content, user_prompt
 
         except Exception as e:
@@ -694,6 +833,41 @@ class ContentGenerator:
         }
         return topic_map.get(post_type, "важном")
 
+    def _convert_markdown_to_html(self, content: str) -> str:
+        """
+        Конвертирует markdown-форматирование в Telegram HTML.
+
+        Преобразования:
+        - **bold** → <b>bold</b>
+        - *italic* → <i>italic</i>  (но не ** которое bold)
+        - __underline__ → <u>underline</u>
+        - ~~strike~~ → <s>strike</s>
+        - `code` → <code>code</code>
+
+        Args:
+            content: Текст с возможным markdown
+
+        Returns:
+            str: Текст с HTML-тегами
+        """
+        # Bold: **text** → <b>text</b>
+        content = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', content, flags=re.DOTALL)
+
+        # Italic: *text* → <i>text</i> (но не ** которое bold)
+        # Используем negative lookbehind/lookahead чтобы не затронуть уже преобразованное
+        content = re.sub(r'(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)', r'<i>\1</i>', content)
+
+        # Underline: __text__ → <u>text</u>
+        content = re.sub(r'__(.+?)__', r'<u>\1</u>', content, flags=re.DOTALL)
+
+        # Strikethrough: ~~text~~ → <s>text</s>
+        content = re.sub(r'~~(.+?)~~', r'<s>\1</s>', content, flags=re.DOTALL)
+
+        # Inline code: `text` → <code>text</code>
+        content = re.sub(r'`([^`]+)`', r'<code>\1</code>', content)
+
+        return content
+
     def _clean_content(self, content: str) -> str:
         """
         Очищает сгенерированный контент от артефактов
@@ -716,6 +890,9 @@ class ContentGenerator:
         # Убираем кавычки в начале и конце
         if content.startswith('"') and content.endswith('"'):
             content = content[1:-1]
+
+        # ВАЖНО: Конвертируем markdown в HTML
+        content = self._convert_markdown_to_html(content)
 
         # Убираем лишние переносы строк
         while "\n\n\n" in content:

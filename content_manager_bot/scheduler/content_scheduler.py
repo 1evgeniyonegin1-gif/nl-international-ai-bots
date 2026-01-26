@@ -117,15 +117,20 @@ class ContentScheduler:
 
     async def _publish_post(self, post: Post, session):
         """
-        Публикация поста в группу с Topics или канал
+        Публикация поста в группу с Topics или канал.
+        Поддерживает публикацию с картинкой (send_photo) и без (send_message).
 
         Args:
             post: Пост для публикации
             session: Сессия БД
         """
+        import base64
+        from aiogram.types import BufferedInputFile
+
         try:
             # Определяем куда публиковать (тема в группе)
             topic_id = settings.get_topic_id(post.post_type)
+            target_chat = settings.group_id if settings.group_id and topic_id else settings.channel_username
 
             # Добавляем ссылку на куратора
             post_with_curator = (
@@ -134,22 +139,74 @@ class ContentScheduler:
                 f"❓ Есть вопросы? Спроси AI-Куратора → {settings.curator_bot_username}"
             )
 
-            # Публикуем в группу с Topics или в канал
-            if settings.group_id and topic_id:
-                message = await self.bot.send_message(
-                    chat_id=settings.group_id,
-                    text=post_with_curator,
-                    message_thread_id=topic_id,
-                    parse_mode="HTML"
-                )
-                publish_target = f"группа (тема #{topic_id})"
-            else:
-                message = await self.bot.send_message(
-                    chat_id=settings.channel_username,
-                    text=post_with_curator,
-                    parse_mode="HTML"
-                )
-                publish_target = settings.channel_username
+            message = None
+            publish_target = f"группа (тема #{topic_id})" if topic_id else settings.channel_username
+
+            # === ПУБЛИКАЦИЯ С КАРТИНКОЙ ===
+            if post.image_url:
+                try:
+                    image_bytes = base64.b64decode(post.image_url)
+                    image_file = BufferedInputFile(image_bytes, filename=f"post_{post.id}.jpg")
+
+                    # Ограничение Telegram: caption max 1024 символа
+                    caption = post_with_curator[:1024] if len(post_with_curator) > 1024 else post_with_curator
+
+                    if settings.group_id and topic_id:
+                        message = await self.bot.send_photo(
+                            chat_id=target_chat,
+                            photo=image_file,
+                            caption=caption,
+                            message_thread_id=topic_id,
+                            parse_mode="HTML"
+                        )
+                    else:
+                        message = await self.bot.send_photo(
+                            chat_id=target_chat,
+                            photo=image_file,
+                            caption=caption,
+                            parse_mode="HTML"
+                        )
+
+                    logger.info(f"Published post #{post.id} WITH IMAGE to {publish_target}")
+
+                    # Если текст длиннее 1024 символов - отправляем остаток
+                    if len(post_with_curator) > 1024:
+                        rest_text = post_with_curator[1024:]
+                        if settings.group_id and topic_id:
+                            await self.bot.send_message(
+                                chat_id=target_chat,
+                                text=rest_text,
+                                message_thread_id=topic_id,
+                                parse_mode="HTML"
+                            )
+                        else:
+                            await self.bot.send_message(
+                                chat_id=target_chat,
+                                text=rest_text,
+                                parse_mode="HTML"
+                            )
+
+                except Exception as e:
+                    logger.error(f"Error sending image for post #{post.id}: {e}, falling back to text")
+                    # Fallback на текст
+                    message = None
+
+            # === ПУБЛИКАЦИЯ БЕЗ КАРТИНКИ (или fallback) ===
+            if message is None:
+                if settings.group_id and topic_id:
+                    message = await self.bot.send_message(
+                        chat_id=target_chat,
+                        text=post_with_curator,
+                        message_thread_id=topic_id,
+                        parse_mode="HTML"
+                    )
+                else:
+                    message = await self.bot.send_message(
+                        chat_id=target_chat,
+                        text=post_with_curator,
+                        parse_mode="HTML"
+                    )
+                logger.info(f"Published post #{post.id} (text only) to {publish_target}")
 
             # Обновляем статус
             post.status = "published"
@@ -164,6 +221,7 @@ class ContentScheduler:
             await self._notify_admins(
                 f"📢 Автопубликация\n\n"
                 f"Пост #{post.id} опубликован в {publish_target} по расписанию."
+                + (" (с картинкой)" if post.image_url else "")
             )
 
         except Exception as e:

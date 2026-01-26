@@ -287,6 +287,38 @@ class MediaKeywordIndex(Base):
         return f"<MediaKeywordIndex(keyword={self.keyword}, asset_id={self.asset_id}, priority={self.priority})>"
 
 
+class ImportedPost(Base, TimestampMixin):
+    """Импортированный пост из Telegram экспорта для использования как тема/вдохновение"""
+    __tablename__ = "content_imported_posts"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    # Источник
+    source_id: Mapped[int] = mapped_column(Integer, index=True)  # Оригинальный ID сообщения
+    source_channel: Mapped[str] = mapped_column(String(200))     # Название канала
+
+    # Контент
+    text: Mapped[str] = mapped_column(Text)
+    category: Mapped[str] = mapped_column(String(50), index=True)  # product, motivation, business, success, tips, news, lifestyle
+
+    # Метрики качества
+    reactions_count: Mapped[int] = mapped_column(Integer, default=0)
+    char_count: Mapped[int] = mapped_column(Integer, default=0)
+    has_formatting: Mapped[bool] = mapped_column(Boolean, default=False)
+    quality_score: Mapped[Optional[float]] = mapped_column(nullable=True)
+
+    # Дата оригинального поста
+    original_date: Mapped[Optional[datetime]] = mapped_column(nullable=True)
+
+    # Статус использования
+    is_used: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+    used_at: Mapped[Optional[datetime]] = mapped_column(nullable=True)
+    used_for_post_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+
+    def __repr__(self) -> str:
+        return f"<ImportedPost(id={self.id}, channel={self.source_channel}, category={self.category}, used={self.is_used})>"
+
+
 class HookTemplate(Base, TimestampMixin):
     """Шаблон hook'а (цепляющей фразы)"""
     __tablename__ = "content_hook_templates"
