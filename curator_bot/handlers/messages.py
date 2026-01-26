@@ -25,6 +25,7 @@ from curator_bot.funnels.messages import CONTACT_THANKS
 #     get_curious_keyboard,
 # )
 from content_manager_bot.utils.product_reference import ProductReferenceManager
+from curator_bot.ai.business_presenter import get_business_presenter
 from loguru import logger
 
 
@@ -55,6 +56,9 @@ chat_engine = CuratorChatEngine(ai_client=ai_client)
 
 # Инициализируем менеджер фото продуктов
 product_manager = ProductReferenceManager()
+
+# Инициализируем презентер бизнеса
+business_presenter = get_business_presenter()
 
 
 # ============================================
@@ -230,6 +234,31 @@ async def handle_message(message: Message):
                     logger.debug(f"[PRODUCT] No product found in: {combined_text[:100]}")
             except Exception as photo_error:
                 logger.error(f"[PRODUCT] ❌ Error sending photo: {photo_error}", exc_info=True)
+
+            # Проверяем, нужно ли отправить бизнес-медиа (истории успеха, чеки)
+            try:
+                media_type = business_presenter.should_send_business_media(message.text, ai_response)
+                if media_type:
+                    media_result = None
+                    if media_type == "success_story":
+                        media_result = business_presenter.get_success_story()
+                    elif media_type == "income_proof":
+                        media_result = business_presenter.get_income_proof()
+                    elif media_type == "business_proof":
+                        media_result = business_presenter.get_business_presentation()
+
+                    if media_result:
+                        photo_path, caption = media_result
+                        if photo_path.exists():
+                            await message.answer_photo(
+                                photo=FSInputFile(photo_path),
+                                caption=caption[:1024]  # Telegram limit
+                            )
+                            logger.info(f"[BUSINESS] ✅ Sent {media_type} media")
+                        else:
+                            logger.warning(f"[BUSINESS] Photo not found: {photo_path}")
+            except Exception as business_error:
+                logger.error(f"[BUSINESS] ❌ Error sending business media: {business_error}", exc_info=True)
 
             logger.info(f"Response sent to user {user.telegram_id}")
 
