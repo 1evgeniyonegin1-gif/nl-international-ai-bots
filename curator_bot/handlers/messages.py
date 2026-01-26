@@ -133,6 +133,18 @@ async def handle_message(message: Message):
             # Обновляем последнюю активность
             user.last_activity = datetime.now()
 
+            # Обновляем активность в онбординге
+            from curator_bot.database.models import UserOnboardingProgress
+            result_onboarding = await session.execute(
+                select(UserOnboardingProgress).where(UserOnboardingProgress.user_id == user.id)
+            )
+            onboarding_progress = result_onboarding.scalar_one_or_none()
+
+            if onboarding_progress and not onboarding_progress.is_completed:
+                onboarding_progress.last_activity = datetime.now()
+                # Сбрасываем счётчик напоминаний (пользователь активен)
+                onboarding_progress.last_reminder_hours = 0
+
             # Сохраняем сообщение пользователя в БД
             user_msg = ConversationMessage(
                 user_id=user.id,

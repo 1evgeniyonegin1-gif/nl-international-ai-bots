@@ -54,18 +54,35 @@ async def cmd_start(message: Message):
                 await session.commit()
                 logger.info(f"New user registered: {message.from_user.id}")
 
-                # ДИАЛОГОВЫЙ РЕЖИМ - предлагаем варианты сразу
+                # Создаём запись онбординга
+                from curator_bot.database.models import UserOnboardingProgress
+
+                onboarding_progress = UserOnboardingProgress(
+                    user_id=user.id,
+                    current_day=1,
+                    completed_tasks=[],
+                    started_at=datetime.utcnow(),
+                    last_activity=datetime.utcnow()
+                )
+                session.add(onboarding_progress)
+                await session.commit()
+                logger.info(f"Onboarding progress created for user {message.from_user.id}")
+
+                # Получаем чеклист для дня 1
+                from curator_bot.onboarding.proactive_tasks import OnboardingTasks
+                tasks_message = OnboardingTasks.format_tasks_message(day=1, completed_tasks=[])
+
+                # ДИАЛОГОВЫЙ РЕЖИМ с чеклистом
                 welcome_text = f"""Йо, {first_name}! 👋
 
 Я Данил — твой гайд по NL.
 
-Чё интересно?
+🎯 Давай начнём с простого чеклиста на первые 7 дней.
+Никакого давления — просто следуй шагам в своём темпе.
 
-1️⃣ **Продукты** — расскажу про ED Smart, Greenflash, косметику
-2️⃣ **Бабки** — сколько реально зарабатывают (без понтов)
-3️⃣ **Как начать** — с нуля до первых денег
+{tasks_message}
 
-Просто напиши цифру или своими словами 🤙"""
+💬 Можешь задавать любые вопросы — я отвечу!"""
 
                 await message.answer(welcome_text)
 

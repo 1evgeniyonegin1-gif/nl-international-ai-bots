@@ -217,6 +217,32 @@ class ContentScheduler:
 
             logger.info(f"Scheduled post #{post.id} published to {publish_target}")
 
+            # Создаём событие для curator_bot (рассылка уведомлений)
+            try:
+                from shared.database.models import SystemEvent
+
+                event = SystemEvent(
+                    event_type="post_published",
+                    source="content_manager",
+                    payload={
+                        "post_id": post.id,
+                        "post_type": post.post_type,
+                        "content_preview": post.content[:200] if post.content else "",
+                        "full_content": post.content,
+                        "published_at": post.published_at.isoformat() if post.published_at else None,
+                        "topic_id": topic_id,
+                        "has_image": bool(post.image_url)
+                    },
+                    target_module="curator",
+                    expires_at=datetime.utcnow() + timedelta(hours=72)
+                )
+                session.add(event)
+                await session.commit()
+
+                logger.info(f"Event 'post_published' created for post #{post.id}")
+            except Exception as e:
+                logger.error(f"Failed to create event for post #{post.id}: {e}")
+
             # Уведомляем админов
             await self._notify_admins(
                 f"📢 Автопубликация\n\n"

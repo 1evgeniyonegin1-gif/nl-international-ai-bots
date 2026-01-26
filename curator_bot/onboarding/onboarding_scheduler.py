@@ -53,11 +53,16 @@ class OnboardingScheduler:
             try:
                 await self._check_inactive_users()
                 await self._send_daily_tasks()
+
+                # Обработка событий из system_events (уведомления о новых постах)
+                from curator_bot.events.event_consumer import process_pending_events
+                await process_pending_events(self.bot)
+
             except Exception as e:
                 logger.error(f"Error in onboarding scheduler: {e}")
 
-            # Ждём до следующей проверки
-            await asyncio.sleep(self.CHECK_INTERVAL_HOURS * 3600)
+            # Проверяем каждые 30 секунд (для быстрой обработки событий)
+            await asyncio.sleep(30)
 
     async def _check_inactive_users(self):
         """Проверить неактивных пользователей и отправить напоминания"""

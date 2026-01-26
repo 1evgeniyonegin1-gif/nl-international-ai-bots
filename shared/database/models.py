@@ -170,3 +170,41 @@ class StyleAnalysis(Base, TimestampMixin):
         Index("idx_style_analyses_channel", "channel_id"),
         Index("idx_style_analyses_date", "analysis_date"),
     )
+
+
+class SystemEvent(Base, TimestampMixin):
+    """
+    События в системе для межмодульной коммуникации.
+
+    Используется для связи между curator_bot и content_manager_bot.
+    Например, когда Content Manager публикует пост, он создаёт событие
+    'post_published', которое Curator обрабатывает и рассылает уведомления
+    целевой аудитории.
+    """
+    __tablename__ = "system_events"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+
+    # Тип события (post_published, user_registered и т.д.)
+    event_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+
+    # Источник события (content_manager, curator)
+    source: Mapped[str] = mapped_column(String(50), nullable=False)
+
+    # Данные события в JSON формате
+    payload: Mapped[dict] = mapped_column(JSONB, nullable=False)
+
+    # Обработано ли событие
+    processed: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+    processed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    # Целевой модуль (curator, all, NULL для всех)
+    target_module: Mapped[Optional[str]] = mapped_column(String(50), nullable=True, index=True)
+
+    # Время истечения события (TTL)
+    expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
+
+    __table_args__ = (
+        Index("idx_system_events_type_processed", "event_type", "processed"),
+        Index("idx_system_events_target_processed", "target_module", "processed"),
+    )

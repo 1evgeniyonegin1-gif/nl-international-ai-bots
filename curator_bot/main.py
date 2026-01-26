@@ -47,6 +47,15 @@ async def main():
     setup_reminder_scheduler(bot)
     logger.info("✅ Reminder scheduler started")
 
+    # Запускаем онбординг-планировщик
+    from curator_bot.onboarding.onboarding_scheduler import OnboardingScheduler
+    onboarding_scheduler = OnboardingScheduler(bot)
+    await onboarding_scheduler.start()
+    logger.info("✅ Onboarding scheduler started")
+
+    # Сохраняем ссылку для graceful shutdown
+    dp.onboarding_scheduler = onboarding_scheduler
+
     # Запускаем polling
     try:
         logger.info("🤖 AI-Curator Bot is running!")
@@ -54,6 +63,12 @@ async def main():
         await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
     finally:
         shutdown_scheduler()
+
+        # Останавливаем онбординг-планировщик
+        if hasattr(dp, 'onboarding_scheduler'):
+            await dp.onboarding_scheduler.stop()
+            logger.info("✅ Onboarding scheduler stopped")
+
         await bot.session.close()
         logger.info("👋 AI-Curator Bot stopped")
 
