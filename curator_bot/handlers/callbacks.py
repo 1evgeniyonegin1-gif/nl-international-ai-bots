@@ -1152,3 +1152,19 @@ async def handle_curious_hidden(callback: CallbackQuery):
         CURIOUS_HIDDEN,
         reply_markup=get_curious_response_health_keyboard()
     )
+
+
+# ============================================
+# УВЕДОМЛЕНИЯ О НОВЫХ ПОСТАХ
+# ============================================
+
+@router.callback_query(F.data == "ask_curator")
+async def handle_ask_curator(callback: CallbackQuery):
+    """Пользователь хочет задать вопрос куратору после уведомления о посте"""
+    await callback.answer()
+
+    await callback.message.answer(
+        "💬 <b>Задавай любой вопрос!</b>\n\n"
+        "Я отвечу на вопросы о продуктах, бизнесе, акциях — о чём угодно.\n\n"
+        "Просто напиши сообщение 👇"
+    )
