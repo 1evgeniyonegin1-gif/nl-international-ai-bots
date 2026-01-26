@@ -1,10 +1,10 @@
 """
-Менеджер персон Данила.
+Менеджер персон Данила (УПРОЩЁННАЯ ВЕРСИЯ).
 
-Управляет выбором версии персоны на основе:
-- Текущего настроения
-- Типа контента
-- Контекста общения
+ИЗМЕНЕНИЯ 26.01.2026:
+- Убрана генерация случайных эмоций
+- Персона выбирается напрямую по типу поста
+- Упрощён интерфейс
 
 Используется в:
 - AI-Контент-Менеджер: выбор тона для постов
@@ -17,12 +17,9 @@ from dataclasses import dataclass
 from loguru import logger
 
 from .mood_config import (
-    MOOD_CATEGORIES,
-    MOOD_WEIGHTS,
-    INTENSITY_DISTRIBUTION,
     PERSONA_CHARACTERISTICS,
-    MOOD_TO_PERSONA_MAP,
-    get_personas_for_mood,
+    POST_TYPE_TO_PERSONAS,
+    get_personas_for_post_type,
     get_persona_temperature
 )
 from .hook_selector import HookSelector
@@ -30,12 +27,12 @@ from .hook_selector import HookSelector
 
 @dataclass
 class MoodState:
-    """Состояние настроения (упрощённая версия без БД)"""
-    category: str       # joy, sadness, anger, etc.
-    emotion: str        # конкретная эмоция (happy, angry, etc.)
-    intensity: str      # light, medium, strong, extreme
-    persona_version: str  # expert, friend, rebel, etc.
-    trigger: Optional[str] = None  # событие-триггер
+    """Состояние (упрощённое — только персона)"""
+    category: str = "neutral"
+    emotion: str = "neutral"
+    intensity: str = "medium"
+    persona_version: str = "friend"
+    trigger: Optional[str] = None
 
 
 class PersonaContext(NamedTuple):
@@ -47,16 +44,15 @@ class PersonaContext(NamedTuple):
     speech_patterns: list[str]  # Характерные фразы
     temperature: float        # Рекомендуемая температура AI
     hook: Optional[str]       # Цепляющая фраза (если запрошена)
-    mood: Optional[MoodState]  # Текущее настроение
+    mood: Optional[MoodState]  # Совместимость со старым API
 
 
 class PersonaManager:
     """
-    Менеджер персон для AI-ботов.
+    Менеджер персон для AI-ботов (упрощённая версия).
 
     Предоставляет:
-    - Генерацию настроения
-    - Выбор версии персоны
+    - Выбор версии персоны по типу поста
     - Получение контекста для генерации
     - Выбор hook'ов
     """
@@ -64,8 +60,8 @@ class PersonaManager:
     def __init__(self):
         """Инициализация менеджера"""
         self.hook_selector = HookSelector()
-        self._current_mood: Optional[MoodState] = None
-        logger.info("[PersonaManager] Инициализирован")
+        self._current_persona: str = "friend"
+        logger.info("[PersonaManager] Инициализирован (упрощённая версия)")
 
     def generate_mood(
         self,
@@ -74,106 +70,24 @@ class PersonaManager:
         trigger: Optional[str] = None
     ) -> MoodState:
         """
-        Генерирует новое настроение.
-
-        Args:
-            force_category: Принудительная категория (для тестирования)
-            force_intensity: Принудительная интенсивность
-            trigger: Событие-триггер
-
-        Returns:
-            MoodState: Сгенерированное настроение
+        DEPRECATED: Возвращает MoodState для совместимости.
+        Используй get_persona_context() напрямую.
         """
-        # 1. Выбираем категорию
-        if force_category and force_category in MOOD_CATEGORIES:
-            category = force_category
-        else:
-            category = self._select_category_weighted()
-
-        # 2. Выбираем интенсивность
-        if force_intensity and force_intensity in INTENSITY_DISTRIBUTION:
-            intensity = force_intensity
-        else:
-            intensity = self._select_intensity()
-
-        # 3. Выбираем конкретную эмоцию
-        emotion = self._select_emotion(category, intensity)
-
-        # 4. Выбираем версию персоны
-        persona_version = self._select_persona(category, intensity)
-
-        # 5. Создаём MoodState
-        mood = MoodState(
-            category=category,
-            emotion=emotion,
-            intensity=intensity,
-            persona_version=persona_version,
+        return MoodState(
+            category="neutral",
+            emotion="neutral",
+            intensity="medium",
+            persona_version=self._current_persona,
             trigger=trigger
         )
-
-        self._current_mood = mood
-
-        logger.info(
-            f"[PersonaManager] Настроение: {emotion} ({category}/{intensity}) -> {persona_version}"
-        )
-
-        return mood
 
     def trigger_mood_change(
         self,
         event: str,
         force_category: Optional[str] = None
     ) -> MoodState:
-        """
-        Изменяет настроение по триггеру (событие).
-
-        Args:
-            event: Название события
-            force_category: Категория настроения (опционально)
-
-        Returns:
-            MoodState: Новое настроение
-        """
-        # Маппинг событий -> категории
-        event_to_category = {
-            "big_achievement": "joy",
-            "small_win": "joy",
-            "failure": "sadness",
-            "setback": "sadness",
-            "controversy": "anger",
-            "frustration": "anger",
-            "challenge": "anticipation",
-            "new_opportunity": "excitement",
-            "breakthrough": "surprise",
-            "deep_thought": "calm"
-        }
-
-        # Маппинг событий -> интенсивность
-        event_to_intensity = {
-            "big_achievement": "extreme",
-            "small_win": "medium",
-            "failure": "strong",
-            "setback": "medium",
-            "controversy": "strong",
-            "frustration": "medium",
-            "challenge": "medium",
-            "new_opportunity": "strong",
-            "breakthrough": "extreme",
-            "deep_thought": "strong"
-        }
-
-        category = force_category or event_to_category.get(event)
-        intensity = event_to_intensity.get(event, "medium")
-
-        if not category:
-            logger.warning(f"[PersonaManager] Неизвестное событие: {event}")
-            return self.generate_mood(trigger=event)
-
-        return self.generate_mood(
-            force_category=category,
-            force_intensity=intensity,
-            trigger=event
-        )
+        """DEPRECATED: Возвращает MoodState для совместимости."""
+        return self.generate_mood(trigger=event)
 
     def get_persona_context(
         self,
@@ -183,26 +97,25 @@ class PersonaManager:
         hook_variables: Optional[dict[str, str]] = None
     ) -> PersonaContext:
         """
-        Возвращает полный контекст персоны для генерации.
+        Возвращает контекст персоны для генерации.
 
         Args:
-            mood: Настроение (если None - используется текущее или генерируется)
-            post_type: Тип поста/контента
+            mood: Игнорируется (для совместимости)
+            post_type: Тип поста — определяет выбор персоны
             include_hook: Включить цепляющую фразу
             hook_variables: Переменные для hook'а
 
         Returns:
             PersonaContext: Контекст для генерации
         """
-        # Получаем или генерируем настроение
-        if mood is None:
-            mood = self._current_mood or self.generate_mood()
+        # Выбираем персону по типу поста
+        if post_type:
+            personas = get_personas_for_post_type(post_type)
+            persona_version = random.choice(personas)
+        else:
+            persona_version = self._current_persona
 
-        # Адаптируем персону под тип поста если нужно
-        persona_version = self._adapt_persona_for_post_type(
-            base_persona=mood.persona_version,
-            post_type=post_type
-        )
+        self._current_persona = persona_version
 
         # Получаем характеристики персоны
         persona_data = PERSONA_CHARACTERISTICS.get(
@@ -217,15 +130,23 @@ class PersonaManager:
                 hook = self.hook_selector.select_hook_with_variables(
                     persona_version=persona_version,
                     variables=hook_variables,
-                    mood_category=mood.category,
+                    mood_category="neutral",
                     post_type=post_type
                 )
             else:
                 hook = self.hook_selector.select_hook(
                     persona_version=persona_version,
-                    mood_category=mood.category,
+                    mood_category="neutral",
                     post_type=post_type
                 )
+
+        # Создаём MoodState для совместимости
+        mood_state = MoodState(
+            category="neutral",
+            emotion="neutral",
+            intensity="medium",
+            persona_version=persona_version
+        )
 
         return PersonaContext(
             persona_version=persona_version,
@@ -235,7 +156,7 @@ class PersonaManager:
             speech_patterns=persona_data["speech_patterns"],
             temperature=persona_data.get("temperature", 0.7),
             hook=hook,
-            mood=mood
+            mood=mood_state
         )
 
     def get_prompt_enhancement(self, context: PersonaContext) -> str:
@@ -267,18 +188,6 @@ class PersonaManager:
 ЭМОДЗИ (используй умеренно): {' '.join(context.emoji[:5])}
 """
 
-        if context.mood:
-            # Получаем инструкции по эмоциям
-            emotion_instructions = self._get_emotion_instructions(
-                context.mood.category,
-                context.mood.intensity
-            )
-            enhancement += f"""
-ТЕКУЩЕЕ НАСТРОЕНИЕ: {context.mood.emotion} ({context.mood.category}/{context.mood.intensity})
-
-{emotion_instructions}
-"""
-
         if context.hook:
             enhancement += f"""
 
@@ -297,164 +206,15 @@ class PersonaManager:
 
         return enhancement
 
-    def _get_emotion_instructions(self, category: str, intensity: str) -> str:
-        """
-        Возвращает конкретные инструкции для эмоции.
-
-        Args:
-            category: Категория настроения
-            intensity: Интенсивность
-
-        Returns:
-            str: Инструкции для AI
-        """
-        # Базовые инструкции по категориям
-        category_instructions = {
-            "joy": {
-                "light": "Пиши спокойно-позитивно. Эмодзи: 1-2. Тон: умиротворённый.",
-                "medium": "Пиши с теплотой и благодарностью. Эмодзи: 2-3. Делись радостью.",
-                "strong": "Пиши с энтузиазмом! Эмодзи: 3-4. Восклицания уместны!",
-                "extreme": "ЗАРАЖАЙ ЭНЕРГИЕЙ!!! Эмодзи: 5-7!!! Капс для акцентов!!!"
-            },
-            "sadness": {
-                "light": "Пиши задумчиво, с ноткой грусти. Эмодзи: 0-1. Тон: рефлексивный.",
-                "medium": "Пиши честно о сложностях. Эмодзи: 1. Покажи уязвимость.",
-                "strong": "Пиши откровенно. Без прикрас. Эмодзи: 0-1. Настоящая боль.",
-                "extreme": "Raw и честно. Никаких эмодзи. Только правда. Тяжело — так тяжело."
-            },
-            "anger": {
-                "light": "Пиши с лёгким раздражением. Риторические вопросы. Эмодзи: 1-2.",
-                "medium": "Пиши резко, по делу. Короткие фразы. Эмодзи: 2-3 агрессивных.",
-                "strong": "Пиши ДЕРЗКО! Провоцируй! Эмодзи: 3-4 огненных! 🔥💥",
-                "extreme": "ХВАТИТ! Рви шаблоны! Капс! Эмодзи: 5+! Борись!"
-            },
-            "love": {
-                "light": "Пиши тепло, с заботой. Эмодзи: 1-2 тёплых. Мягкий тон.",
-                "medium": "Пиши с искренней любовью. Эмодзи: 2-3 ❤️. Благодарность.",
-                "strong": "Пиши от всего сердца! Эмодзи: 3-4! Признательность!",
-                "extreme": "Пиши с переполняющей любовью! Эмодзи: 5+! Ты лучшие!"
-            },
-            "surprise": {
-                "light": "Пиши с любопытством. Вопросы. Эмодзи: 1-2. Интерес.",
-                "medium": "Пиши с удивлением! Эмодзи: 2-3. 'Не ожидал!' 'Вау!'",
-                "strong": "ЧТО?! Не верю! Эмодзи: 3-4! Шок! Изумление!",
-                "extreme": "КАКОГО?! НЕВЕРОЯТНО!! Эмодзи: 5+! Мозг взрывается!"
-            },
-            "anticipation": {
-                "light": "Пиши с предвкушением. Эмодзи: 1-2. 'Скоро...' 'Жду...'",
-                "medium": "Пиши с нетерпением! Эмодзи: 2-3. 'Не могу дождаться!'",
-                "strong": "УЖЕ СКОРО!! Эмодзи: 3-4! Горю! Готов!",
-                "extreme": "НЕ МОГУ ЖДАТЬ!!! Эмодзи: 5+! Разрываюсь!"
-            },
-            "calm": {
-                "light": "Пиши расслабленно. Эмодзи: 0-1. Спокойный тон.",
-                "medium": "Пиши с мудрым спокойствием. Эмодзи: 1. Zen.",
-                "strong": "Пиши глубоко-философски. Эмодзи: 1. Созерцание.",
-                "extreme": "Пиши из абсолютного покоя. Минимум слов. Глубина."
-            },
-            "excitement": {
-                "light": "Пиши энергично. Эмодзи: 2. Живо и бодро.",
-                "medium": "Пиши с огнём! Эмодзи: 3! Энергия! Драйв!",
-                "strong": "ЗАЖИГАЙ!! Эмодзи: 4-5! Капс! Огонь! 🔥🚀",
-                "extreme": "БЕЗУМИЕ ЭНЕРГИИ!!! Эмодзи: 6+!!! Взрыв!!!"
-            },
-            "trust": {
-                "light": "Пиши доверительно. Эмодзи: 1-2. 'Между нами...'",
-                "medium": "Пиши как другу. Эмодзи: 2. Открыто и честно.",
-                "strong": "Пиши с полным доверием. Эмодзи: 2-3. Близость.",
-                "extreme": "Пиши как самому близкому. Эмодзи: 3. Душа нараспашку."
-            },
-            "interest": {
-                "light": "Пиши с любопытством. Эмодзи: 1. Наблюдательно.",
-                "medium": "Пиши увлечённо! Эмодзи: 2. Погружённо.",
-                "strong": "Пиши с глубоким интересом! Эмодзи: 2-3. Исследуй!",
-                "extreme": "ПОГРУЖЁН ПОЛНОСТЬЮ!! Эмодзи: 3-4! Одержим темой!"
-            }
-        }
-
-        # Получаем инструкцию
-        cat_data = category_instructions.get(category, {})
-        instruction = cat_data.get(intensity, "Пиши естественно. Эмодзи: 2-3.")
-
-        return f"КАК ПИСАТЬ: {instruction}"
-
-    def _select_category_weighted(self) -> str:
-        """Выбирает категорию настроения с учётом весов"""
-        categories = list(MOOD_WEIGHTS.keys())
-        weights = list(MOOD_WEIGHTS.values())
-        return random.choices(categories, weights=weights, k=1)[0]
-
-    def _select_intensity(self) -> str:
-        """Выбирает интенсивность настроения"""
-        intensities = list(INTENSITY_DISTRIBUTION.keys())
-        probabilities = list(INTENSITY_DISTRIBUTION.values())
-        return random.choices(intensities, weights=probabilities, k=1)[0]
-
-    def _select_emotion(self, category: str, intensity: str) -> str:
-        """Выбирает конкретную эмоцию из категории и интенсивности"""
-        emotions = MOOD_CATEGORIES[category]["emotions"][intensity]
-        return random.choice(emotions)
-
-    def _select_persona(self, category: str, intensity: str) -> str:
-        """Выбирает версию персоны на основе настроения"""
-        personas = get_personas_for_mood(category, intensity)
-        return random.choice(personas)
-
-    def _adapt_persona_for_post_type(
-        self,
-        base_persona: str,
-        post_type: Optional[str]
-    ) -> str:
-        """
-        Адаптирует версию персоны под тип поста.
-
-        Args:
-            base_persona: Базовая версия персоны (из настроения)
-            post_type: Тип поста
-
-        Returns:
-            str: Адаптированная версия персоны
-        """
-        if not post_type:
-            return base_persona
-
-        # Типы постов, где нужна конкретная персона
-        post_type_preferences = {
-            "product": ["expert", "friend"],
-            "motivation": ["friend", "philosopher", "rebel"],
-            "news": ["expert", "friend"],
-            "tips": ["expert", "friend"],
-            "success_story": ["friend", "crazy", "philosopher"],
-            "promo": ["crazy", "rebel", "expert"],
-            "faq": ["expert", "friend"],
-            "myth_busting": ["rebel", "expert"],
-            "personal": ["tired", "friend", "philosopher"],
-            "celebration": ["crazy", "friend"],
-            "philosophical": ["philosopher", "tired"],
-            "controversial": ["rebel", "philosopher"]
-        }
-
-        preferred = post_type_preferences.get(post_type, [])
-
-        # Если базовая персона подходит под тип поста - оставляем
-        if base_persona in preferred:
-            return base_persona
-
-        # Иначе выбираем из предпочтительных
-        if preferred:
-            return random.choice(preferred)
-
-        return base_persona
-
     @property
     def current_mood(self) -> Optional[MoodState]:
-        """Возвращает текущее настроение"""
-        return self._current_mood
+        """DEPRECATED: Возвращает MoodState для совместимости"""
+        return MoodState(persona_version=self._current_persona)
 
     def set_mood(self, mood: MoodState):
-        """Устанавливает настроение вручную"""
-        self._current_mood = mood
-        logger.info(f"[PersonaManager] Настроение установлено: {mood.emotion} -> {mood.persona_version}")
+        """Устанавливает персону вручную"""
+        self._current_persona = mood.persona_version
+        logger.info(f"[PersonaManager] Персона установлена: {mood.persona_version}")
 
     @staticmethod
     def get_all_personas() -> list[str]:
@@ -486,7 +246,7 @@ class PersonaManager:
         Объясняет почему была выбрана эта версия персоны.
 
         Args:
-            mood: Настроение
+            mood: MoodState (используется persona_version)
             post_type: Тип поста
 
         Returns:
@@ -496,18 +256,16 @@ class PersonaManager:
 
         explanation = (
             f"Выбрана версия: {persona_data['name']}\n"
-            f"Настроение: {mood.emotion} ({mood.category}/{mood.intensity})\n"
         )
 
         if post_type:
             explanation += f"Тип поста: {post_type}\n"
+            personas = get_personas_for_post_type(post_type)
+            explanation += f"Подходящие персоны: {', '.join(personas)}\n"
 
         explanation += (
             f"Тон: {persona_data['tone']}\n"
             f"Когда используется: {persona_data['when_to_use']}"
         )
-
-        if mood.trigger:
-            explanation += f"\nТриггер: {mood.trigger}"
 
         return explanation

@@ -87,14 +87,17 @@ async def callback_generate_by_type(callback: CallbackQuery):
         await callback.answer("⛔ Доступ запрещён", show_alert=True)
         return
 
+    # Сразу отвечаем пользователю что началась генерация
+    await callback.answer("⏳ Генерирую пост...", show_alert=False)
+
     post_type = callback.data.split(":")[1]
 
     await callback.message.edit_text(
-        f"⏳ Генерирую пост типа: {post_type}..."
+        f"⏳ Генерирую пост типа: {post_type}...\n"
+        f"<i>Это может занять 20-40 секунд</i>"
     )
 
     await generate_and_show_post(callback.message, post_type)
-    await callback.answer()
 
 
 # === Публикация ===
@@ -108,6 +111,9 @@ async def callback_publish(callback: CallbackQuery, bot: Bot):
     if not is_admin(callback.from_user.id):
         await callback.answer("⛔ Доступ запрещён", show_alert=True)
         return
+
+    # Сразу отвечаем что публикуем
+    await callback.answer("📤 Публикую...", show_alert=False)
 
     post_id = int(callback.data.split(":")[1])
 
@@ -175,7 +181,6 @@ async def callback_publish(callback: CallbackQuery, bot: Bot):
 
                     # Остальные части отправляем как текст
                     for part in post_parts[1:]:
-                        await asyncio.sleep(0.5)  # Чтобы не было флуда
                         if settings.group_id and topic_id:
                             await bot.send_message(
                                 chat_id=target_chat,
@@ -194,8 +199,6 @@ async def callback_publish(callback: CallbackQuery, bot: Bot):
                     logger.error(f"Error sending image for post #{post_id}: {e}")
                     # Фолбэк: публикуем без изображения
                     for i, part in enumerate(post_parts):
-                        if i > 0:
-                            await asyncio.sleep(0.5)
                         if settings.group_id and topic_id:
                             msg = await bot.send_message(
                                 chat_id=target_chat,
@@ -214,8 +217,6 @@ async def callback_publish(callback: CallbackQuery, bot: Bot):
             else:
                 # Публикуем без изображения — все части
                 for i, part in enumerate(post_parts):
-                    if i > 0:
-                        await asyncio.sleep(0.5)  # Чтобы не было флуда
                     if settings.group_id and topic_id:
                         msg = await bot.send_message(
                             chat_id=target_chat,
@@ -265,7 +266,7 @@ async def callback_publish(callback: CallbackQuery, bot: Bot):
             await callback.answer(f"❌ Ошибка публикации: {str(e)}", show_alert=True)
             return
 
-    await callback.answer("✅ Опубликовано!")
+    # callback.answer уже был вызван в начале
 
 
 # === Планирование ===
@@ -365,6 +366,7 @@ async def callback_edit(callback: CallbackQuery, state: FSMContext):
         await callback.answer("⛔ Доступ запрещён", show_alert=True)
         return
 
+    await callback.answer()
     post_id = int(callback.data.split(":")[1])
 
     # Сохраняем ID поста в состояние
@@ -377,7 +379,6 @@ async def callback_edit(callback: CallbackQuery, state: FSMContext):
         "Например: «Сделай короче» или «Добавь больше эмодзи»\n\n"
         "<i>Или отправьте /cancel для отмены</i>"
     )
-    await callback.answer()
 
 
 @router.callback_query(F.data.startswith("regenerate:"))
@@ -387,6 +388,7 @@ async def callback_regenerate(callback: CallbackQuery, state: FSMContext):
         await callback.answer("⛔ Доступ запрещён", show_alert=True)
         return
 
+    await callback.answer()
     post_id = int(callback.data.split(":")[1])
 
     await state.update_data(regenerating_post_id=post_id)
@@ -398,7 +400,6 @@ async def callback_regenerate(callback: CallbackQuery, state: FSMContext):
         "AI учтёт ваши пожелания при генерации нового варианта.\n\n"
         "<i>Или отправьте /cancel для отмены</i>"
     )
-    await callback.answer()
 
 
 # === Ручное редактирование ===
@@ -549,12 +550,15 @@ async def callback_menu_pending(callback: CallbackQuery):
         await callback.answer("⛔ Доступ запрещён", show_alert=True)
         return
 
+    # Сразу отвечаем
+    await callback.answer("📋 Загружаю посты...", show_alert=False)
+
     async with AsyncSessionLocal() as session:
         result = await session.execute(
             select(Post)
             .where(Post.status == "pending")
             .order_by(Post.generated_at.desc())
-            .limit(10)
+            .limit(5)  # Уменьшено с 10 до 5 для быстрой загрузки
         )
         posts = result.scalars().all()
 
@@ -564,7 +568,6 @@ async def callback_menu_pending(callback: CallbackQuery):
             "Используйте кнопку «Создать пост» для генерации нового поста.",
             reply_markup=Keyboards.back_to_menu()
         )
-        await callback.answer()
         return
 
     # Показываем список
@@ -578,8 +581,8 @@ async def callback_menu_pending(callback: CallbackQuery):
 
     await callback.message.edit_text(text, reply_markup=Keyboards.back_to_menu())
 
-    # Показываем каждый пост с кнопками модерации
-    for post in posts:
+    # Показываем только первые 3 поста с кнопками (для скорости)
+    for post in posts[:3]:
         type_name = type_names.get(post.post_type, post.post_type)
         preview = post.content[:200] + "..." if len(post.content) > 200 else post.content
         has_image = bool(post.image_url)
@@ -591,7 +594,11 @@ async def callback_menu_pending(callback: CallbackQuery):
             reply_markup=Keyboards.post_moderation(post.id, has_image)
         )
 
-    await callback.answer()
+    # Если есть ещё посты — уведомляем
+    if len(posts) > 3:
+        await callback.message.answer(
+            f"<i>... и ещё {len(posts) - 3} постов. Используйте /pending для полного списка.</i>"
+        )
 
 
 @router.callback_query(F.data == "menu:stats")
@@ -1274,7 +1281,8 @@ async def callback_generate_image(callback: CallbackQuery):
         )
         return
 
-    await callback.answer("⏳ Генерирую изображение...")
+    # Сразу отвечаем что началась генерация
+    await callback.answer("🖼 Генерирую изображение...", show_alert=False)
 
     # Обновляем сообщение
     await callback.message.edit_text(
@@ -1352,7 +1360,8 @@ async def callback_regenerate_image(callback: CallbackQuery, state: FSMContext):
         )
         return
 
-    await callback.answer("⏳ Генерирую новое изображение...")
+    # Сразу отвечаем что началась генерация
+    await callback.answer("🖼 Генерирую новое изображение...", show_alert=False)
 
     # Обновляем сообщение
     await callback.message.edit_text(

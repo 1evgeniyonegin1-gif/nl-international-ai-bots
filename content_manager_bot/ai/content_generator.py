@@ -222,55 +222,61 @@ class ContentGenerator:
         """
         Получает образцы постов из каналов-образцов для обучения стилю.
 
+        ВРЕМЕННО ОТКЛЮЧЕНО: Telethon API keys не настроены, вызов тормозит.
+        Включить когда будут настроены TELETHON_API_ID и TELETHON_API_HASH.
+
         Args:
             post_type: Тип поста для маппинга на категорию стиля
             limit: Максимум образцов
 
         Returns:
-            List[str]: Список текстов образцов
+            List[str]: Список текстов образцов (пустой пока отключено)
         """
-        if not self.use_style_samples:
-            return []
+        # ВРЕМЕННО ОТКЛЮЧЕНО — Telethon тормозит без API keys
+        # TODO: Включить когда будут настроены TELETHON_API_ID и TELETHON_API_HASH
+        return []
 
-        # Маппинг типов постов на категории стиля
-        type_to_category = {
-            "product": "product",
-            "motivation": "motivation",
-            "success_story": "motivation",
-            "transformation": "motivation",
-            "business_lifestyle": "lifestyle",
-            "business": "business",
-            "business_myths": "business",
-            "tips": "general",
-            "news": "general",
-            "promo": "general",
-            "myth_busting": "general",
-            "faq": "general"
-        }
-
-        style_category = type_to_category.get(post_type, "general")
-
-        try:
-            style_service = get_style_service()
-            samples = await style_service.get_style_samples(
-                style_category=style_category,
-                limit=limit,
-                min_quality=7  # Только качественные образцы
-            )
-
-            if not samples:
-                # Пробуем без фильтра по категории
-                samples = await style_service.get_style_samples(
-                    style_category=None,
-                    limit=limit,
-                    min_quality=None
-                )
-
-            return [s.text for s in samples if s.text]
-
-        except Exception as e:
-            logger.debug(f"Could not get style samples: {e}")
-            return []
+        # Оригинальный код закомментирован:
+        # if not self.use_style_samples:
+        #     return []
+        #
+        # type_to_category = {
+        #     "product": "product",
+        #     "motivation": "motivation",
+        #     "success_story": "motivation",
+        #     "transformation": "motivation",
+        #     "business_lifestyle": "lifestyle",
+        #     "business": "business",
+        #     "business_myths": "business",
+        #     "tips": "general",
+        #     "news": "general",
+        #     "promo": "general",
+        #     "myth_busting": "general",
+        #     "faq": "general"
+        # }
+        #
+        # style_category = type_to_category.get(post_type, "general")
+        #
+        # try:
+        #     style_service = get_style_service()
+        #     samples = await style_service.get_style_samples(
+        #         style_category=style_category,
+        #         limit=limit,
+        #         min_quality=7
+        #     )
+        #
+        #     if not samples:
+        #         samples = await style_service.get_style_samples(
+        #             style_category=None,
+        #             limit=limit,
+        #             min_quality=None
+        #         )
+        #
+        #     return [s.text for s in samples if s.text]
+        #
+        # except Exception as e:
+        #     logger.debug(f"Could not get style samples: {e}")
+        #     return []
 
     def _format_style_examples(self, samples: List[str]) -> str:
         """
