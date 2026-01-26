@@ -224,7 +224,7 @@ class VectorStore:
         query: str,
         top_k: int = 5,
         category: str = None,
-        min_similarity: float = 0.3,
+        min_similarity: float = 0.4,  # Повышено с 0.3 для лучшей релевантности (2026-01-26)
         exclude_expired: bool = True,
         prefer_recent: bool = True,
         max_age_days: Optional[int] = None

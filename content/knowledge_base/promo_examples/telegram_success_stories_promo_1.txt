@@ -1,3 +1,11 @@
+---
+date_created: 2025-01-15
+date_updated: 2026-01-26
+category: promo_examples
+source: Промо-посты Telegram NL International
+expires: 2026-07-01
+---
+
 # Примеры постов: Истории успеха партнёров NL International
 
 Источник: Рабочий канал NL International

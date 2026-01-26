@@ -1,11 +1,11 @@
 """
-Модуль для работы с медиа контентом (стикеры, гифки, изображения).
+Модуль медиа-библиотеки
 
-Предоставляет:
-- MediaManager: управление медиа для ботов
-- Каталог стикеров, гифок, эмодзи
+Экспорт:
+- MediaLibrary: Основной класс для работы с медиа
+- media_library: Singleton инстанс
 """
 
-from .media_manager import MediaManager, get_media_manager
+from .media_library import MediaLibrary, media_library
 
-__all__ = ["MediaManager", "get_media_manager"]
+__all__ = ["MediaLibrary", "media_library"]

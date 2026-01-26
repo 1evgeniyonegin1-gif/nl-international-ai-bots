@@ -85,7 +85,7 @@ class Settings(BaseSettings):
         return self
 
     # YandexART (генерация изображений)
-    yandex_art_enabled: bool = Field(default=True, env="YANDEX_ART_ENABLED")
+    yandex_art_enabled: bool = Field(default=False, env="YANDEX_ART_ENABLED")  # default=False чтобы не генерировать без явного включения
     yandex_art_width: int = Field(default=1024, env="YANDEX_ART_WIDTH")
     yandex_art_height: int = Field(default=1024, env="YANDEX_ART_HEIGHT")
 

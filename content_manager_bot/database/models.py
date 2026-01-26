@@ -203,41 +203,88 @@ class MoodState(Base, TimestampMixin):
 
 
 class MediaAsset(Base, TimestampMixin):
-    """Медиа-ресурс (мем, гифка, стикер)"""
+    """Медиа-ресурс (мем, гифка, стикер, фото продукта, чек партнёра)"""
     __tablename__ = "content_media_assets"
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    # Telegram file_id
-    file_id: Mapped[str] = mapped_column(String(200), unique=True, index=True)
+    # Telegram file_id (опционально для локальных файлов)
+    file_id: Mapped[Optional[str]] = mapped_column(String(200), unique=True, index=True, nullable=True)
 
     # Тип файла (gif, image, sticker, video)
-    file_type: Mapped[str] = mapped_column(String(20))
+    file_type: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
 
+    # ====== НОВЫЕ ПОЛЯ ДЛЯ ИНДЕКСИРОВАННОГО ПОИСКА ======
+    # Тип ресурса (product, testimonial, sticker, gif)
+    asset_type: Mapped[str] = mapped_column(String(50), default="sticker", index=True)
+
+    # Ключевые слова для поиска ["коллаген", "collagen", "peptides"]
+    keywords: Mapped[Optional[list]] = mapped_column(JSONB, default=list, nullable=True)
+
+    # Описание (особенно для testimonials)
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    # Связанные продукты NL ["3d_slim", "omega"]
+    nl_products: Mapped[Optional[list]] = mapped_column(JSONB, default=list, nullable=True)
+
+    # SHA256 хеш файла для дедупликации
+    file_hash: Mapped[Optional[str]] = mapped_column(String(64), nullable=True, unique=True)
+
+    # Дополнительные теги ["семья", "успех", "первый_чек"]
+    tags: Mapped[Optional[list]] = mapped_column(JSONB, default=list, nullable=True)
+
+    # ====== СТАРЫЕ ПОЛЯ (для обратной совместимости) ======
     # Категория (morning, work, products, relationships, achievements, emotions, meta, seasonal, industry, random)
-    category: Mapped[str] = mapped_column(String(50), index=True)
+    category: Mapped[Optional[str]] = mapped_column(String(50), index=True, nullable=True)
 
     # Конкретная ситуация
-    situation: Mapped[str] = mapped_column(String(200))
+    situation: Mapped[Optional[str]] = mapped_column(String(200), nullable=True)
 
     # Теги эмоций [happy, tired, excited] (JSONB)
-    emotion_tags: Mapped[list] = mapped_column(JSONB, default=list)
+    emotion_tags: Mapped[Optional[list]] = mapped_column(JSONB, default=list, nullable=True)
 
     # Теги персон [expert, friend, rebel] (JSONB)
-    persona_tags: Mapped[list] = mapped_column(JSONB, default=list)
+    persona_tags: Mapped[Optional[list]] = mapped_column(JSONB, default=list, nullable=True)
 
     # Статистика использования
     usage_count: Mapped[int] = mapped_column(Integer, default=0)
     last_used_at: Mapped[Optional[datetime]] = mapped_column(nullable=True)
 
-    # Локальный путь (если есть)
+    # Локальный путь (для фото продуктов и testimonials)
     file_path: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     # Промпт для генерации (для регенерации)
     generation_prompt: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     def __repr__(self) -> str:
-        return f"<MediaAsset(id={self.id}, category={self.category}, situation={self.situation})>"
+        if self.asset_type == "product":
+            return f"<MediaAsset(id={self.id}, type=product, products={self.nl_products})>"
+        elif self.asset_type == "testimonial":
+            return f"<MediaAsset(id={self.id}, type=testimonial, desc={self.description[:50] if self.description else 'N/A'})>"
+        else:
+            return f"<MediaAsset(id={self.id}, category={self.category}, situation={self.situation})>"
+
+
+class MediaKeywordIndex(Base):
+    """Индекс для быстрого O(1) поиска медиа по ключевым словам"""
+    __tablename__ = "media_keyword_index"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    # Оригинальное ключевое слово
+    keyword: Mapped[str] = mapped_column(String(255))
+
+    # Нормализованное для поиска (lowercase, без спецсимволов)
+    normalized_keyword: Mapped[str] = mapped_column(String(255), index=True)
+
+    # Ссылка на медиа-ресурс
+    asset_id: Mapped[int] = mapped_column(Integer, index=True)
+
+    # Приоритет при множественных совпадениях (1-10, выше = приоритетнее)
+    priority: Mapped[int] = mapped_column(Integer, default=1)
+
+    def __repr__(self) -> str:
+        return f"<MediaKeywordIndex(keyword={self.keyword}, asset_id={self.asset_id}, priority={self.priority})>"
 
 
 class HookTemplate(Base, TimestampMixin):

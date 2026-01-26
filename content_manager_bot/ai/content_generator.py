@@ -21,6 +21,7 @@ from shared.persona import PersonaManager, PersonaContext
 from shared.rag import get_rag_engine, RAGEngine
 from content_manager_bot.ai.prompts import ContentPrompts
 from content_manager_bot.utils.product_reference import ProductReferenceManager
+from shared.media import media_library  # НОВОЕ: индексированная медиа-библиотека
 
 
 # Типы постов, где используется GPT-4 для лучшего качества
@@ -95,8 +96,11 @@ class ContentGenerator:
             self.yandexart_client = YandexARTClient()
             logger.info("YandexART available for image generation")
 
-        # Менеджер референсных изображений продуктов
+        # Менеджер референсных изображений продуктов (старый, для совместимости)
         self.product_reference = ProductReferenceManager()
+
+        # НОВОЕ: индексированная медиа-библиотека (< 20ms поиск)
+        self.media_library = media_library
 
         if not self.main_client:
             raise ValueError("No AI client configured! Check .env settings")
@@ -212,6 +216,56 @@ class ContentGenerator:
 
         except Exception as e:
             logger.warning(f"Could not get knowledge context: {e}")
+            return ""
+
+    def _get_content_style_guide(self) -> str:
+        """
+        Читает примеры из CONTENT_STYLE_GUIDE.md для обучения стилю.
+
+        Returns:
+            str: Отформатированные примеры из гайда или пустая строка
+        """
+        try:
+            from pathlib import Path
+
+            # Путь к файлу относительно content_manager_bot/ai/
+            style_guide_path = Path(__file__).parent.parent.parent / "docs" / "CONTENT_STYLE_GUIDE.md"
+
+            if not style_guide_path.exists():
+                logger.warning(f"CONTENT_STYLE_GUIDE.md not found at {style_guide_path}")
+                return ""
+
+            content = style_guide_path.read_text(encoding="utf-8")
+
+            # Извлекаем примеры из секции "Примеры живых постов"
+            import re
+            examples_section = re.search(
+                r"## Примеры живых постов.*?(?=##|\Z)",
+                content,
+                re.DOTALL
+            )
+
+            if examples_section:
+                examples_text = examples_section.group(0)
+                return f"""
+
+### 📚 ПРИМЕРЫ СТИЛЯ (ОБЯЗАТЕЛЬНО СЛЕДУЙ ЭТОМУ ФОРМАТУ):
+
+{examples_text}
+
+### ⚠️ ВАЖНО:
+- Используй ТОТ ЖЕ живой стиль написания
+- Короткие абзацы (1-2 предложения)
+- HTML-теги: <blockquote>, <b>, <i>, <tg-spoiler>
+- Разговорный язык, как в примерах
+- Вопрос или CTA в конце
+"""
+
+            logger.info("Loaded style examples from CONTENT_STYLE_GUIDE.md")
+            return ""
+
+        except Exception as e:
+            logger.warning(f"Could not load CONTENT_STYLE_GUIDE.md: {e}")
             return ""
 
     async def _get_style_samples(
@@ -405,7 +459,13 @@ class ContentGenerator:
                     f"(mood: {persona_context.mood.emotion if persona_context.mood else 'none'})"
                 )
 
-            # Добавляем образцы стиля если доступны
+            # 1. ВСЕГДА добавляем примеры из CONTENT_STYLE_GUIDE.md (приоритет!)
+            style_guide_examples = self._get_content_style_guide()
+            if style_guide_examples:
+                user_prompt = user_prompt + style_guide_examples
+                logger.info("Added examples from CONTENT_STYLE_GUIDE.md")
+
+            # 2. Добавляем образцы стиля если доступны (Telethon - пока отключено)
             if use_style_samples and self.use_style_samples:
                 style_samples = await self._get_style_samples(post_type, limit=3)
                 if style_samples:
@@ -413,7 +473,7 @@ class ContentGenerator:
                     user_prompt = user_prompt + style_block
                     logger.info(f"Added {len(style_samples)} style samples to prompt")
 
-            # Добавляем контекст из базы знаний (RAG)
+            # 3. Добавляем контекст из базы знаний (RAG)
             if self.use_knowledge_base:
                 knowledge_context = await self._get_knowledge_context(
                     post_type=post_type,
@@ -842,24 +902,47 @@ class ContentGenerator:
             Tuple[Optional[str], str]: (base64 изображения или путь к файлу, описание)
         """
         try:
-            # === 1. СНАЧАЛА ВСЕГДА ИЩЕМ ГОТОВОЕ ФОТО ===
+            # === 1. СНАЧАЛА ВСЕГДА ИЩЕМ ГОТОВОЕ ФОТО (через MediaLibrary) ===
             if use_product_reference and post_type == "product":
-                # Ищем упоминание конкретного продукта (новый формат: keyword, folder_path, photo_path)
+                import time
+                import base64
+
+                start_time = time.time()
+
+                # НОВОЕ: используем индексированный поиск через MediaLibrary
+                try:
+                    asset = await self.media_library.find_in_text(post_content, asset_type="product")
+                    search_time_ms = (time.time() - start_time) * 1000
+
+                    if asset and asset.file_path:
+                        from pathlib import Path
+                        photo_path = Path(asset.file_path)
+
+                        if photo_path.exists():
+                            with open(photo_path, 'rb') as f:
+                                image_base64 = base64.b64encode(f.read()).decode('utf-8')
+
+                            product_name = asset.nl_products[0] if asset.nl_products else "unknown"
+                            logger.info(f"[ФОТО] ✅ MediaLibrary: найдено фото {product_name} за {search_time_ms:.1f}ms")
+                            return image_base64, f"готовое фото: {product_name} ({photo_path.name})"
+                        else:
+                            logger.warning(f"[ФОТО] ❌ Файл не существует: {photo_path}")
+                    else:
+                        logger.info(f"[ФОТО] MediaLibrary: продукт не найден за {search_time_ms:.1f}ms")
+
+                except Exception as e:
+                    logger.error(f"[ФОТО] Ошибка MediaLibrary: {e}, fallback на старый метод")
+
+                # FALLBACK: старый метод через ProductReferenceManager
                 product_result = self.product_reference.extract_product_from_content(post_content)
                 if product_result:
                     keyword, folder_path, photo_path = product_result
-                    logger.info(f"[ФОТО] Найден продукт в тексте: '{keyword}' → {folder_path}")
+                    logger.info(f"[ФОТО] Fallback: найден продукт '{keyword}' → {folder_path}")
                     if photo_path and photo_path.exists():
-                        # Читаем фото и конвертируем в base64
-                        import base64
                         with open(photo_path, 'rb') as f:
                             image_base64 = base64.b64encode(f.read()).decode('utf-8')
-                        logger.info(f"[ФОТО] ✅ Используем готовое фото: {photo_path}")
+                        logger.info(f"[ФОТО] ✅ Fallback: используем фото {photo_path}")
                         return image_base64, f"готовое фото: {keyword} ({photo_path.name})"
-                    else:
-                        logger.warning(f"[ФОТО] ❌ Фото не найдено для '{keyword}', путь: {photo_path}")
-                else:
-                    logger.warning(f"[ФОТО] ❌ Продукт не распознан в тексте поста (первые 200 символов): {post_content[:200]}")
 
             # === 3. ТОЛЬКО ЕСЛИ НЕТ ГОТОВЫХ — ГЕНЕРИРУЕМ ===
             if not self.yandexart_client:

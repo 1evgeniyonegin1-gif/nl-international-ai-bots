@@ -1,3 +1,10 @@
+---
+date_created: 2024-01-01
+date_updated: 2026-01-26
+category: products
+source: PDF презентации NL International
+---
+
 # GREENFLASH - Информация из PDF документов
 
 Источник: PDF презентации и FAQ NL International

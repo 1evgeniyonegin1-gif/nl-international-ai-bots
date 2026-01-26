@@ -33,7 +33,11 @@ class YandexGPTClient:
         """
         self.service_account_id = service_account_id or settings.yandex_service_account_id
         self.key_id = key_id or settings.yandex_key_id
-        self.private_key = private_key or settings.yandex_private_key
+
+        # Обрабатываем приватный ключ: заменяем \n на реальные переносы строк
+        raw_key = private_key or settings.yandex_private_key
+        self.private_key = raw_key.replace('\\n', '\n') if raw_key else None
+
         self.folder_id = folder_id or settings.yandex_folder_id
         self.model = model or settings.yandex_model or "yandexgpt-lite"
         self.base_url = "https://llm.api.cloud.yandex.net/foundationModels/v1"
