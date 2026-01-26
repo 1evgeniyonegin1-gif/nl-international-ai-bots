@@ -1,3 +1,8 @@
+---
+date_created: 2024-07-01
+date_updated: 2026-01-20
+---
+
 # Client Club — программа лояльности NL International
 
 ## Что такое Client Club?

@@ -1,3 +1,8 @@
+---
+date_created: 2024-11-01
+date_updated: 2026-01-20
+---
+
 # Личный кабинет NL International
 
 ## Вход в личный кабинет

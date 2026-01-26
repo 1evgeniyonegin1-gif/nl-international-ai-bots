@@ -1,3 +1,8 @@
+---
+date_created: 2024-06-01
+date_updated: 2026-01-20
+---
+
 # Продукты для похудения NL International (3D Slim)
 
 ## Обзор линейки

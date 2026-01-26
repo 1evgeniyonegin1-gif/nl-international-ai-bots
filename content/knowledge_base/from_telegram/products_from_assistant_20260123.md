@@ -1,3 +1,8 @@
+---
+date_created: 2026-01-23
+date_updated: 2026-01-23
+---
+
 # Информация о продуктах из NL Assistant AI
 
 ---

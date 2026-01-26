@@ -1,3 +1,8 @@
+---
+date_created: 2024-08-01
+date_updated: 2026-01-20
+---
+
 # Доставка продукции NL International
 
 ## Способы доставки

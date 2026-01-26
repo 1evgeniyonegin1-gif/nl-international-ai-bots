@@ -1,3 +1,8 @@
+---
+date_created: 2024-06-01
+date_updated: 2026-01-20
+---
+
 # Lovely — косметика от NL International
 
 ## О бренде Lovely

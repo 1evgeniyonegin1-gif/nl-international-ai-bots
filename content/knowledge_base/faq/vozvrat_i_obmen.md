@@ -1,3 +1,8 @@
+---
+date_created: 2024-08-01
+date_updated: 2026-01-20
+---
+
 # Возврат и обмен товара в NL International
 
 ## Общие правила

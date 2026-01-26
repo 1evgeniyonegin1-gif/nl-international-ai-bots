@@ -1,3 +1,8 @@
+---
+date_created: 2024-08-01
+date_updated: 2026-01-20
+---
+
 # Как начисляются бонусы в NL International
 
 ## Виды бонусов

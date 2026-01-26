@@ -1,3 +1,8 @@
+---
+date_created: 2026-01-23
+date_updated: 2026-01-23
+---
+
 # Новости NL International (2024-2026)
 
 Источник: NL_News

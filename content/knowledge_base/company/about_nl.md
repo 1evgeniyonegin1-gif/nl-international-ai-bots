@@ -1,3 +1,8 @@
+---
+date_created: 2024-06-01
+date_updated: 2026-01-15
+---
+
 # О компании NL International
 
 ## Общая информация

@@ -1,3 +1,8 @@
+---
+date_created: 2024-09-01
+date_updated: 2026-01-20
+---
+
 # Обучающие материалы из NL University
 
 Источник: university
