@@ -163,14 +163,14 @@ async def callback_publish(callback: CallbackQuery, bot: Bot):
                             photo=image_file,
                             caption=first_part,
                             message_thread_id=topic_id,
-                            parse_mode="Markdown"
+                            parse_mode="HTML"
                         )
                     else:
                         channel_message = await bot.send_photo(
                             chat_id=target_chat,
                             photo=image_file,
                             caption=first_part,
-                            parse_mode="Markdown"
+                            parse_mode="HTML"
                         )
 
                     # Остальные части отправляем как текст
@@ -181,13 +181,13 @@ async def callback_publish(callback: CallbackQuery, bot: Bot):
                                 chat_id=target_chat,
                                 text=part,
                                 message_thread_id=topic_id,
-                                parse_mode="Markdown"
+                                parse_mode="HTML"
                             )
                         else:
                             await bot.send_message(
                                 chat_id=target_chat,
                                 text=part,
-                                parse_mode="Markdown"
+                                parse_mode="HTML"
                             )
 
                 except Exception as e:
@@ -201,13 +201,13 @@ async def callback_publish(callback: CallbackQuery, bot: Bot):
                                 chat_id=target_chat,
                                 text=part,
                                 message_thread_id=topic_id,
-                                parse_mode="Markdown"
+                                parse_mode="HTML"
                             )
                         else:
                             msg = await bot.send_message(
                                 chat_id=target_chat,
                                 text=part,
-                                parse_mode="Markdown"
+                                parse_mode="HTML"
                             )
                         if i == 0:
                             channel_message = msg
@@ -221,13 +221,13 @@ async def callback_publish(callback: CallbackQuery, bot: Bot):
                             chat_id=target_chat,
                             text=part,
                             message_thread_id=topic_id,
-                            parse_mode="Markdown"
+                            parse_mode="HTML"
                         )
                     else:
                         msg = await bot.send_message(
                             chat_id=target_chat,
                             text=part,
-                            parse_mode="Markdown"
+                            parse_mode="HTML"
                         )
                     if i == 0:
                         channel_message = msg

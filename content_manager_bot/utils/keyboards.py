@@ -276,8 +276,12 @@ class Keyboards:
         )
         builder.row(
             InlineKeyboardButton(
-                text="📝 Редактировать",
+                text="📝 AI-редакт",
                 callback_data=f"edit:{post_id}"
+            ),
+            InlineKeyboardButton(
+                text="✏️ Свой текст",
+                callback_data=f"manual_edit:{post_id}"
             ),
             InlineKeyboardButton(
                 text="🔄 Заново",

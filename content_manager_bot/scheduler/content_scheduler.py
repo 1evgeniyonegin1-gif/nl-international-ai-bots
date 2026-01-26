@@ -140,14 +140,14 @@ class ContentScheduler:
                     chat_id=settings.group_id,
                     text=post_with_curator,
                     message_thread_id=topic_id,
-                    parse_mode="Markdown"
+                    parse_mode="HTML"
                 )
                 publish_target = f"группа (тема #{topic_id})"
             else:
                 message = await self.bot.send_message(
                     chat_id=settings.channel_username,
                     text=post_with_curator,
-                    parse_mode="Markdown"
+                    parse_mode="HTML"
                 )
                 publish_target = settings.channel_username
 
