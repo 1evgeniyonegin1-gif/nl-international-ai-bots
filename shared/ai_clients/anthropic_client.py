@@ -21,7 +21,14 @@ class AnthropicClient:
         """
         self.api_key = api_key or settings.anthropic_api_key
         self.model = model or settings.curator_ai_model
-        self.client = AsyncAnthropic(api_key=self.api_key)
+
+        # Используем прокси если указан (для обхода блокировки с российских IP)
+        base_url = settings.anthropic_base_url if settings.anthropic_base_url else None
+        if base_url:
+            self.client = AsyncAnthropic(api_key=self.api_key, base_url=base_url)
+            logger.info(f"Anthropic client initialized with proxy: {base_url}")
+        else:
+            self.client = AsyncAnthropic(api_key=self.api_key)
         logger.info(f"Anthropic client initialized with model: {self.model}")
 
     async def generate_response(

@@ -63,6 +63,7 @@ class Settings(BaseSettings):
     gemini_api_key: str = Field(default="", env="GEMINI_API_KEY")
     openai_api_key: str = Field(default="", env="OPENAI_API_KEY")
     anthropic_api_key: str = Field(default="", env="ANTHROPIC_API_KEY")
+    anthropic_base_url: str = Field(default="", env="ANTHROPIC_BASE_URL")  # Прокси для обхода блокировки
     gigachat_auth_token: str = Field(default="", env="GIGACHAT_AUTH_TOKEN")
     gigachat_client_id: str = Field(default="", env="GIGACHAT_CLIENT_ID")
 
