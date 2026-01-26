@@ -55,19 +55,22 @@ async def send_post_notification(bot: Bot, user, post_type: str, content_preview
 Смотри в группе 👇"""
 
     # Кнопки для взаимодействия
-    # Формируем ссылку на группу
-    group_id_for_link = str(settings.group_id).replace("-100", "") if settings.group_id else ""
+    # Формируем ссылку на группу (только если group_id валидный)
+    buttons = []
 
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(
+    if settings.group_id and settings.group_id.strip() and settings.group_id.startswith("-100"):
+        group_id_for_link = settings.group_id.replace("-100", "")
+        buttons.append([InlineKeyboardButton(
             text="📖 Читать полностью",
             url=f"https://t.me/c/{group_id_for_link}"
-        )],
-        [InlineKeyboardButton(
-            text="❓ Задать вопрос",
-            callback_data="ask_curator"
-        )]
-    ])
+        )])
+
+    buttons.append([InlineKeyboardButton(
+        text="❓ Задать вопрос",
+        callback_data="ask_curator"
+    )])
+
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
 
     try:
         await bot.send_message(
