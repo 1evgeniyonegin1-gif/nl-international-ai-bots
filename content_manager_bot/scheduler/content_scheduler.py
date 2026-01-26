@@ -139,13 +139,15 @@ class ContentScheduler:
                 message = await self.bot.send_message(
                     chat_id=settings.group_id,
                     text=post_with_curator,
-                    message_thread_id=topic_id
+                    message_thread_id=topic_id,
+                    parse_mode="Markdown"
                 )
                 publish_target = f"группа (тема #{topic_id})"
             else:
                 message = await self.bot.send_message(
                     chat_id=settings.channel_username,
-                    text=post_with_curator
+                    text=post_with_curator,
+                    parse_mode="Markdown"
                 )
                 publish_target = settings.channel_username
 
@@ -269,7 +271,8 @@ class ContentScheduler:
                 await self.bot.send_message(
                     chat_id=admin_id,
                     text=message_text,
-                    reply_markup=Keyboards.post_moderation(post_id)
+                    reply_markup=Keyboards.post_moderation(post_id),
+                    parse_mode="HTML"
                 )
             except Exception as e:
                 logger.error(f"Failed to send post for moderation to admin {admin_id}: {e}")
@@ -283,7 +286,7 @@ class ContentScheduler:
         """
         for admin_id in settings.admin_ids_list:
             try:
-                await self.bot.send_message(chat_id=admin_id, text=message)
+                await self.bot.send_message(chat_id=admin_id, text=message, parse_mode="HTML")
             except Exception as e:
                 logger.error(f"Failed to notify admin {admin_id}: {e}")
 

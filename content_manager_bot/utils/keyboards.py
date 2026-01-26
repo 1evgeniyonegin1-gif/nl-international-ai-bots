@@ -276,50 +276,40 @@ class Keyboards:
         )
         builder.row(
             InlineKeyboardButton(
-                text="📝 AI-редактор",
+                text="📝 Редактировать",
                 callback_data=f"edit:{post_id}"
             ),
             InlineKeyboardButton(
-                text="🔄 Перегенерировать",
+                text="🔄 Заново",
                 callback_data=f"regenerate:{post_id}"
-            )
-        )
-        builder.row(
-            InlineKeyboardButton(
-                text="✏️ Свой текст",
-                callback_data=f"manual_edit:{post_id}"
-            ),
-            InlineKeyboardButton(
-                text="❌ Отклонить",
-                callback_data=f"reject:{post_id}"
             )
         )
         # Кнопки для изображений
         if has_image:
             builder.row(
                 InlineKeyboardButton(
-                    text="🖼 Новое изображение",
+                    text="🖼 Другая",
                     callback_data=f"regen_image:{post_id}"
                 ),
                 InlineKeyboardButton(
-                    text="🚫 Без картинки",
+                    text="🚫 Убрать",
                     callback_data=f"remove_image:{post_id}"
                 )
             )
         else:
             builder.row(
                 InlineKeyboardButton(
-                    text="🖼 Добавить картинку",
+                    text="🖼 Картинка",
                     callback_data=f"gen_image:{post_id}"
                 )
             )
         builder.row(
             InlineKeyboardButton(
-                text="❌ Отклонить",
+                text="❌ Удалить",
                 callback_data=f"reject:{post_id}"
             ),
             InlineKeyboardButton(
-                text="🔙 В меню",
+                text="🔙 Меню",
                 callback_data="menu:main"
             )
         )
