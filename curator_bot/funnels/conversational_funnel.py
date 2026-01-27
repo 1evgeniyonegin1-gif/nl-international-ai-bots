@@ -67,6 +67,9 @@ class ConversationContext:
     suggested_products: List[str] = field(default_factory=list)
     suggested_business: bool = False
 
+    # Флаг немедленной выдачи ссылки (через промпт)
+    link_provided: bool = False
+
     # Таймстемпы
     last_message_at: Optional[datetime] = None
     conversation_started_at: Optional[datetime] = None
@@ -332,7 +335,16 @@ class ConversationalFunnel:
         return ConversationStage.SOLUTION_HINT
 
     def _should_offer_solution(self, ctx: ConversationContext) -> bool:
-        """Определяет, готов ли пользователь к предложению"""
+        """
+        Определяет, готов ли пользователь к предложению через воронку.
+
+        Теперь учитывает: была ли уже дана ссылка через промпт (немедленная выдача).
+        Если ссылка уже дана AI, воронка не дублирует предложение.
+        """
+        # НОВОЕ: Если ссылка уже дана AI, воронка не дублирует
+        if ctx.link_provided:
+            return False
+
         # Нужно минимум сообщений
         if ctx.messages_count < self.MIN_MESSAGES_BEFORE_OFFER:
             return False
@@ -350,6 +362,31 @@ class ConversationalFunnel:
             return False
 
         return True
+
+    def mark_link_provided(self, user_id: int):
+        """
+        Помечает что пользователю уже дана ссылка (чтобы воронка не дублировала).
+
+        Вызывается когда AI дал ссылку через промпт (немедленная выдача).
+
+        Args:
+            user_id: Telegram ID пользователя
+        """
+        ctx = self._get_or_create_context(user_id)
+        ctx.link_provided = True
+
+    def has_link_been_provided(self, user_id: int) -> bool:
+        """
+        Проверяет давалась ли уже ссылка пользователю.
+
+        Args:
+            user_id: Telegram ID пользователя
+
+        Returns:
+            bool: True если ссылка уже дана
+        """
+        ctx = self._get_context(user_id)
+        return ctx.link_provided if ctx else False
 
     def _get_objection_script(self, objection_type: str) -> str:
         """Возвращает скрипт для отработки возражения с реальными ценами"""

@@ -188,6 +188,67 @@ def get_client_registration_link() -> str:
     return CLIENT_REGISTRATION_LINK
 
 
+def get_instant_link_for_query(query: str) -> tuple[str, str]:
+    """
+    Определяет подходящую ссылку для немедленной выдачи на основе запроса.
+
+    Используется для быстрой выдачи ссылок при первом упоминании продуктов/бизнеса.
+
+    Args:
+        query: Текст вопроса пользователя
+
+    Returns:
+        tuple: (category_name, link_url)
+        Если не найдено — возвращает ("general", NLSTORE_MAIN_LINK)
+
+    Examples:
+        >>> get_instant_link_for_query("Что такое MetaBoost?")
+        ('cocktails', 'https://nlstore.com/ref/hQrnSg/')
+
+        >>> get_instant_link_for_query("Как заработать в NL?")
+        ('business', 'https://nlstar.com/ref/eiPusg/')
+    """
+    query_lower = query.lower()
+
+    # Продуктовые ключевые слова
+    product_keywords = {
+        "cocktails": [
+            "похудение", "похудеть", "вес", "slim", "метабуст", "metaboost",
+            "draineffect", "дрейн", "white tea", "3d slim", "коктейль", "energy diet",
+            "ед", "энерджи диет", "сбросить вес", "жиросжигатель"
+        ],
+        "bad": [
+            "энергия", "витамин", "бад", "иммунитет", "здоровье", "адаптоген",
+            "детокс", "detox", "очищение", "усталость"
+        ],
+        "face_care": [
+            "красота", "кожа", "лицо", "уход", "крем", "морщины",
+            "антивозраст", "коллаген", "гиалур"
+        ],
+        "kids": [
+            "ребенок", "детям", "дети", "школа", "иммунитет детский",
+            "ребёнок", "для детей"
+        ],
+    }
+
+    # Ищем совпадения с продуктовыми категориями
+    for category, keywords in product_keywords.items():
+        if any(keyword in query_lower for keyword in keywords):
+            return (category, CATEGORY_LINKS[category])
+
+    # Бизнес ключевые слова
+    business_keywords = [
+        "заработ", "бизнес", "доход", "партнёр", "деньги",
+        "заработать", "млм", "сетевой маркетинг", "партнер",
+        "квалификация", "структура", "команда", "доход"
+    ]
+    if any(keyword in query_lower for keyword in business_keywords):
+        return ("business", PARTNER_REGISTRATION_LINK)
+
+    # По умолчанию — общий магазин
+    return ("general", NLSTORE_MAIN_LINK)
+
+
 def get_business_link() -> str:
     """Ссылка на лендинг о бизнесе"""
     return BUSINESS_LANDING_LINK
