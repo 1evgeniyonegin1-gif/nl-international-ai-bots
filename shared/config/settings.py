@@ -84,10 +84,7 @@ class Settings(BaseSettings):
                 self.yandex_private_key = key_path.read_text(encoding='utf-8')
         return self
 
-    # YandexART (генерация изображений)
-    yandex_art_enabled: bool = Field(default=False, env="YANDEX_ART_ENABLED")  # default=False чтобы не генерировать без явного включения
-    yandex_art_width: int = Field(default=1024, env="YANDEX_ART_WIDTH")
-    yandex_art_height: int = Field(default=1024, env="YANDEX_ART_HEIGHT")
+    # YandexART удалён — используем готовые фото из базы unified_products/
 
     # Database
     database_url: str = Field(..., env="DATABASE_URL")
@@ -112,6 +109,15 @@ class Settings(BaseSettings):
     telethon_api_id: int = Field(default=0, env="TELETHON_API_ID")
     telethon_api_hash: str = Field(default="", env="TELETHON_API_HASH")
     telethon_session_name: str = Field(default="nl_style_monitor", env="TELETHON_SESSION_NAME")
+
+    # Channel Monitoring Settings
+    channel_monitor_interval: int = Field(default=30, env="CHANNEL_MONITOR_INTERVAL")  # Интервал обновления (минуты)
+    channel_min_quality_score: float = Field(default=7.0, env="CHANNEL_MIN_QUALITY_SCORE")  # Минимальная оценка для RAG
+    channel_min_views: int = Field(default=500, env="CHANNEL_MIN_VIEWS")  # Минимум просмотров
+    channel_fetch_limit: int = Field(default=30, env="CHANNEL_FETCH_LIMIT")  # Лимит постов за раз
+    channel_fetch_days_back: int = Field(default=30, env="CHANNEL_FETCH_DAYS_BACK")  # Период загрузки (дни)
+    channel_auto_rag_sync: bool = Field(default=True, env="CHANNEL_AUTO_RAG_SYNC")  # Автодобавление в RAG
+    channel_ai_style_analysis: bool = Field(default=False, env="CHANNEL_AI_STYLE_ANALYSIS")  # AI-анализ стиля
 
     # Other Settings
     log_level: str = Field(default="INFO", env="LOG_LEVEL")

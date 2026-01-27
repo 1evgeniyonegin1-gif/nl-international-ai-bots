@@ -62,7 +62,7 @@ class Post(Base, TimestampMixin):
     prompt_used: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     generation_params: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
 
-    # Изображения (YandexART)
+    # Изображения (фото из базы unified_products/)
     image_url: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # URL или base64 изображения
     image_prompt: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # Промпт для генерации
     image_status: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)  # pending, generated, approved, rejected
